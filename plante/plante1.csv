@@ -1,1 +1,223 @@
-Denumirea_stiintifică,Denumirea_populară,Habitat,Localitatea,Silvice,Pajisti_sau_stepice,Stancarii,Palustre_si_acvatice,P_rară,Conventia_Berna,Directiva_Habitate,RM_Cartea_R_2015
+Denumirea_stiintifică,Denumirea_populară,Clasa,Familia,Habitat,Localitatea,Silvice,Pajisti_sau_stepice,Stancarii,Palustre_si_acvatice,P_rară,Conventia_Berna,Directiva_Habitate,RM_Cartea_R_2015,Frcevența
+Equisetum arvense L.,Ecvisetă campestră,Equisetopsida,Equisetaceae,,, ,+, , ,,,,,C
+Equisetum hyemale L.,Ecvisetă hibernantă,Equisetopsida,Equisetaceae,,, ,+, , ,,,,,C
+Equisetum palustre L.,Ecvisetă palustră,Equisetopsida,Equisetaceae,,, , , ,+,,,,,C
+Equisetum telmateia Ehrh. ,Ecvisetă telmicolă,Equisetopsida,Equisetaceae,,, ,+, , ,,,,,C
+Ophioglossum vulgatum L.,Grăitoare comună,Polypodiopsida,Ophioglossaceae,,,,,+,,,,,,RR
+Athyrium filix-femina (L.) Roth,Filice feminină,Polypodiopsida,Athyriaceae,,,+,,,,,,,,RR
+Cystopteris fragilis (L.)Bernh,Vezicarie fragilă,Polypodiopsida,Athyriaceae,,,,,+,,,,,,RR
+Asplenium ruta-muraria L.,Ruginiță parietală,Polypodiopsida,Aspleniaceae,,,,,+,,,,,,R
+Asplenium trichomanes L,Ruginiță filiformă,Polypodiopsida,Aspleniaceae,,,,,+,,,,,,R
+Gymnocarpium dryopteris(L.) Newman,Gimnocarpiu ferigoideu,Polypodiopsida,Aspidiaceae,,,,,+,,,,,,RR
+Gymnocarpium robertianum (Hoffm) Newman,Gimnocarpiu Robert,Polypodiopsida,Aspidiaceae,,,,,+,,,,,,RR
+Dryopteris dilatata (Hoffm.) A. Gray,Ferigă dilatată,Polypodiopsida,Dryopteridaceae,,,+,,,,,,,,RR
+Dryopteris carthusiana H.P. Fuchs  ,Ferigă cartuziuană,Polypodiopsida,Dryopteridaceae,,,+,,,,,,,,RR
+Dryopteris caucasica (A.Br.) Fraser-Jenkins et Corley,Ferigă caucaziană,Polypodiopsida,Dryopteridaceae,,,+,,,,,,,,RR
+Dryopteris filix-mas (L.) Schott  ,Ferigă masculină,Polypodiopsida,Dryopteridaceae,,,+,,,,,,,,RR
+Acer campestre L.,Jugastru,Magnoliopsida,Aceraceae,,,+,,,,,,,,C
+Acer negundo L.,Arțar negru,Magnoliopsida,Aceraceae,,,+,,,,,,,,C
+Acer platanoides L.,Paltin de câmp,Magnoliopsida,Aceraceae,,,+,,,,,,,,C
+Acer pseudoplatanus L.,Paltin de munte,Magnoliopsida,Aceraceae,,,+,,,,,,,,C
+Acer tataricum L.,Arțar tătăresc,Magnoliopsida,Aceraceae,,,+,,,,,,,,C
+Aegopodium podagraria L.,Piciorul caprei,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Aethusa cynapium L.,Pătrunjica câinelui,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Angelica sylvestris L.,Angelică silvicolă,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Anthriscus cerefolium (L.) Hoffm,Hațmațucă cerifolie ,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Anthriscus sylvestris (L.) Hoffm. ,Hațmațucă silvicolă,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Bupleurum affine Sadler,Urechelniță înrudită,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Bupleurum falcatum L.,Urechelniță falcată,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Bupleurum rotundifolium L.,Urechelniță rotundifolie,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Carum carvi L.,Chimion,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Caucalis platycarpos L.,Ghiurluci platicarp,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Chaerophyllum bulbosum L.,Baraboi bulbos,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Chaerophyllum temulum L.,Baraboi amețitor,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Conium maculatum L.,Cucută patată,Magnoliopsida,Apiaceae,,, +,+, ,+,,,,,C
+Daucus carota L.,Morcov sălbatic,Magnoliopsida,Apiaceae,,, +,+, , ,,,,,C
+Eryngium campestre L.,Scai campestru,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
+Eryngium planum L.,Scai plan,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
+Falcaria vulgaris Bernh.,Dornic comun,,Apiaceae,,, ,+, , ,,,,,C
+Heracleum sibiricum L.,Brâncuță siberiană,,Apiaceae,,, +, , , ,,,,,C
+Oenanthe aquatica L.,Mărăraș acvatic ,,Apiaceae,,, +, , , ,,,,,C
+Oenanthe silaifolia Bieb. ,Mărăraș silaifoliu,,Apiaceae,,, +,+, , ,,,,,C
+Pastinaca sylvestris Mill.,Păstârnac silvicol,,Apiaceae,,, +, , , ,,,,,C
+Peucedanum alsaticum L.,Mărarul porcului,,Apiaceae,,, +, , , ,,,,,C
+Peucedanum cervaria L. ,Somnoroasă carvifolie,,Apiaceae,,, +, , , ,,,,,C
+Peucedanum latifolium (M. Bieb)DC,Somnoroasă latifolie,,Apiaceae,,, ,+, , ,,,,,C
+Pimpinella saxifraga L.,Petringel saxifragoid,,Apiaceae,,, +, , , ,,,,,C
+Sanicula europaea L.,Sineghioară europeană,,Apiaceae,,, +, , , ,,,,,R
+Seseli annuum L.,Zmeoae anuală,,Apiaceae,,, +, , , ,,,,,C
+Seseli peucedanifolium Besser, ,,Apiaceae,,, , ,+, ,,,,,C
+Sium sisaroideum D.C.,Bolonică comună,,Apiaceae,,, +, , , ,,,,,C
+Torilis arvensis (Hudson) Link,Asmățui campestru,,Apiaceae,,, +,+, , ,,,,,C
+Torilis japonica (Houtt) DC. ,Asmățui japonez,,Apiaceae,,, +,+, , ,,,,,C
+Alisma lanceolatum With.,Limbariță lanceolată,,Alismataceae,,,,,,,,,,,C
+Alisma plantago-aquatica L.,Pătlagina apei,,Alismataceae,,,,,,+,,,,,C
+Allium angulosum L.,Ceapă muchiată,,Alliaceae,,, ,+, , ,,,,,C
+Allium paniculatum L.,Ceapă paniculată,,Alliaceae,,, ,+, , ,,,,,C
+Allium inaequale Janka,Ceapă inegală,,Alliaceae,,, , ,+, ,,,,,RR
+Allium rotundum L.,Pur,,Alliaceae,,, ,+, , ,,,,,C
+Allium scorodoprasum L.,Aiul șarpelui,,Alliaceae,,, ,+, , ,,,,,C
+Allium sphaerocephalon L.,Ceapă sferocapitată,,Alliaceae,,, , ,+, ,,,,,C
+Allium ursinum L.,Leurdă,,Alliaceae,,, +, , , ,,,,,C
+Galanthus nivalis L.,Ghiocel nival,,Amaryllidaceae,,,+,,,,,,,,RR
+Cotinus coggygria Scop.,Scumpie,,Anacardiaceae,,,,,+,,,,,,C
+Vinca herbacea Waldst. et Kit.,Brebenoc erbaceu,,Apocynaceae,,,,+,,,,,,,C
+Vinca minor L.,Brebenoc minor,,Apocynaceae,,,+,,,,,,,,C
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,

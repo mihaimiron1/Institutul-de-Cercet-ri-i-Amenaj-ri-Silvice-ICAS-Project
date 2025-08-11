@@ -1,34 +1,12 @@
-Denumirea_stiintifică,Denumirea_populară,Habitat,Localitatea,Silvice,Pajisti_sau_stepice,Stancarii,Palustre_si_acvatice,P_rară,Conventia_Berna,Directiva_Habitate,RM_Cartea_R_2015
-Centaurea ruthenica Lam.,,,,,,,,,,,
-,,,Trebujeni,,,,,,,,
-,,,,,,,,,,,
-Crepis tectorum L.,,,,,,,,,,,
-,,,Morovaia,,,,,,,,
-,,,,,,,,,,,
-Lactuca saligna L,,,,,,,,,,,
-,,,"Mășcăuți, Ivancea
-",,,,,,,,
-Leontodon biscutelifolius DC.,,,,,,,,,,,
-,,,"Morovaia, Trebujeni
-",,,,,,,,
-Podospermum laciniatum (L.) DC.,,,,,,,,,,,
-,,,"Mășcăuți, Butuceni
-",,,,,,,,
-Potentilla obscura Willd.,,,,,,,,,,,
-,,,"Tîgănești, Trebujeni
-",,,,,,,,
-Rosa andegavensis Dost.,,,,,,,,,,,
-,,,"Trebujeni, Butuceni
-",,,,,,,,
-Rosa gallica L.,,,,,,,,,,,
-,,,Trebujeni,,,,,,,,
-,,,,,,,,,,,
-Rosa rubiginosa L.,,,,,,,,,,,
-,,,"Trebujeni, Mașcauți
-",,,,,,,,
-Rubus canescens DC.,,,,,,,,,,,
-,,,Butuceni,,,,,,,,
-,,,,,,,,,,,
-Sonchus palustris L.,,,,,,,,,,,
-,,,"Mășcăuți, Butuceni, Trebujeni
-",,,,,,,,
+Denumirea_stiintifică,Denumirea_populară,Clasa,Familia,Habitat,Localitatea,Silvice,Pajisti_sau_stepice,Stancarii,Palustre_si_acvatice,P_rară,Conventia_Berna,Directiva_Habitate,RM_Cartea_R_2015,Frcevența
+Centaurea ruthenica Lam,,,,,Trebujeni,,,,,,,,
+Crepis tectorum L.,,,,,Morovaia,,,,,,,,
+Lactuca saligna L,,,,,"Mășcăuți, Ivancea",,,,,,,,
+Leontodon biscutelifolius DC.,,,,,"Morovaia, Trebujeni",,,,,,,,
+Podospermum laciniatum (L.) DC.,,,,,"Mășcăuți, Butuceni",,,,,,,,
+Potentilla obscura Willd.,,,,,"Tîgănești, Trebujeni",,,,,,,,
+Rosa andegavensis Dost.,,,,,"Trebujeni, Butuceni",,,,,,,,
+Rosa gallica L.,,,,,Trebujeni,,,,,,,,
+Rosa rubiginosa L.,,,,,"Trebujeni, Mașcauți",,,,,,,,
+Rubus canescens DC.,,,,,Butuceni,,,,,,,,
+Sonchus palustris L.,,,,,"Mășcăuți, Butuceni, Trebujeni",,,,,,,,
