@@ -35,189 +35,784 @@ Conium maculatum L.,Cucută patată,Magnoliopsida,Apiaceae,,, +,+, ,+,,,,,C
 Daucus carota L.,Morcov sălbatic,Magnoliopsida,Apiaceae,,, +,+, , ,,,,,C
 Eryngium campestre L.,Scai campestru,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
 Eryngium planum L.,Scai plan,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
-Falcaria vulgaris Bernh.,Dornic comun,,Apiaceae,,, ,+, , ,,,,,C
-Heracleum sibiricum L.,Brâncuță siberiană,,Apiaceae,,, +, , , ,,,,,C
-Oenanthe aquatica L.,Mărăraș acvatic ,,Apiaceae,,, +, , , ,,,,,C
-Oenanthe silaifolia Bieb. ,Mărăraș silaifoliu,,Apiaceae,,, +,+, , ,,,,,C
-Pastinaca sylvestris Mill.,Păstârnac silvicol,,Apiaceae,,, +, , , ,,,,,C
-Peucedanum alsaticum L.,Mărarul porcului,,Apiaceae,,, +, , , ,,,,,C
-Peucedanum cervaria L. ,Somnoroasă carvifolie,,Apiaceae,,, +, , , ,,,,,C
-Peucedanum latifolium (M. Bieb)DC,Somnoroasă latifolie,,Apiaceae,,, ,+, , ,,,,,C
-Pimpinella saxifraga L.,Petringel saxifragoid,,Apiaceae,,, +, , , ,,,,,C
-Sanicula europaea L.,Sineghioară europeană,,Apiaceae,,, +, , , ,,,,,R
-Seseli annuum L.,Zmeoae anuală,,Apiaceae,,, +, , , ,,,,,C
-Seseli peucedanifolium Besser, ,,Apiaceae,,, , ,+, ,,,,,C
-Sium sisaroideum D.C.,Bolonică comună,,Apiaceae,,, +, , , ,,,,,C
-Torilis arvensis (Hudson) Link,Asmățui campestru,,Apiaceae,,, +,+, , ,,,,,C
-Torilis japonica (Houtt) DC. ,Asmățui japonez,,Apiaceae,,, +,+, , ,,,,,C
-Alisma lanceolatum With.,Limbariță lanceolată,,Alismataceae,,,,,,,,,,,C
-Alisma plantago-aquatica L.,Pătlagina apei,,Alismataceae,,,,,,+,,,,,C
-Allium angulosum L.,Ceapă muchiată,,Alliaceae,,, ,+, , ,,,,,C
-Allium paniculatum L.,Ceapă paniculată,,Alliaceae,,, ,+, , ,,,,,C
-Allium inaequale Janka,Ceapă inegală,,Alliaceae,,, , ,+, ,,,,,RR
-Allium rotundum L.,Pur,,Alliaceae,,, ,+, , ,,,,,C
-Allium scorodoprasum L.,Aiul șarpelui,,Alliaceae,,, ,+, , ,,,,,C
-Allium sphaerocephalon L.,Ceapă sferocapitată,,Alliaceae,,, , ,+, ,,,,,C
-Allium ursinum L.,Leurdă,,Alliaceae,,, +, , , ,,,,,C
-Galanthus nivalis L.,Ghiocel nival,,Amaryllidaceae,,,+,,,,,,,,RR
-Cotinus coggygria Scop.,Scumpie,,Anacardiaceae,,,,,+,,,,,,C
-Vinca herbacea Waldst. et Kit.,Brebenoc erbaceu,,Apocynaceae,,,,+,,,,,,,C
-Vinca minor L.,Brebenoc minor,,Apocynaceae,,,+,,,,,,,,C
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,
+Falcaria vulgaris Bernh.,Dornic comun,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
+Heracleum sibiricum L.,Brâncuță siberiană,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Oenanthe aquatica L.,Mărăraș acvatic ,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Oenanthe silaifolia Bieb. ,Mărăraș silaifoliu,Magnoliopsida,Apiaceae,,, +,+, , ,,,,,C
+Pastinaca sylvestris Mill.,Păstârnac silvicol,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Peucedanum alsaticum L.,Mărarul porcului,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Peucedanum cervaria L. ,Somnoroasă carvifolie,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Peucedanum latifolium (M. Bieb)DC,Somnoroasă latifolie,Magnoliopsida,Apiaceae,,, ,+, , ,,,,,C
+Pimpinella saxifraga L.,Petringel saxifragoid,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Sanicula europaea L.,Sineghioară europeană,Magnoliopsida,Apiaceae,,, +, , , ,,,,,R
+Seseli annuum L.,Zmeoae anuală,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Seseli peucedanifolium Besser, ,Magnoliopsida,Apiaceae,,, , ,+, ,,,,,C
+Sium sisaroideum D.C.,Bolonică comună,Magnoliopsida,Apiaceae,,, +, , , ,,,,,C
+Torilis arvensis (Hudson) Link,Asmățui campestru,Magnoliopsida,Apiaceae,,, +,+, , ,,,,,C
+Torilis japonica (Houtt) DC. ,Asmățui japonez,Magnoliopsida,Apiaceae,,, +,+, , ,,,,,C
+Alisma lanceolatum With.,Limbariță lanceolată,Magnoliopsida,Alismataceae,,,,,,,,,,,C
+Alisma plantago-aquatica L.,Pătlagina apei,Magnoliopsida,Alismataceae,,,,,,+,,,,,C
+Allium angulosum L.,Ceapă muchiată,Magnoliopsida,Alliaceae,,, ,+, , ,,,,,C
+Allium paniculatum L.,Ceapă paniculată,Magnoliopsida,Alliaceae,,, ,+, , ,,,,,C
+Allium inaequale Janka,Ceapă inegală,Magnoliopsida,Alliaceae,,, , ,+, ,,,,,RR
+Allium rotundum L.,Pur,Magnoliopsida,Alliaceae,,, ,+, , ,,,,,C
+Allium scorodoprasum L.,Aiul șarpelui,Magnoliopsida,Alliaceae,,, ,+, , ,,,,,C
+Allium sphaerocephalon L.,Ceapă sferocapitată,Magnoliopsida,Alliaceae,,, , ,+, ,,,,,C
+Allium ursinum L.,Leurdă,Magnoliopsida,Alliaceae,,, +, , , ,,,,,C
+Galanthus nivalis L.,Ghiocel nival,Magnoliopsida,Amaryllidaceae,,,+,,,,,,,,RR
+Cotinus coggygria Scop.,Scumpie,Magnoliopsida,Anacardiaceae,,,,,+,,,,,,C
+Vinca herbacea Waldst. et Kit.,Brebenoc erbaceu,Magnoliopsida,Apocynaceae,,,,+,,,,,,,C
+Vinca minor L.,Brebenoc minor,Magnoliopsida,Apocynaceae,,,+,,,,,,,,C
+Arum orientale Bieb.,Aron oriental,Magnoliopsida,Araceae,,, +, , , ,,,,,R
+Hedera helix L.,Iederă,Magnoliopsida,Araliaceae,,, +, , , ,,,,,C
+Aristolochia clematitis L.,Curcubețică curpenoidă,Magnoliopsida,Aristolochiaceae,,, ,+, , ,,,,,C
+Asarum europaeum L.,Popivnic european,Magnoliopsida,Aristolochiaceae,,, +, , , ,,,,,C
+Vincetoxicum hirundinaria Medik.,Rânduniță,Magnoliopsida,Asclepiadaceae,,, ,+,+, ,,,,,C
+Asparagus officinalis L.,Sparanghel medicinal,Magnoliopsida,Asparagaceae,,, ,+, , ,,,,,C
+Asparagus tenuifolius Lam.,Umbra iepurelui,Magnoliopsida,Asparagaceae,,, +, , , ,,,,,C
+Asparagus verticillatus L.,Sparanghel verticilat,Magnoliopsida,Asparagaceae,,, +, ,+, ,,,,,R
+Achillea collina Becker,Alunică colinară,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Achillea millefolium L.,Coada șoricelului,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Achillea nobilis L.,Alunică nobilă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Achillea pannonica Scheele,Alunică panoniană,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Achillea setacea Waldst. et Kit.,Alunică setacee,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Achyrophorus maculatus (L.) Scop.,Amărea pătată,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Ambrosia artemisifolia L.,Venetică artemisifolie,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Anthemis cotula L.,Romanița câinelui,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Anthemis ruthenica Bieb.,Romaniță rusească,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Anthemis subtinctoria Dobrocz.,Romaniță subtinctorială,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Arctium lappa L.,Brusture mare,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Arctium tomentosum Mill.,Brusture tomentos,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Artemisia absinthium L.,Pelin alb,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Artemisia annua L.,Pelin anual,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Artemisia austriaca Jacq.,Pelin austriac,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Artemisia campestris L.,Pelin campestru,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Artemisia vulgaris L.,Pelin comun,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Aster amellus L.,Steluță,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Bidens cernua L.,Dentiță nutantă,Magnoliopsida,Asteraceae,,, ,+, ,+,,,,,C
+Bidens tripartita L.,Dentiță tripartită,Magnoliopsida,Asteraceae,,, ,+, ,+,,,,,C
+Carduus crispus L.,Spin crispat,Magnoliopsida,Asteraceae,,, +,+, , ,,,,,C
+Carduus hamulosus Ehrh.,Spin hamulos,Magnoliopsida,Asteraceae,,, +,+, , ,,,,,C
+Carduus nutans L.,Spin nutant,Magnoliopsida,Asteraceae,,, +,+, , ,,,,,C
+Carlina biebersteinii Bernh ex Hornem.,Turtacă Bieberștein,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,C
+Carlina vulgaris L.,Turtacă comună,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,C
+Carpesium cernuum L.,Dosnică nutantă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Carthamus lanatus L.,Pintenoagă lânoasă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea apiculata Ledeb.,Albăstriță apiculată,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea  biebersteinii DC.,Albăstriță Bieberștein,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea diffusa Lam.,Albăstriță difuză,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea iberica Trv. ex Spreng.,Albăstriță iberică,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea jacea L.,Albăstriță praticolă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea marschalliana Spreng,Albăstriță Marșal,Magnoliopsida,Asteraceae,,, , ,+, ,,,,, R
+Centaurea orientalis L.,Albăstriță orientală,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea pseudomaculosa Dobrocz.,Albăstriță pseudomaculată,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea × pulberiana Pînzaru ,Albăstriță Pulbere,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,R 
+Centaurea ruthenica Lam.,Albăstriță rusească,Magnoliopsida,Asteraceae,,, , , , ,,,,,R
+Centaurea scabiosa L.,Albăstriță scabioasă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea solstitialis L.,Scai galben,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Centaurea stereophylla Bess,Albăstriță rigidifolie,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Chamomilla recutita L.,Mușețel,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Chamomilla suaveolens (Pursh.) Rydb.,Mușețea,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Chondrilla juncea L.,Răsfug junceu,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Cichorium intybus L.,Cicoare comună,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Cirsium arvense (L.) Scop.,Pălămidă campestră,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Cirsium canum  (L.) All.,Pălămidă cenușie,Magnoliopsida,Asteraceae,,, , , , ,,,,,R
+Cirsium oleraceum (L.) Scop.,Pălămidă oleracee,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Cirsium vulgare (Savi)Ten.,Pălămidă comună,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Cirsium setosum (Willd.) Besser,Pălămidă setoasă,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Crepis biennis L.,Gălbenuș bianual,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Crepis tectorum L.,Gălbenuș tecticol,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Crepis rhoeadifolia (Bieb.) Celak.,Gălbenuș rubrifoliu,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Crepis setosa Haller Fil.,Gălbenuș setos,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Crinitaria linosyris (L.) Less.,Coamă aurie,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Doronicum hungaricum Reichenb. fil.,Cujdă ungurească,Magnoliopsida,Asteraceae,,, +, , , ,,,,,R
+Echinops sphaerocephalus L.,Rostogol sferocefal,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Echinops ruthenicus M.Bieb.,Rostogol rusesc,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Erigeron annuus (L.) Pers.,Bătrâniș anual,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Erigeron canadensis L.,Bătrâniș canadian,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Erigeron podolicus Bess.,Bătrâniș podolean,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Eupatorium cannabinum L.,Cânepioara codrului,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Filago arvensis L.,Flocoșel campestru,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Galisonga parviflora Cav.,Busuioacă parvifloră,Magnoliopsida,Asteraceae,,, +,+, , ,,,,,C
+Gnaphalium rossicum Kirp.,Lânărică rusească,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Grindelia squarrosa (Pursh.) Dunal,Grindelie scvaroasă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Helichrysum arenarium (L.) Moench,Siminoc arenicol,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,R
+Hieracium caespitosum Dumort.,Vulturică cespitoasă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,R
+Hieracium glaucescens Bess.,Vulturică glaucescentă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Hieracium pilosella L.,Vulturică fin-păroasă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Hieracium virosum Pallas.,Vulturică virotică,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Inula britannica L.,Sovârvăriță britanică,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Inula ensifolia L.,Sovârvăriță enzifolie,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,R
+Inula germanica L.,Sovârvăriță germană,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Inula helenium L.,Iarbă mare,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Inula hirta L.,Sovârvăriță hirsută,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Inula oculus-christi L.,Ochiul-lui-Cristos,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Inula salicina L.,Sovârvăriță salicină,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Jurinea mollis L.,Jurinee moale,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,C
+Jurinea stoechadifolia (M. Bieb.) DC.,Jurinee integrifolie,Magnoliopsida,Asteraceae,,, , ,+, ,,,,,RR
+Lactuca serriola L,Lăptucă serată,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Lactuca quercina L.,Lăptucă silvatică,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Lactuca saligna L.,Lăptucă salicină,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Lapsana communis L.,Zgrăbunțică comună,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Leontodon hispidus L.,Leontel hispid,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Leontodon biscutellifolius DC.,Leontel biscutelifoliu,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Leucanthemum vulgare Lam. ,Bumbișor comun,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Matricaria perforata Merat.,Mărăriță perforată,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Mycelis muralis (L.) Dumort.,Tâlhărea murală,Magnoliopsida,Asteraceae,,, +, , , ,,,,,C
+Onopordum acanthium L.,Scăiete comun,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Picris heracioides L.,Amăruță hieracioidă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Podospermum canum C.A.Mey.,Podosperm cărunt,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,R
+Podospermum laciniatum (L.) DC.,Podosperm laciniat,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Pyrethrum corymbosum (L.) Scop.,Năpraznic corimbos,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Scorzonera purpurea L.,Lăptiucă purpurie,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,RR
+Senecio erucifolius L.,Bătătorniță,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Senecio jacobaea L.,Cruciuliță praticolă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Senecio vernalis Waldst. et Kit.,Cruciuliță vernală,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Serratula radiata (Walldst. et Kit.)M.Bieb.,Gălbinare radiată,Magnoliopsida,Asteraceae,,, , , , ,,,,,R
+Serratula tinctoria L.,Gălbinare tinctorială,Magnoliopsida,Asteraceae,,, +,+, , ,,,,,C
+Sonchus arvensis L.,Susai campestru,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Sonchus asper (L.) Hill.,Susai aspru,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Sonchus palustris L.,Susai palustru,Magnoliopsida,Asteraceae,,, , , , ,,,,, 
+Tanacetum milefolium (L.)Tzvel.,Vetrice plurifolie,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Tanacetum vulgare L. ,Vetrice comună,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Taraxacum bessarabicum (Hornem.) Hand.-Mazz.,Păpădie basarabeană,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Taraxacum erythrospermum Andrz.,Păpădie eritrocarpă,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Taraxacum hypanicum Tzvelev ,Păpădie hipanică,Magnoliopsida,Asteraceae,,, ,+, , ,,,,, C
+Taraxacum officinale Wigg.,Păpădie medicinală,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Taraxacum serotinum (Waldst. et Kit.) Poir.,Păpădie tardivă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Trogopogon desertorum (Lindem.) Klok.,Bărbiță deșerticolă,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Tragopogon dubius Scop.,Barba caprei,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Tragopogon orientalis L.,Bărbiță orientală,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Tussilago farfara L.,Podbal,Magnoliopsida,Asteraceae,,, ,+, ,+,,,,,C
+Xanthium strumarium L. ,Cornuți tumefiați,Magnoliopsida,Asteraceae,,, , , , ,,,,,C
+Xeranthemum annuum L.,Plevăiță anuală,Magnoliopsida,Asteraceae,,, ,+,+, ,,,,,C
+Xeranthemum cylindraceum Sibth.et Sm.,Plevăiță cilindrică,Magnoliopsida,Asteraceae,,, ,+, , ,,,,,C
+Impatiens noli-tangere L.,Nu-mă-atinge,Magnoliopsida,Balsaminaceae,,, +,+, , ,,,,,R
+Aegonychon purpureo-caeruleum (L.) Holub.,Mărgică albăstruie,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Anchusa gmelinii Ledeb.,Miruță Gmelin,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Anchusa officinalis L.,Miruță medicinală,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Anchusa ochroleuca Bieb. ,Miruță gălbuie,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Anchusa procera Bess.,Miruță zveltă,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Asperugo procumbens L.,Rugozică culcată,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Buglossoides arvensis (L.) Johnst.,Zmeiță campestră,Magnoliopsida,Boraginaceae,,, ,+,+, ,,,,,C
+Cerinthe minor L.,Cerițică mică,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Cynoglossum officinale L.,Ariel medicinal,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Echium vulgare L.,Viperică comună,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Lappula squarrosa (Retz.) Dumort.,Turiță scvaroasă,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Myosotis arvensis Hill.,Șerpeliță campestră,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Myosotis caespitosa C. F. Schultz,Șerpeliță cespitoasă,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Myosotis micrantha Pall. ex Lehm.,Șerpeliță micrantă,Magnoliopsida,Boraginaceae,,, +,+, , ,,,,,C
+Myosotis ramosissima Rochel ex Schult.,Șerpeliță ramificată,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Nonea rossica Steven,Nonee rusească,Magnoliopsida,Boraginaceae,,, ,+, , ,,,,,C
+Nonea pulla (L.)DC.,Nonee brună,Magnoliopsida,Boraginaceae,,, ,+,+, ,,,,,C
+Omphalodes scorpoides (Haenke) Schrank.,Buricar scorpioid,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Onosma visianii Clemennti ,Onosmă Visiani,Magnoliopsida,Boraginaceae,,, , ,+, ,,,,, R
+Pulmonaria mollis Wulfen ex Hornem.,Cuscrișor moale,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Pulmonaria obscura Dumort.,Cuscrișor neevident,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Pulmonaria officinalis L.,Mierea ursului,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Symphytum officinale L.,Tătăneasă medicinală,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Symphytum tauricum Willd. ,Tătăneasă taurică,Magnoliopsida,Boraginaceae,,, +, , , ,,,,,C
+Alliaria petiolata (Bieb.) Cavara et Grande,Usturoiță pețiolată,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Alyssum calycinum L.,Ciucușoară calicină,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,C
+Alyssum gmelinii Jord.,Ciucușoară Gmelin,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,, C
+Allysum hirsutum M. Bieb,Ciucușoară hirsută,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,C
+Alyssum minutum Schlecht. ex DC.,Ciucușoară măruntă,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,C
+Alyssum murale Waldst. et Kit.,Ciucușoară murală,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,C
+Alyssum rostratum Stev.,Ciucușoară rostrată,Magnoliopsida,Brassicaceae,,, , , , ,,,,,C
+Arabidopsis thaliana (L.) Heynh.,Gâscăriță Tali,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Arabis sagittata (Bertol.) DC.,Turicea sagitată,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Arabis turrita L.,Turicea,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Aurinia saxatilis (L.) Desv.,Aurinie saxicolă,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,R
+Armoracia rusticana P. Gaertn.,Hrean obișnuit,Magnoliopsida,Brassicaceae,,, , , , ,,,,,C
+Barbarea vulgaris R.Br.,Crușețea comună,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Berteroa incana (L.) DC.,Albiță comună,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Bunias orientalis L.,Brăbin oriental,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Capsella bursa-pastoris (L.) Medik.,Traista ciobanului,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Cardamine impatiens L.,Râjnică intolerantă,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Cardaria draba (L.) Desv.,Hreniță draboidă,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Crambe tataria Sebeok,Hodolean tătăresc,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,RR
+Dentaria bulbifera L.,Colțișor bulbifer,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Dentaria quinquefolia Bieb.,Colțișor pentafoliat,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,RR
+Descurainia sophia (L.)Webb ex Prantl,Voinicuță Sofia,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Draba nemorosa L.,Flămânzică nemorală,Magnoliopsida,Brassicaceae,,, +,+, , ,,,,,C
+Erophila verna (L.) Chevall.,Năpârliță vernală,Magnoliopsida,Brassicaceae,,, ,+,+, ,,,,,C
+Erysimum diffusum Ehrh.,Mixandră difuză,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Erysimum odoratum Ehrh.,Mixandră odorată,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Hesperis tristis L.,Nopticoasă tristă,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Lepidium campestre (L.) R. Br.,Scvamăriță campestră,Magnoliopsida,Brassicaceae,,, ,+,+, ,,,,,C
+Lepidium ruderale L.,Scvamăriță ruderală,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Lunaria annua L.,Lopățea anuală,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,R 
+Rapistrum perenne (L.) All.,Ciurlan peren,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Rorippa austriaca (Crantz) ,Gălbănea austriacă,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Rorippa palustris L.,Gălbănea palustră,Magnoliopsida,Brassicaceae,,, , , ,+,,,,,C
+Rorippa sylvestris (L.) Bess. ,Gălbănea silvicolă,Magnoliopsida,Brassicaceae,,, +,+, , ,,,,,C
+Schivereckia podolica (Bess.) Andrz.,Șeverechie podoleană,Magnoliopsida,Brassicaceae,,, , ,+, ,,,,,RR
+Sisymbrium altissimum L. ,Voinicică înaltă,Magnoliopsida,Brassicaceae,,, , , , ,,,,,C
+Sisymbrium loeselii L. ,Voinicică Loesel,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Sisymbrium polymorphum (Murr.) Roth,Voinicică polimorfă,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Sisymbrium officinale (L.) Scop. ,Voinicică medicinală,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Sisymbrium strictissimum L.,Voinicică rigidă,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Thlaspi arvense L. ,Punguliță campestră,Magnoliopsida,Brassicaceae,,, ,+, , ,,,,,C
+Turritis glabra L.,Turicel glabru,Magnoliopsida,Brassicaceae,,, +, , , ,,,,,C
+Butomus umbellatus L.,Roșețea umbelată,Magnoliopsida,Butomaceae,,, , , ,+,,,,,R
+Campanula glomerata L.,Clopoțel glomerat,Magnoliopsida,Campanulaceae,,, +,+, , ,,,,,C
+Campanula macrostachya Waldst.et Kit.,Clopoțel macrospicat,Magnoliopsida,Campanulaceae,,, +, , , ,,,,,C
+Campanula persicifolia L.,Clopoțel persicifoliu,Magnoliopsida,Campanulaceae,,, +, , , ,,,,,C
+Campanula rapunculoides L.,Clopoțel rapioid,Magnoliopsida,Campanulaceae,,, +, , , ,,,,,C
+Campanula rapunculus L.,Clopoțel rapiform,Magnoliopsida,Campanulaceae,,, +, , , ,,,,,C
+Campanula sibirica L.,Clopoțel siberian,Magnoliopsida,Campanulaceae,,, ,+,+, ,,,,,C
+Campanula trachelium L.,Clopoțel rugos,Magnoliopsida,Campanulaceae,,, +, , , ,,,,,C
+Humulus lupulus L.,Hamei comun,Magnoliopsida,Cannabaceae,,, +,+, , ,,,,,C
+Cannabis ruderalis Janish.,Cânepă ruderală,Magnoliopsida,Cannabaceae,,,+,+, , ,,,,,C
+Sambucus ebulus L.,Boz,Magnoliopsida,Caprifoliaceae,,, +, , , ,,,,,C
+Sambucus nigra L.,Soc negru,Magnoliopsida,Caprifoliaceae,,, +, , , ,,,,,C
+Viburnum lantana L.,Dârmoz,Magnoliopsida,Caprifoliaceae,,, +, , , ,,,,,C
+Viburnum opulus L.,Călin comun,Magnoliopsida,Caprifoliaceae,,, +, , , ,,,,,R
+Gypsophila collina Steven ex Ser. ,Gipsoriță colinară,Magnoliopsida,Cariophilaceae,,, , ,+, ,,,,, R
+Paronychia cephalotes (M.Bieb.) Besser,Paronichie capitată,Magnoliopsida,Cariophilaceae,,, , ,+, ,,,,,RR
+Arenaria serpyllifolia L.,Studeniță serpelifolie,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Agrostemma gitchago L.,Neghină comună,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Cerastium holosteoides Fries. ,Cănăriță holosteoidă,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Cucubalus baccifer L. ,Pleșcaiță baciferă,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Dianthus armeria L.,Garofiță armeroidă,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Dianthus deltoides L.,Garofiță deltoidă,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Dianthus membranaceus Borbas.,Garofiță membranacee,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Elisanthe noctiflora (L.) Willk.,Noctifloare noctifloră,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Holosteum umbellatum L.,Cuișoriță umbelată,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Melandrium album (Miller) Garcke,Opaiță albă,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Minuartia setacea (Thuill.) Hayek,Mierluță setiformă,Magnoliopsida,Cariophilaceae,,, +,+, , ,,,,,C
+Moehringia trinervia (L.) Clairv.,Merinană trinervată,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Myosoton aquaticum (L.) Moench,Plescaiță acvatică,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Silene exaltata Friv.,Cercei înalți,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Saponaria officinalis L.,Săpunăriță medicinală,Magnoliopsida,Cariophilaceae,,, ,+, , ,,,,,C
+Scleranthus annuus L.,Sincerică anuală,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Silene chlorantha (Willd.) Ehrh.,Cercei verzui,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Silene nutans L.,Cercei nutanți,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Stellaria graminea L.,Rocoțel graminifoliu,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Stellaria holostea L.,Steluță,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Stellaria media (L.) Vill.,Rocoțel mediu,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Steris viscaria (L.) Rafin.,Lipicioasă purpurie,Magnoliopsida,Cariophilaceae,,, +, , , ,,,,,C
+Euonymus europaea L.,Salbă europeană,Magnoliopsida,Celastraceae,,,+,,,,,,,,C
+Euonymus verrucosa  Scop.,Salbă râioasă,Magnoliopsida,Celastraceae,,,+,,,,,,,,C
+Ceratophyllum demersum L.,Cosor demers,Magnoliopsida,Ceratophyllaceae,,,+,,,,,,,,C
+Ceratophyllum submersum L.,Cosor submers,Magnoliopsida,Ceratophyllaceae,,,+,,,,,,,,C
+Gleditsia triacanthos L.,Glădiță,Magnoliopsida,Cesalpinaceae,,,+,,,,,,,,C
+Atriplex rosea L. ,Lobodă roză,Magnoliopsida,Chenopodiaceae,,, +, , , ,,,,,C
+Atriplex nitens L.,Lobodă sagitată,Magnoliopsida,Chenopodiaceae,,, ,+, , ,,,,,C
+Atriplex prostrata Boucher ex DC,Lobodă prostrată,Magnoliopsida,Chenopodiaceae,,, ,+, , ,,,,,C
+Atriplex tatarica L. ,Lobodă tătărească,Magnoliopsida,Chenopodiaceae,,, +, , , ,,,,,C
+Chenopodium album L. ,Tămâiță albă,Magnoliopsida,Chenopodiaceae,,, +,+, , ,,,,,C
+Chenopodium hybridum L.,Tămâiță hibridă,Magnoliopsida,Chenopodiaceae,,, ,+, , ,,,,,C
+Chenopodium urbicum L.,Tămâiță urbană,Magnoliopsida,Chenopodiaceae,,, ,+, , ,,,,,C
+Helianthemum canum (L.) Hornem.,Mălăoae căruntă,Magnoliopsida,Cistaceae,,, , ,+, ,,,,,RR
+Helianthemum nummularium (L.) Mill. ,Iarba osului,Magnoliopsida,Cistaceae,,, ,+,+, ,,,,, R
+Calystegia sepium (L.) R. Br.,Cupa vacii,Magnoliopsida,Convolvulaceae,,, +, ,,,,,,,C
+Convolvulus arvensis L.,Volbură campestră,Magnoliopsida,Convolvulaceae,,, ,+,,,,,,,C
+Cornus mas L.,Corn,Magnoliopsida,Cornaceae,,, +,,,,,,,,C
+Swida sanguinea (L.) Opiz.,Sânger,Magnoliopsida,Cornaceae,,, +,,,,,,,,C
+Carpinus betulus L.,Carpen,Magnoliopsida,Corylaceae,,, +,,,,,,,,C
+Corylus avellana L.,Alun,Magnoliopsida,Corylaceae,,, +,,,,,,,,C
+Sedum acre L.,Șoaldină acră,Magnoliopsida,Crassulaceae,,, , ,+, ,,,,,C
+Sedum maximum (L.) Hoffm.,Șoaldină maximă,Magnoliopsida,Crassulaceae,,, +, , , ,,,,,R
+Sedum sexangulare  L.,Șoaldină hexagonală,Magnoliopsida,Crassulaceae,,, , ,+, ,,,,,C
+Sempervivum ruthenicum (W. D. J. Koch) Schnittsp. et C.B.Lehm,Nevăstuică rusească,Magnoliopsida,Crassulaceae,,, , ,+, ,,,,,RR 
+Bryonia alba L.,Mutătoare albă,Magnoliopsida,Cucurbitaceae,,, +, , , ,,,,,C
+Echinocystis lobata (Michx.) Torrey et A. Gray,Bostanaș lobat,Magnoliopsida,Cucurbitaceae,,, +, , , ,,,,,C
+Cuscuta europaea L.,Torțel european,Magnoliopsida,Cuscutaceae,,, ,+,,,,,,,C
+Cuscuta campestris Yunck.,Torțel campestru,Magnoliopsida,Cuscutaceae,,, ,+,,,,,,,C
+Bolboschoenus maritimus (L.) Palla,Pipirig maritim,Magnoliopsida,Cyperaceae,,, , , ,+,,,,,C
+Carex acutiformis Ehrh.,Rogoz acutiform,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex brevicollis DC.,Rogoz brevicolat,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex contigua Hoppe,Rogoz adiacent,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex digitata L.,Rogoz digitat,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex distans L.,Rogoz distanțat,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex  hirta L.,Rogoz hirt,Magnoliopsida,Cyperaceae,,, ,+, , ,,,,,C
+Carex melanostachya Bieb. Ex Willd,Rogoz melanospiculat,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex michellii Host.,Rogoz Micheli,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex montana L. ,Rogoz montan,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex otrubae Podp.,Rogoz otrub,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex pilosa Scop.,Rogoz pilos,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex praecox Schreb.,Rogoz precoce,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex riparia Curt.,Rogoz riveran,Magnoliopsida,Cyperaceae,,, ,+, , ,,,,,C
+Carex sylvatica Huds.,Rogoz silvatic,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex stenophylla Wahlenb.,Rogoz angustifoliu,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Carex vulpina L.,Rogoz vulpariu,Magnoliopsida,Cyperaceae,,, ,+, , ,,,,,C
+Eleocharis palustris (L.) Roem. et Schult,Pipiriguț palustru,Magnoliopsida,Cyperaceae,,, , , ,+,,,,,C
+Scirpus sylvaticus L.,Țipirig silvatic,Magnoliopsida,Cyperaceae,,, +, , , ,,,,,C
+Dipsacus fullonum L.,Varga ciobanului,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Dipsacus laciniatus L.,Scăiuș laciniat,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Dipsacus pilosus L.,Scăiuș păros,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Cephalaria transylvanica (L.)Roem,Sipică transilvăneană,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Knautia arvensis (L.) Coult.,Călugăraș campestru,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Scabiosa ochroleuca L.,Văduvele galbene,Magnoliopsida,Dipsacaceae,,, ,+,,,,,,,C
+Elaeagnus angustifolia L.,Sălcioară mirositoare,Magnoliopsida,Elaeagnaceae,,,,,,,,,,,C
+Euphorbia agraria Bieb.,Alior agrar,Magnoliopsida,Euphorbiaceae,,, ,+,+, ,,,,,C
+Euphorbia amygdaloides L.,Alior amigdaloid,Magnoliopsida,Euphorbiaceae,,, +,+, , ,,,,,C
+Euphorbia esula L.,Laptele câinelui,Magnoliopsida,Euphorbiaceae,,, ,+, , ,,,,,C
+Euphorbia falcata L.,Alior falcat,Magnoliopsida,Euphorbiaceae,,, ,+, , ,,,,,C
+Euphorbia helioscopia L.,Alior helioscopic,Magnoliopsida,Euphorbiaceae,,, ,+, , ,,,,,C
+Euphorbia platyphyllos L.,Alior macrofil,Magnoliopsida,Euphorbiaceae,,, ,+, , ,,,,,C
+Euphorbia stepposa Zoz.,Alior stepic,Magnoliopsida,Euphorbiaceae,,, ,+,+, ,,,,,C
+Mercurialis perennis L.,Brei peren,Magnoliopsida,Euphorbiaceae,,, +, , , ,,,,,C
+Astragalus albidus Waldst. et Kit.,Coșaci alburiu,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,R
+Astragalus austriacus Jasq.,Coșaci austriac,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Astragalus cicer L.,Coșaci năutiu,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Astragalus corniculatus,Coșaci corniculat,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Astragalus dasyanthus Pall.,Zăvăcustă,Magnoliopsida,Fabaceae,,, , , , ,,,,,R
+Astragalus glycyphyllos L.,Coșaci glicifil,Magnoliopsida,Fabaceae,,, +,+, , ,,,,,C
+Astragalus onobrychis L.,Unghia găii,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Astragalus ponticus Pall.,Coșaci pontic,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Astragalus pubiflorus D.C.,Coșaci pubiflor,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,R
+Caragana frutex (L.)C.Koch,Salcâmaș pitic,Magnoliopsida,Fabaceae,,, ,+,+, ,,,,,C
+Chamaecytisus austriacus (L.) Link,Drob austriac,Magnoliopsida,Fabaceae,,, ,+,+, ,,,,,C
+Coronilla varia L.,Coroniște variată,Magnoliopsida,Fabaceae,,, +,+, , ,,,,,C
+Dorycnium herbaceum Vill.,Sulițică ierbacee,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Galega officinalis L.,Ciumărea medicinală,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Genista tetragona Besser,Drobișor tetramuchiat,Magnoliopsida,Fabaceae,,, , ,+, ,,,,,RR
+Glycyrrhiza echinata L. ,Reglisă echinată,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus aureus (Stev.) Brandza ,Linte aurie,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus hirsutus L.,Linte hirsută,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Lathyrus niger (L.) Bernh.,Linte neagră,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus nissolia L.,Linte graminifolie,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Lathyrus pannonicus (Jacq.),Linte panoniană,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus pratensis L.,Linte praticolă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Lathyrus sylvestris L.,Linte silvicolă,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus tuberosus L.,Linte tuberoasă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Lathyrus venetus (Miller) Wohlf.,Linte azurie,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lathyrus vernus (L.) Bernh,Linte vernală,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Lotus corniculatus L.,Ghizdei corniculat,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Lotus tenuis Waldst et Kit. ex Willd.,Ghizdei subțire,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Medicago falcata L.,Lucernă falcată,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Medicago lupulina L.,Lucerna lupului,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Medicago romanica Prod.,Lucernă română,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Medicago minima (L.) Bartalini,Lucernă minimă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Medicago sativa L.,Lucernă cultivată,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Melilotus albus Medik,Sulfină albă,Magnoliopsida,Fabaceae,,, +,+, , ,,,,,C
+Melilotus officinalis (L.) Pall.,Sulfină medicinală,Magnoliopsida,Fabaceae,,, +,+, , ,,,,,C
+Onobrychis arenaria (Kit.) DC.,Sparcetă arenicolă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Onobrychis viciifolia Scop.,Sparcetă viciefolie,Magnoliopsida,Fabaceae,,,+ ,+, , ,,,,,C
+Ononis arvensis L.,Lingoare campestră,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Ononis spinosa L.,Lingoare spinoasă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Robinia pseudoacacia L.,Salcâm ,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Trifolium alpestre L.,Trifoi alpin,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium arvense L.,Papanași,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium aureum Poll.,Auraș,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium campestre Schreb.,Trifoi campestru,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium dubium Sm.,Trifoi dubios,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium fragiferum L. ,Trifoi fragifer,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium hybridum L.,Trifoi hibrid,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium medium L.,Trifoi mediu,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium montanum L.,Trifoi montan,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium ochroleucon Huds.,Trifoi alb-gălbui,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium pratense L.,Trifoi praticol,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trifolium repens L.,Trifoi repent,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trigonella procumbens (Bess.) Reichneb.,Molotru procumbent,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Trigonella monspeliaca L.,Molotru pitic,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia angustifolia Reichard,Măzăriche angustifolie,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia cracca L.,Bobușor păsăresc,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia dumetorum L. ,Măzăriche-de-crâng,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Vicia grandiflora Scop.,Măzăriche grandifloră,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Vicia hirsuta (L.) S.F. Gray,Cosiță,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia pannonica Crantz.,Borceag,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Vicia sativa L.,Măzăriche cultivată,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia sepium L.,Măzăriche brun-închisă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia sylvatica L.,Măzăriche silvicolă,Magnoliopsida,Fabaceae,,, +, , , ,,,,,C
+Vicia tenuifolia Roth.,Măzăriche tenuifolie,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia tetrasperma (L.) Schreb.,Măzăriche tetraspermă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Vicia villosa Roth,Măzăriche lânoasă,Magnoliopsida,Fabaceae,,, ,+, , ,,,,,C
+Quercus pubescens Willd. ,Stejar pufos,Magnoliopsida,Fagaceae,,, +, ,+, ,,,,,C
+Quercus petraea (Mattuschka) Liebl.,Gorun,Magnoliopsida,Fagaceae,,, +, , , ,,,,,C
+Quercus robur L.,Stejar pedunculat,Magnoliopsida,Fagaceae,,, +, , , ,,,,,C
+Corydalis cava (L.) Schweigg et Korte,Brebenel găunos,Magnoliopsida,Fumariaceae,,, +, ,,,,,,,C
+Corydalis marschalliana pers.,Brebenel Marșal,Magnoliopsida,Fumariaceae,,, +, ,,,,,,,C
+Corydalis solida (L.) Clairv.,Brebenel plin,Magnoliopsida,Fumariaceae,,, +, ,,,,,,,C
+Fumaria schleicheri Soy. Wiilem.,Fumăriță Șleicher,Magnoliopsida,Fumariaceae,,, +, ,,,,,,,C
+Centaurium erythraea Rafn,Frigurică roșie,Magnoliopsida,Gentianaceae,,, ,+, , ,,,,,C
+Centaurium  pulchellum (Sw.) Druce,Frigurică frumoasă,Magnoliopsida,Gentianaceae,,, ,+, , ,,,,,C
+Gentiana cruciata L.,Ghințură cruciată,Magnoliopsida,Gentianaceae,,, ,+, , ,,,,,R
+Erodium cicutarium L.,Priboi cicutifoliu,Magnoliopsida,Geraniaceae,,, +,+, , ,,,,,C
+Geranium collinum Stephan,Geraniu colinar,Magnoliopsida,Geraniaceae,,, ,+, , ,,,,,C
+Geranium columbinum L.,Geraniu columbin,Magnoliopsida,Geraniaceae,,, +, , , ,,,,,C
+Geranium dissectum L.,Geraniu dispicat,Magnoliopsida,Geraniaceae,,, ,+, , ,,,,,C
+Geranium palustre L.,Geraniu palustru,Magnoliopsida,Geraniaceae,,, , , ,+,,,,,C
+Geranium phaeum L.,Geraniu brun-roșcat,Magnoliopsida,Geraniaceae,,, +, , , ,,,,,C
+Geranium pratense L.,Geraniu praticol,Magnoliopsida,Geraniaceae,,, +, , , ,,,,,C
+Geranium pussilum L.,Geraniu minuscul,Magnoliopsida,Geraniaceae,,, ,+, , ,,,,,C
+Geranium robertianum L.,Geraniu Robert,Magnoliopsida,Geraniaceae,,, +, , , ,,,,,C
+Geranium sanguineum L.,Geraniu sanguineu,Magnoliopsida,Geraniaceae,,, +, , , ,,,,,C
+Myriophyllum spicatum L.,Prâsnel spicat,Magnoliopsida,Haloragaceae,,,+,,,,,,,,C
+Hyacinthella leucophaea (K. Koch) Schur ,Zambilă albicioasă,Magnoliopsida,Hyacinthaceae,,, , ,+, ,,,,,R
+Ornithogalum boucheanum (Kunth) Asch.,Lușcă,Magnoliopsida,Hyacinthaceae,,, ,+, , ,,,,,RR
+Hypericum hirsutum L.,Sunătoare hirsută,Magnoliopsida,Hypericaceae,,, ,+, , ,,,,,C
+Hypericum perforatum L.,Sunătoare perforată,Magnoliopsida,Hypericaceae,,,,+,,,,,,,C
+Hypericum elegans Steph,Sunătoare elegantă,Magnoliopsida,Hypericaceae,,,,+,,,,,,,C
+Crocus reticulatus Stev. ex Adam.,Șofrănel reticulat,Magnoliopsida,Iridaceae,,, ,+,+, ,,,,,R
+Iris aphylla L.,Stânjenel afil,Magnoliopsida,Iridaceae,,, +, , , ,,,,,R
+Iris graminea L.,Stânjenel gramineu,Magnoliopsida,Iridaceae,,, ,+, , ,,,,,C
+Iris halophila Pall.,Stânjenel halofil,Magnoliopsida,Iridaceae,,, ,+, , ,,,,,C
+Iris pseudacorus L.,Stânjenel galben,Magnoliopsida,Iridaceae,,, , , ,+,,,,,C
+Iris pumila L. ,Stânjenel scund,Magnoliopsida,Iridaceae,,, , ,+, ,,,,,C
+Iris variegata L.,Stânjenel vărgat,Magnoliopsida,Iridaceae,,, ,+,+, ,,,,,R
+Juncus articulatus L.,Rugină articulată,Magnoliopsida,Juncaceae,,, +,,,,,,,,C
+Juncus compressus Jacq.,Rugină turtită,Magnoliopsida,Juncaceae,,, +,,,,,,,,C
+Juncus effusus L. ,Rugină extinsă,Magnoliopsida,Juncaceae,,, +,,,,,,,,C
+Juncus gerardii Loisel.,Rugină Gerard,Magnoliopsida,Juncaceae,,, +,,,,,,,,C
+Juncus inflexus L.,Rugină inflectă,Magnoliopsida,Juncaceae,,, +,,,,,,,,C
+Acinos arvensis (Lam.) Dandy,Izmușoară campestră,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Ajuga genevensis L.,Suliman,Magnoliopsida,Lamiaceae,,, +,+, , ,,,,,C
+Ajuga laxmanii (L.) Benth.,Vinețică Laxman,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Ajuga reptans L.,Vinețică repentă,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Ballota nigra L.,Cătușă neagră,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Betonica officinalis L.,Crețișor medicinal,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Clinopodium vulgare L.,Calapăr comun,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Galeobdolon luteum Huds.,Gălbiniță,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Galeopsis bifida Boenn.,Tăpoșnic bifidat,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Galeopsis ladanum L.,Tăpoșnic,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Galeopsis speciosa Mill.,Tăpoșnic frumos,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Glechoma hederacea L.,Silnic,Magnoliopsida,Lamiaceae,,, +,+, , ,,,,,C
+Glechoma hirsuta Waldst et Kit.,Rărunchioară hirsută,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Lamium album L.,Sugel alb,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Lamium amplexicaule L.,Sugel amplexicaul,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Lamium maculatum L.,Sugel pătat,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Lamium purpureum L.,Sugel purpuriu,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Leonurus cardiaca L.,Talpa gâștei,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Leonorus quinquelobatum Gilib.,Somnișor pentalobat,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Lycopus europaeus L.,Cervană europeană,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Lycopus exaltatus L. ,Cervană înaltă,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Marrubium praecox Janka,Unguraș precoce,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Marubium peregrinum L.,Unguraș străin,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Mentha aquatica L.,Mentă acvatică,Magnoliopsida,Lamiaceae,,, +, , ,+,,,,,C
+Mentha arvensis L.,Mentă campestră,Magnoliopsida,Lamiaceae,,, +,+, , ,,,,,C
+Mentha longifolia L.,Mentă longifolie,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Mentha spicata L.,Mentă spicată,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Mentha verticillata L.,Mentă verticilată,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Nepeta pannonica L.,Cătușnică panoniană,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Origanum vulgare L.,Sovârv comun,Magnoliopsida,Lamiaceae,,, +,+, , ,,,,,C
+Phlomis pungens Willd.,Scorogoi pungent,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Phlomis tuberosa L.,Scorogoi tuberos,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Prunella grandiflora L.,Șopârliță grandifloră,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Prunella laciniata (L.) L.,Șopârliță laciniată,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Prunella vulgaris L.,Șopârliță comună,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Salvia aethiopis L.,Șerlai,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Salvia austriaca Jasq.,Salvie austriacă,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Salvia dumetorum  Andrz.,Salvie-de-crâng,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Salvia glutinosa L.,Cinsteț,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Salvia nemorosa L.,Corovatică,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Salvia nutans L.,Salvie nutantă,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Salvia pratensis L.,Salvie praticolă,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Salvia verticillata L.,Salvie verticilată,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Scutellaria altissisima L.,Gluguță înaltă,Magnoliopsida,Lamiaceae,,, +,+, , ,,,,,C
+Scutellaria galericulata L.,Gluguță comună,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Sideritis comosa L.,Încheietoare moțată,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Sideritis montana L. ,Încheietoare montană,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Stachys annua (L.) L.,Jaleș anual,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Stachys germanica L.,Jaleș german,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Stachys palustris L.,Jaleș palustru,Magnoliopsida,Lamiaceae,,, , , ,+,,,,,C
+Stachys officinalis (L.)Trev.,Jaleș medicinal,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Stachys recta L.,Jaleș erect,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Stachys sylvatica L.,Jaleș silvatic,Magnoliopsida,Lamiaceae,,, +, , , ,,,,,C
+Teucrium chamaedrys L.,Jugărel comun,Magnoliopsida,Lamiaceae,,, ,+, , ,,,,,C
+Teucrium montanum L. ,Jugărel montan,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Teucrium polium L.,Jugărel cenușiu,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Thymus marschallianus Willd.,Cimbru Marșal,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Thymus moldavicus Klokov & Des.-Shost,Cimbru moldovenesc,Magnoliopsida,Lamiaceae,,, ,+,+, ,,,,,C
+Lemna minor L.,Lentiță minoră,Magnoliopsida,Lemnaceae,,, , , ,+,,,,,C
+Lemna trisulca L.,Lentiță trisulcată,Magnoliopsida,Lemnaceae,,, , , ,+,,,,,C
+Anthericum ramosum L.,Liliuță rămuroasă,Magnoliopsida,Liliaceae,,, , ,+, ,,,,,R
+Convallaria majalis L.,Lăcrămioară,Magnoliopsida,Liliaceae,,, +, , , ,,,,,R
+Fritillaria montana Hoppe ex W.D.J. Koch ,Bibilică montană,Magnoliopsida,Liliaceae,,, +, , , ,,,,,RR
+Gagea erubescens (Besser) Schult. & Schult. F.,Scânteiuță roșcată,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Gagea lutea (L.) Ker-Gawl.,Scânteiuță galbenă,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Gagea minima  (L.) Ker-Gawl.,Scânteiuță minimă,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Gagea pratensis (Pers.) Dumort.,Scânteiuță praticolă,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Gagea pusilla Schult.et Schult. fil.,Scânteiuță pitică,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Gagea villosa (M Bieb) Duby,Scânteiuță viloasă,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Leopoldia tenuiflora Heldr.,Leopoldie tenuifolie,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Lilium martagon L.,Crin silvicol,Magnoliopsida,Liliaceae,,, +, , , ,,,,,R
+Majanthemum bifolium F.W. Schmidt,Umbrăvioară bifolie,Magnoliopsida,Liliaceae,,, +, , , ,,,,,RR
+Muscari neglectum Guss.,Muscăriță neglijată,Magnoliopsida,Liliaceae,,, , ,+, ,,,,,C
+Paris quadrifolia L.,Dalac tetrafoliat,Magnoliopsida,Liliaceae,,, +, , , ,,,,,R
+Polygonatum latifolium Desf.,Cerceluș hirt,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Polygonatum multiflorum (L.) All.,Cerceluș multiflor,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Polygonatum odoratum (Mill.) Druce,Cerceluș odorant,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Scilla bifolia L.,Viorele bifoliate,Magnoliopsida,Liliaceae,,, +, , , ,,,,,C
+Tulipa biebersteiniana Schult. et Schult. fil.,Lalea Bieberștein,Magnoliopsida,Liliaceae,,, +, , , ,,,,,R
+Veratrum nigrum L.,Strigoaie neagră,Magnoliopsida,Liliaceae,,, +, , , ,,,,,R
+Linum austriacum L. ,In austriac,Magnoliopsida, Linaceae,,, ,+, , ,,,,,C
+Linum hirsutum L.,In hirsutum,Magnoliopsida, Linaceae,,, ,+, , ,,,,,C
+Linum tauricum Willd. ,In tauric,Magnoliopsida, Linaceae,,, , ,+, ,,,,, R
+Loranthus europaeus Jacq.,Mărgăritar european,Magnoliopsida, Loranthaceae,,, +,,,,,,,,C
+Viscum album L.,Vâsc alb,Magnoliopsida, Loranthaceae,,, +,,,,,,,,C
+Lythrum salicaria L.,Răchitan salicifoliu,Magnoliopsida,Lythraceae,,, ,+, ,+,,,,,C
+Althaea cannabiana L.,Camileac,Magnoliopsida,Malvaceae,,, ,+, , ,,,,,C
+Althaea officinalis L.,Rujă medicinală,Magnoliopsida,Malvaceae,,, ,+, , ,,,,,C
+Hibiscus trionum L. ,Zămoșică ternată,Magnoliopsida,Malvaceae,,, ,+, , ,,,,,C
+Lavathera thuringiaca L.,Nalba câinelui,Magnoliopsida,Malvaceae,,, ,+, , ,,,,,C
+Malva pusilla Sm ,Colăcei mărunți,Magnoliopsida,Malvaceae,,, ,+, , ,,,,,C
+Malva sylvestris L.,Colăcei silvicoli,Magnoliopsida,Malvaceae,,, +, , , ,,,,,C
+Fraxinus excelsior L.,Frasin înalt,Magnoliopsida,Oleaceae,,, +, ,,,,,,,C
+Fraxinus ornus L.,Mojdrean,Magnoliopsida,Oleaceae,,,+, ,,,,,,,C
+Ligustrum vulgare L.,Lemn câinesc,Magnoliopsida,Oleaceae,,,+, ,,,,,,,C
+Circaea lutetiana L.,Vrăjitoare pariziană,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Chamaenerion angustifolium (L.) Scop.,Răscoage angustifolie,Magnoliopsida,Onagraceae,,, ,+,,,,,,,C
+Epilobium hirsutum L.,Pufuliță hirsută,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Epilobium montanum L.,Pufuliță montană,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Epilobium parviflorum Schreber,Pufuliță microfloră,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Epilobium tetragonum L.  ,Pufuliță tetraunghiulară,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Oenothera biennis L.,Luminiță bienală,Magnoliopsida,Onagraceae,,, +, ,,,,,,,C
+Cephalanthera damasonium (Mill.) Druce  ,Căpșuniță grandifloră,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Cephalanthera longifolia (L.) Fritsch,Căpșuniță longifolie,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Cephalanthera rubra (L.) Rich.,Căpșuniță roșie,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Cypripedium calceolus L.,Papucul doamnei,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Epipactis atrorubens (Hoffm.) Bess.,Dumbrăviță roșcată,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Epipactis helleborine ( L.) Crantz,Dumbrăviță heleboroidă,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,R
+Epipactis purpurata Smith.,Dumbrăviță purpurie,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Listera ovata  (L.) R. Br.,Buhăeș ovat,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,RR
+Neottia nidus-avis (L.) Rich,Cuibul pământului,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,R
+Orchis purpurea Huds,Poroinic purpuriu,Magnoliopsida,Orchidaceae,,, ,+, , ,,,,,R
+Platanthera bifolia (L.) Rich,Stupiniță bifolie,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,R
+Platanthera chlorantha (Cust.) Reichenb.,Stupiniță verzuie,Magnoliopsida,Orchidaceae,,, +, , , ,,,,,R
+Chelidonium majus L.,Rostopască mare,Magnoliopsida,Papaveraceae,,, ,+, ,+,,,,,C
+Papaver dubium L.,Mac dubios,Magnoliopsida,Papaveraceae,,, ,+, , ,,,,,C
+Papaver rhoeas L.,Mac roșu,Magnoliopsida,Papaveraceae,,, ,+, , ,,,,,C
+Plantago cornuti Gouan,Pătlagină cornută,Magnoliopsida,Plantaginaceae,,, ,+,,,,,,,C
+Plantago lanceolata L.,Pătlagină lanceolată,Magnoliopsida,Plantaginaceae,,, ,+,,,,,,,C
+Plantago major L.,Pătlagină majoră,Magnoliopsida,Plantaginaceae,,, ,+,,,,,,,C
+Plantago media L.,Pătlagină medie,Magnoliopsida,Plantaginaceae,,, ,+,,,,,,,C
+Plantago urvillei Opiz,Pătlagină ,Magnoliopsida,Plantaginaceae,,, ,+,,,,,,,C
+Goniolimon besserianum (Schult.) Kusn.,Apărătoare Beser,Magnoliopsida,Plumbaginaceae,,, ,+,+, ,,,,,R
+Limonium gmelinii(Willd.) O. Kuntze ,Sică Gmelin,Magnoliopsida,Plumbaginaceae,,, ,+, , ,,,,,C
+Agropyron pectinatum (Bieb.) Beauv.,Pir pectinat,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Aegilops cylindrica Host,Ciucuri cilindrici,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Agrostis gigantea Roth.,Bucățel giganteu,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Agrostis stolonifera L.,Bucățel stolonifer,Magnoliopsida,Poaceae,,, +,+, , ,,,,,C
+Alopecurus aegualis Sobol.,Vulpină egală,Magnoliopsida,Poaceae,,, , , ,+,,,,,C
+Alopecurus arundinaceus Poir.,Vulpină arundinacee,Magnoliopsida,Poaceae,,, , , ,+,,,,,C
+Alopecurus pratensis L.,Coada vulpii,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Anisantha sterilis (L.) Nevscki,Anizantă sterilă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Anisantha tectorum (L.) Nevski,Anizantă tegulicolă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Arhenatherum elatius (L.) J. et C.Presl,Raigras înalt,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Beckmannia eruciformis (L.) Host,Becmanie eruciformis,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Botrichloa ischaemum (L.) Keng,Bărboasă hemostatică,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Brachyopodium sylvaticum (Huds.) Beauv.,Ovăsică silvatică,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Bromopsis benekenii ( Lange) Holub,Târsacă Beneken,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Bromopsis inermis (Leys) Holub,Târsacă neînarmată,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Bromopsis riparia (Rehm.) Holub.,Târsacă riparină,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Bromus arvensis L.,Obsigă campestră,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Bromus commutatus Schrad.,Obsigă fluctuantă,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Bromus japonicus Thunb.,Obsigă japoneză,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Bromus mollis L.,Obsigă moale,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Bromus squarrosus L.,Obsigă svaroasă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Calamagrostis canescens (Weber) Roth ,Trestioară căruntă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Calamagrostis arundinacea (L.) Roth ,Trestioară arundinacee,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Calamagrostis epigeios (L.) Roth,Trestioară epigee,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Cynodon dactylon (L.) Pers.,Iarba câinelui,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Dactylis glomerata L.,Golomăț glomerat,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Deschampsia caespitosa (L.) Beauv.,Pipiriguță cespitoasă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Echinochloa crus-galii (L.) Beauv.,Costrei păsărești,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Elytrigia intermedia (Host) Nevski,Chirău intermediu,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Elytrigia repens (L.) Nevski,Chirău repent,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Festuca gigantea (L.) Vill.,Păiuș gigantic,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Festuca pratensis Huds.,Păiuș praticol,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Festuca valesiaca Gaudin,Păiuș stepic,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Glyceria maxima (C. Hartm.) Holub,Rourică maximă,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Glyceria plicata (Fries) Fries,Rourică cutată,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Hordeum leporinum Link,Orz leporin,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Koeleria cristata (L.) Pers.,Kelerie cristată,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Koeleria moldavica M. Alexeenco.,Kelerie moldoveană,Magnoliopsida,Poaceae,,, ,+, , ,,,,,R
+Lolium perenne L.,Zizanie perenă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Melica nutans L.,Mărgică nutantă,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Melica picta C. Koch,Mărgică pestriță,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Melica transsilvanica Schur,Mărgică transilvăneană,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Melica uniflora Retz.,Mărgică unifloră,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Milium effusum L.,Meișor etalat,Magnoliopsida,Poaceae,,, +, , , ,,,,,C
+Phalaroides arundinaceaea (L.) Rauschert,Ierbăluță arundinacee,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Phleum phleoides (L.) Karst.,Timoftică stepică,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Phleum pratense L.,Timoftică praticolă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Phragmites australis (Cav.) Trin. ex Stend.,Trestie sudică,Magnoliopsida,Poaceae,,, ,+, ,+,,,,,C
+Poa angustifolia L.,Firuță angustifolie,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa annua L.,Firuță anuală,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa bulbosa L.,Firuță bulbiferă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa compressa L. ,Firuță compactă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa nemoralis L.,Firuță nemorală,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa pratensis L.,Firuță praticolă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Poa trivialis L.,Firuță trivială,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Puccinellia distans (Jacq.) Parl.,Lăniș distanțat,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Sclerchloa dura (L.) Beauv.,Iarbă tare,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Setaria glauca (L.) Beauv.,Mohor glauc,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Setaria viridis (L.) Beauv.,Mohor verde,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Stipa capillata L.,Negară pletoasă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Stipa lessingiana  Trin. et Rupr.,Negară Lesing,Magnoliopsida,Poaceae,,, ,+, , ,,,,,R
+Stipa pennata L.,Negară penată,Magnoliopsida,Poaceae,,, ,+, , ,,,,,C
+Stipa pulcherrima K. Koch,Negară frumoasă,Magnoliopsida,Poaceae,,, ,+, , ,,,,,R
+Polygala comosa Schkuhr,Amăreală comată,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Polygala vulgaris L.,Amăreală comună,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Polygala sibirica L.,Amăreală siberiană,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,R 
+Fallopia convolvulus L.,Hrișcuță volubilă,Magnoliopsida,Polygalaceae,,, ,+,+, ,,,,,C
+Fallopia dumetorum (L.) Holub,Hrișcuță dumicolă,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Polygonum amphibium L.,Troscot amfibie,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Polygonum aviculare L.,Troscot păsăresc,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Polygonum lapathifolium L.,Troscot latifoliu,Magnoliopsida,Polygalaceae,,, +, , , ,,,,,C
+Polygonum persicaria L.,Troscot persicariu,Magnoliopsida,Polygalaceae,,, +, , ,+,,,,,C
+Rumex acetosa L.,Stevie mare,Magnoliopsida,Polygalaceae,,, +, , , ,,,,,C
+Rumex acetosella  L.,Măcriș mărunt,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Rumex aquaticus L.,Stevie acvatică,Magnoliopsida,Polygalaceae,,, +, , , ,,,,,C
+Rumex confertus Willd.,Măcrișul calului,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Rumex crispus L.,Stevie crispată,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Rumex sanguineus L.,Stevie sanguinee,Magnoliopsida,Polygalaceae,,, ,+, , ,,,,,C
+Rumex sylvestris (Lam.) Wallr.,Stevie silvicolă,Magnoliopsida,Polygalaceae,,, +, , , ,,,,,C
+Portulaca oleracea L.,Porcina grădinii,Magnoliopsida,Portulacaceae,,,,+,,,,,,,C
+Anagalis arvensis L.,Sclipeț campestru,Magnoliopsida,Primulaceae,,, +,+,,,,,,,C
+Anagalis foemina Mill.,Sclipeț albastru,Magnoliopsida,Primulaceae,,, ,+,,,,,,,C
+Androsace elongata L.,Lăptișor elongat,Magnoliopsida,Primulaceae,,, ,+,,,,,,,C
+Lysimachia nummularia L.,Drețe repente,Magnoliopsida,Primulaceae,,, +,+,,,,,,,C
+Lysimachia vulgaris L.,Drețe comune,Magnoliopsida,Primulaceae,,, ,+,,,,,,,C
+Primula veris L.,Aglică vernală,Magnoliopsida,Primulaceae,,, ,+,,,,,,,R
+Aconitum lasiostomum Rchb. Ex Besser,Omag lasiostom,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,R
+Actaea spicata L.,Orbalț spicat,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,R
+Adonis vernalis L.,Rușcuță vernală,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,R
+Adonis aestivalis L.,Rușcuță estivală,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Anemone sylvestris L.,Oițe silvicole,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Anemonoides nemorosa (L.) Holub.,Păștiță silvicolă,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Anemonoides ranunculoides  (L.) Holub.,Păștiță silvicolă,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Clematis recta L.,Păștiță ranunculoidă,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,R
+Clematis vitalba L.,Viță albă,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Consolida paniculata  (Host) Schur.,Pintenași paniculați,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Consolida regalis S.F. Gray.,Pintenași regali,Magnoliopsida,Ranunculaceae,,, ,+,+, ,,,,,C
+Ficaria verna Huds.,Grâușor vernal,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Isopyrum thalictroides L.,Găinușă talictroidă,Magnoliopsida,Ranunculaceae,,, , , , ,,,,,C
+Nigella arvensis L.,Negrușcă campestris,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Pulsatilla grandis Wender. ,Dedițel mare,Magnoliopsida,Ranunculaceae,,, , ,+, ,,,,,RR 
+Pulsatilla montana (Hoppe) Rchb.,Dedițel montan,Magnoliopsida,Ranunculaceae,,, , ,+, ,,,,,R
+Ranunculus acris L.,Boglari acri,Magnoliopsida,Ranunculaceae,,, +,+, , ,,,,,C
+Ranunculus auricomus L.,Boglari aurii,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Ranunculus illyricus L.,Trânjoaică,Magnoliopsida,Ranunculaceae,,, ,+,+, ,,,,,C
+Ranunculus meyerianus Rupr.,Boglari Meier,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Ranunculus nemorosus L.,Boglari silvatici,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Ranunculus  polyanthemos L.,Boglari pluriflori,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Ranunculus pseudobulbosus Schur.,Boglari pseudobulboși,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Ranunculus repens L.,Boglari repenți,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Ranunculus sceleratus L.,Boglari toxici,Magnoliopsida,Ranunculaceae,,, ,+, , ,,,,,C
+Thalictrum lucidum L.,Rutișorlucios,Magnoliopsida,Ranunculaceae,,, +, , , ,,,,,C
+Thalictrum minus L.,Rutișor mic,Magnoliopsida,Ranunculaceae,,, , ,+, ,,,,,C
+Reseda lutea L.,Rechie galbenă,Magnoliopsida,Resedaceae,,, ,+,+, ,,,,,C
+Frangula alnus Mill.,Crușin fragil,Magnoliopsida,Rhamnaceae,,, , ,+, ,,,,,C
+Rhamnus cathartica L.,Verigar purgativ,Magnoliopsida,Rhamnaceae,,, , ,+, ,,,,,C
+Agrimonia eupatoria L.,Turicioară comună,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Agrimonia procera L.,Turicioară păroasă,Magnoliopsida,Rosaceae,,,+,+, , ,,,,,C
+Amygdalus nana L.,Migdal pitic,Magnoliopsida,Rosaceae,,, , ,+, ,,,,,R
+Cerasus avium (L.) Moench,Cireș păsăresc,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Cotoneaster melanocarpus Fisch. ex Blytt,Bârcoace,Magnoliopsida,Rosaceae,,, , ,+, ,,,,,RR
+Crataegus curvisepala Lindm.,Păducel curvisepal,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Crataegus monogyna Jacq.,Păducel monogin ,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Filipendula vulgaris Moench,Crețușcă comună,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Filipendula ulmaria L. Maxim,Crețușcă ulmifolie,Magnoliopsida,Rosaceae,,, , , ,+,,,,,C
+Fragaria campestris Stev.,Fragi campeștri,Magnoliopsida,Rosaceae,,, ,+,+, ,,,,,C
+Fragaria vesca L.,Fragi comestibili,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Fragaria viridis Duch.,Fragi verzi,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Geum urbanum L.,Cerențel urban,Magnoliopsida,Rosaceae,,, +, , , ,,,,,C
+Malus sylvestris Mill.,Măr pădureț,Magnoliopsida,Rosaceae,,, +, , , ,,,,,C
+Potentilla arenaria L.,Scrântitoare arenicolă,Magnoliopsida,Rosaceae,,, ,+,+, ,,,,,C
+Potentilla anserina L.,Coada racului,Magnoliopsida,Rosaceae,,, , , ,+,,,,,C
+Potentilla argentea L.,Scrântitoare argintie,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Potentilla obscura Willd.,Scrântitoare obscură,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Potentilla recta L.,Scrântitoare erectă,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Potentilla reptans L.,Scrântitoare repentă,Magnoliopsida,Rosaceae,,, ,+, ,+,,,,,C
+Potentilla supina L.,Scrântitoare culcată,Magnoliopsida,Rosaceae,,, , , ,+,,,,,C
+Poterium minor L.,Cebărea,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Poterium polygamum Walds et Kit.,Sângeric poligam,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Prunus spinosa L.,Porumbar,Magnoliopsida,Rosaceae,,, ,+,+, ,,,,,C
+Pyrus pyraster Burgsd.,Păr pădureț,Magnoliopsida,Rosaceae,,, +, , , ,,,,,C
+Rosa andegavensis Bast.,Măceș andegavean,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Rosa canina L.,Măceș canin,Magnoliopsida,Rosaceae,,, ,+,+, ,,,,,C
+Rosa corymbifera Borkh.,Măceș corimbifer,Magnoliopsida,Rosaceae,,, ,+, , ,,,,,C
+Rosa gallica L.,Măceș galic,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Rosa pimpinellifolia L.,Măceș pimpinelifoliu,Magnoliopsida,Rosaceae,,, , ,+, ,,,,,C
+Rosa rubiginosa L.,Măceș ruginiu,Magnoliopsida,Rosaceae,,, , , , ,,,,,C
+Rubus caesius L.,Mur pavonin,Magnoliopsida,Rosaceae,,, +, , , ,,,,,C
+Rubus canescens DC.,Mur canescent,Magnoliopsida,Rosaceae,,, , , , ,,,,, 
+Rubus idaeus L.,Zmeur,Magnoliopsida,Rosaceae,,, +, , , ,,,,,R
+Sorbus domestica L.,Sorb domestic,Magnoliopsida,Rosaceae,,, +, , , ,,,,,R
+Sorbus torminalis L.,Sorb,Magnoliopsida,Rosaceae,,, +, , , ,,,,,C
+Asperula cynanchica L.,Lipitoare canină,Magnoliopsida,Rubiaceae,,, +,+, , ,,,,,C
+Asperula odorata L.,Lipitoare odorantă,Magnoliopsida,Rubiaceae,,, ,+,+, ,,,,,C
+Galium aparine L.,Turiță,Magnoliopsida,Rubiaceae,,, ,+, , ,,,,,C
+Galium campanulatum Vill.,Drăgaică campanulată,Magnoliopsida,Rubiaceae,,, ,+, , ,,,,,C
+Galium humifusum Bieb.,Drăgaică prostrată,Magnoliopsida,Rubiaceae,,, ,+, , ,,,,,C
+Galium intermedium Schult.,Drăgaică intermedie,Magnoliopsida,Rubiaceae,,, +, , , ,,,,,C
+Galium mollugo L.,Drăgaică moale,Magnoliopsida,Rubiaceae,,, +, , , ,,,,,C
+Galium odoratum (L.) Scop.,Vinăriță,Magnoliopsida,Rubiaceae,,, ,+,+, ,,,,,C
+Galium octonarium (Klok.) Soo,Drăgaică octofilă,Magnoliopsida,Rubiaceae,,, ,+, , ,,,,,C
+Galium verum L.,Sânziene,Magnoliopsida,Rubiaceae,,, ,+, , ,,,,,C
+Haplophyllum suaveolens Ledeb.,Haplofil odorant,Magnoliopsida,Rutaceae,,,+,,,,,,,,C
+Populus alba L.,Plop alb,Magnoliopsida,Salicaceae,,, +, , ,+,,,,,C
+Populus canacens (Ait) Smith,Plop canescent,Magnoliopsida,Salicaceae,,, +, , ,+,,,,,C
+Populus tremula L.,Plop tremurător,Magnoliopsida,Salicaceae,,, +, , , ,,,,,C
+Salix alba L.,Salcie albă,Magnoliopsida,Salicaceae,,, +, , ,+,,,,,C
+Salix capraea L.,Salcie căprească,Magnoliopsida,Salicaceae,,, +, , ,+,,,,,C
+Salix cinerea L.,Zăloagă,Magnoliopsida,Salicaceae,,, , , ,+,,,,,C
+Salix viminalis L.,Mlaje,Magnoliopsida,Salicaceae,,, , , ,+,,,,,C
+Salix fragilis L.,Salcie fragilă,Magnoliopsida,Salicaceae,,, , , ,+,,,,,C
+Salix purpurea L.,Răchită roșie,Magnoliopsida,Salicaceae,,, ,+, ,+,,,,,C
+Salix triandra L.,Salcie triandrică,Magnoliopsida,Salicaceae,,, ,+, , ,,,,,C
+Sambucus ebulus L.,Boz,Magnoliopsida,Sambucaceae ,,,,,,,,,,,C
+Thesium arvense Horvatvszky,Măciulie campestră,Magnoliopsida,Santhalaceae,,,,,,,,,,,C
+Saxifraga tridactylites L.,Prescurice tridigitată,Magnoliopsida,Saxifragaceae,,,,,+,,,,,,RR
+Lathraea squamaria L.,Șerpariță scvamoasă,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Linaria genistifolia (L.) Mill. ,Linăriță genistifolie,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Linaria vulgaris Mill.,Linăriță comună,Magnoliopsida,Scrophulariaceae,,, ,+,+, ,,,,,C
+Melampyrum nemorosum L.,Sor-cu-frate,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Odontites luteus (L.) Clairv. ,Dințură galbenă,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Odontites vulgaris L.,Dințură comună,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Scrophularia nodosa L.,Buberic noduros,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Scrophularia vernalis L.,Buberic vernal,Magnoliopsida,Scrophulariaceae,,, +,+, , ,,,,,C
+Verbascum bllattaria L.,Lumânărică obscură,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Verbascum phoeniceum L.,Lumânărică violacee,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Verbascum phlomoides L.,Lumânărică domnului,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Verbascum speciosum Schrad.,Lumânărică uimitoare,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica anagalloides Guss.,Veronică anagaloidă,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica austriaca L,Veronică austriacă,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica arvensis L.,Veronică campestră,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica beccabunga L.,Bobornic,Magnoliopsida,Scrophulariaceae,,, , , ,+,,,,,C
+Veronica chamaedrys L.,Stejărel,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica hederifolia L.,Veronică hederifolie,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Veronica jacquinii Baumg.,Veronică Jacquin,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica officinalis L.,Veronică medicinală,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica persica Poir.,Veronică persiană,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica polita Fries.,Veronică lucioasă,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Veronica prostrata L.,Veronică prostrată,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica praecox All.,Veronică precoce,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica serpyllifolia L.,Veronică serpilifolie,Magnoliopsida,Scrophulariaceae,,, +, , , ,,,,,C
+Veronica spicata L.,Băieței,Magnoliopsida,Scrophulariaceae,,, ,+, , ,,,,,C
+Veronica teucrium L.,Veronică teucrioidă,Magnoliopsida,Scrophulariaceae,,, ,+,+, ,,,,,C
+Ailanthus altissima (Miller) Swigle,Cenușer înalt,Magnoliopsida,Simaroubaceae,,, +,+,+, ,,,,,C
+Datura stramonium L. ,Ciumăfaie comună,Magnoliopsida,Solonaceae,,, +,+, , ,,,,,C
+Hyoscyamus niger L.,Măselariță neagră,Magnoliopsida,Solonaceae,,, +,+, , ,,,,,C
+Physalis alkekengi L.,Păpălău comun,Magnoliopsida,Solonaceae,,, +, , , ,,,,,C
+Scopolia carniolica Jacq.,Mutulică comună,Magnoliopsida,Solonaceae,,, +, , , ,,,,,RR
+Solanum dulcamara L.,Zârnă dulcamară,Magnoliopsida,Solonaceae,,, +,+, , ,,,,,C
+Solanum nigrum L.,Zârnă neagră,Magnoliopsida,Solonaceae,,, +,+, , ,,,,,C
+Staphyllea pinnata L.,Clocotiș,Magnoliopsida, Staphyleaceae,,, +,,,,,,,,R
+Typha angustifolia L.,Papură angustifolie,Magnoliopsida,Thyphaceae,,,,,, +,,,,,C
+Typha  latifolia L.,Papură latifolie,Magnoliopsida,Thyphaceae,,,,,, +,,,,,C
+Tilia cordata Mill.,Tei roșu,Magnoliopsida,Tiliaceae,,, +,,,,,,,,C
+Tilia tomentosa Moench.,Tei argintiu,Magnoliopsida,Tiliaceae,,, +,,,,,,,,C
+Ulmus carpinifolia Rupp. ex Suckow,Ulmcarpinifoliu,Magnoliopsida,Ulmaceae,,, +,,,,,,,,C
+Ulmus glabra Huds.,Ulm glabru,Magnoliopsida,Ulmaceae,,, +,,,,,,,,C
+Ulmus laevis Pall.,Velniș,Magnoliopsida,Ulmaceae,,, +,,,,,,,,C
+Parietaria officinalis L.,Parachelniță officinalis,Magnoliopsida,Urticaceae,,, +, , ,,,,,,C
+Urtica dioica L.,Urzică dioica,Magnoliopsida,Urticaceae,,, +,+, ,,,,,,C
+Urtica urens L.,Urzică arzătoare,Magnoliopsida,Urticaceae,,, +,+, ,,,,,,C
+Valeriana collina Wallr.,Odolean colinar,Magnoliopsida,Valerianaceae,,, ,+,,,,,,,C
+Valeriana officinalis L.,Odolean medicinal,Magnoliopsida,Valerianaceae,,, +, ,,,,,,,C
+Verbena officinalis L.,Sporici medicinal,Magnoliopsida,Verbenaceae,,,,+,,,,,,,C
+Viola alba Bess.,Toporaș alb,Magnoliopsida,Violaceae,,, +,+, , ,,,,,C
+Viola ambigua Waldst. & Kit. ,Toporaș dubios,Magnoliopsida,Violaceae,,, +,+, , ,,,,,C
+Viola arvensis Murr.,Toporaș campestru,Magnoliopsida,Violaceae,,, ,+, , ,,,,,C
+Viola elatior Fries,Toporaș înalt,Magnoliopsida,Violaceae,,, +, , , ,,,,,C
+Viola hirta L.,Toporaș aspru ,Magnoliopsida,Violaceae,,, ,+,+, ,,,,,C
+Viola mirabilis L.,Toporaș minunat,Magnoliopsida,Violaceae,,, +,+, , ,,,,,C
+Viola odorata L.,Toporaș odorat,Magnoliopsida,Violaceae,,, +, , , ,,,,,C
+Viola reichenbachiana Jord. ex Boreau,Toporaș Reichenbach,Magnoliopsida,Violaceae,,, +, , , ,,,,,C
+Viola suavis Bieb.,Toporaș plăcut,Magnoliopsida,Violaceae,,, +,+, , ,,,,,C
+Viola tricolor L.,Tricolori,Magnoliopsida,Violaceae,,, ,+,+, ,,,,,C
