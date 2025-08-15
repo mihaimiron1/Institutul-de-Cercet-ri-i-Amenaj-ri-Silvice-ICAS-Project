@@ -10,9 +10,17 @@ class Reserve(models.Model):
     suprafata_ha = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     category = models.CharField(max_length=120, blank=True, null=True)
     subcategory = models.CharField(max_length=120, blank=True, null=True)
+
+    # ✅ câmpurile care lipsesc
+    diversitatea_fitocenotica = models.TextField(blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    coords_raw = models.TextField(blank=True, null=True)
+
     notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
     class Meta:
         indexes = [models.Index(fields=["raion"])]
@@ -30,24 +38,39 @@ class Species(models.Model):
     localitatea = models.CharField(max_length=255, blank=True, null=True)
 
     silvice = models.BooleanField(default=False)
-    pajisti_sau_stepice = models.BooleanField(default=False)
+    pajisti_sau_stepice = models.BooleanField(default=False) 
     stancarii = models.BooleanField(default=False)
     palustre_si_acvatice = models.BooleanField(default=False)
 
-    p_rara = models.BooleanField(default=False)  # 'conventia_berna'|'directiva_habitate'|'critica'
+    p_rara = models.CharField(max_length=20, blank=True, null=True)  # permite NULL
+     # 'conventia_berna'|'directiva_habitate'|'critica'
     conventia_berna = models.BooleanField(default=False)
     directiva_habitate = models.BooleanField(default=False)
     cartea_rosie = models.PositiveSmallIntegerField(
-    blank=True, null=True,
-    help_text="Anul ediției Cărții Roșii în care planta este inclusă (ex: 2015)"
-)
+        blank=True, null=True,
+        help_text="Anul ediției Cărții Roșii (ex.: 2015)"
+    )
+    cartea_rosie_cat = models.CharField(
+        max_length=10, blank=True, null=True,
+        help_text="Categoria din Cartea Roșie (ex.: VU, EN, CR)"
+    )
 
     notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # Frecvența (va putea fi folosită ca filtru în rapoarte)
+    frecventa = models.CharField(
+        max_length=50, blank=True, null=True,
+        help_text="Frecvența (ex.: C, Rară, etc.)"
+    )
 
     class Meta:
-        indexes = [models.Index(fields=["familia"]), models.Index(fields=["p_rara"])]
+        indexes = [
+            models.Index(fields=["familia"]),
+            models.Index(fields=["p_rara"]),
+            models.Index(fields=["cartea_rosie_cat"]),  # filtrare rapidă pe categorie
+            models.Index(fields=["frecventa"]),          # filtrare pe frecvență
+        ]
 
     def __str__(self):
         return self.denumire_stiintifica
