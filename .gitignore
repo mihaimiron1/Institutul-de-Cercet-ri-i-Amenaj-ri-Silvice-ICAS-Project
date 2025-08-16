@@ -13,3 +13,5 @@ db.sqlite3
 
 # Env
 .env
+
+db.sqlite3
