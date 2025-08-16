@@ -86,17 +86,21 @@ class Occurrence(models.Model):
     species = models.ForeignKey(Species, on_delete=models.CASCADE, related_name="occurrences")
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, related_name="occurrences")
     year = models.PositiveSmallIntegerField()
-    rarity_at_observation = models.CharField(max_length=20)  # 'comuna'|'rara'|'critica'
 
-    # coordonate doar la specii rare (MVP fără PostGIS)
+    # raritatea la momentul observației, booleană
+    rarity = models.BooleanField(default=False)
+
+    # coordonate (de obicei doar la specii rare; rămân opționale)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
+    # metadate utile
+    source = models.CharField(max_length=50, blank=True, null=True)  # ex.: 'teren' | 'literatura' | 'raport'
     observer = models.CharField(max_length=255, blank=True, null=True)
+    created_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, blank=True, null=True)
+
     notes = models.TextField(blank=True, null=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     class Meta:
         unique_together = (("species", "reserve", "year"),)
@@ -104,10 +108,12 @@ class Occurrence(models.Model):
             models.Index(fields=["reserve", "year"]),
             models.Index(fields=["species"]),
             models.Index(fields=["year"]),
+            models.Index(fields=["rarity"]),  # filtre rapide „doar rare”
         ]
 
     def __str__(self):
         return f"{self.species} @ {self.reserve} ({self.year})"
+
 
 
 class ReserveAssociationYear(models.Model):
