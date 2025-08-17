@@ -12,21 +12,21 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import environ
+import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-env = environ.Env(DEBUG=(bool, False))
+# inițializează django-environ și citește .env din BASE_DIR
+env = environ.Env(
+    DEBUG=(bool, False),
+)
 environ.Env.read_env(BASE_DIR / ".env")
 
-# SECURITY WARNING: keep the secret key used in production secret!
 DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
-
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
 
 
@@ -87,8 +87,11 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD"),
         "HOST": env("DB_HOST"),
         "PORT": env("DB_PORT"),
+        "OPTIONS": {"sslmode": env("DB_SSLMODE", default="require")},
     }
 }
+
+
 
 
 
