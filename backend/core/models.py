@@ -42,8 +42,10 @@ class Species(models.Model):
     stancarii = models.BooleanField(default=False)
     palustre_si_acvatice = models.BooleanField(default=False)
 
-    p_rara = models.CharField(max_length=20, blank=True, null=True)  # permite NULL
-     # 'conventia_berna'|'directiva_habitate'|'critica'
+    is_rare = models.BooleanField(default=False, db_index=True)
+
+
+
     conventia_berna = models.BooleanField(default=False)
     directiva_habitate = models.BooleanField(default=False)
     cartea_rosie = models.PositiveSmallIntegerField(
@@ -64,10 +66,15 @@ class Species(models.Model):
         help_text="Frecvența (ex.: C, Rară, etc.)"
     )
 
+    # @property
+    # def is_rare_(self) -> bool:
+    #     return bool(self.cartea_rosie_year or self.cartea_rosie_cat or self.is_rare)
+
+
     class Meta:
         indexes = [
             models.Index(fields=["familia"]),
-            models.Index(fields=["p_rara"]),
+            models.Index(fields=["is_rare"]),
             models.Index(fields=["cartea_rosie_cat"]),  # filtrare rapidă pe categorie
             models.Index(fields=["frecventa"]),          # filtrare pe frecvență
         ]
@@ -88,7 +95,7 @@ class Occurrence(models.Model):
     year = models.PositiveSmallIntegerField()
 
     # raritatea la momentul observației, booleană
-    rarity = models.BooleanField(default=False)
+    is_rare = models.BooleanField(default=False)
 
     # coordonate (de obicei doar la specii rare; rămân opționale)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -108,7 +115,7 @@ class Occurrence(models.Model):
             models.Index(fields=["reserve", "year"]),
             models.Index(fields=["species"]),
             models.Index(fields=["year"]),
-            models.Index(fields=["rarity"]),  # filtre rapide „doar rare”
+            models.Index(fields=["is_rare"]),  # filtre rapide „doar rare”
         ]
 
     def __str__(self):
