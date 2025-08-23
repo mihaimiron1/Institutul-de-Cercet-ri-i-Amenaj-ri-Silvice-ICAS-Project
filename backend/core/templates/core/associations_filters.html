@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Filtrări Asociații</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 1rem 2rem; }
+    form { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: .75rem; align-items: end; }
+    label { display: flex; flex-direction: column; gap: .25rem; }
+    input, select, button { padding: .45rem .6rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: .4rem .6rem; }
+    th { background: #f6f6f6; text-align: left; }
+    .toolbar { display:flex; gap:.75rem; margin-top:.5rem; }
+    .muted { color:#666; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Filtrări Asociații</h1>
+
+  <form method="get">
+    <label>
+      Mod filtrare
+      <select name="mode" id="mode">
+        <option value="by_reserve_year" {% if mode == 'by_reserve_year' %}selected{% endif %}>1) Rezervație X, anul Y</option>
+        <option value="by_reserve_all_years" {% if mode == 'by_reserve_all_years' %}selected{% endif %}>2) Rezervație X, toți anii</option>
+        <option value="by_year_all_reserves" {% if mode == 'by_year_all_reserves' %}selected{% endif %}>3) Anul Y, toate rezervațiile</option>
+      </select>
+    </label>
+
+    <label id="reserveLbl">
+      Rezervație (după nume)
+      <input type="text" name="reserve_name" id="reserveInput" value="{{ reserve_name|default_if_none:'' }}" autocomplete="off" placeholder="ex: Codrii Țigheciului">
+      <select id="reserveSelect">
+        <option value="">— alege din listă —</option>
+        {% for r in all_reserves %}
+          <option value="{{ r.name }}">{{ r.name }}</option>
+        {% endfor %}
+      </select>
+      <span class="muted">Poți scrie și apoi selecta din listă; filtrare live mai jos.</span>
+    </label>
+
+    <label id="yearLbl">
+      An
+      <select name="year" id="year">
+        <option value="">— alege anul —</option>
+      </select>
+    </label>
+
+    <button type="submit">Filtrează</button>
+  </form>
+
+  <div class="toolbar">
+    <a href="?mode={{mode}}&reserve_name={{reserve_name}}&year={{year_q}}&export=csv">Export CSV</a>
+    <a href="?mode={{mode}}&reserve_name={{reserve_name}}&year={{year_q}}&export=xlsx">Export Excel</a>
+  </div>
+
+  {% if error %}
+    <p style="color:#b00">{{ error }}</p>
+  {% endif %}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rezervație</th>
+        <th>Asociație</th>
+        <th>An</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.reserve }}</td>
+          <td>{{ r.association }}</td>
+          <td>{{ r.year }}</td>
+          <td>{{ r.notes }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">Niciun rezultat.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    // Populează lista de ani desc (curent -> 1900)
+    (function() {
+      var sel = document.getElementById('year');
+      var current = new Date().getFullYear();
+      var chosen = "{{ year_q|default_if_none:'' }}";
+      for (var y = current; y >= 1900; y--) {
+        var opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = String(y);
+        if (chosen && String(y) === String(chosen)) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    })();
+
+    // Caută după nume: input text + select sincronizat (filtrare live)
+    (function() {
+      var input = document.getElementById('reserveInput');
+      var select = document.getElementById('reserveSelect');
+
+      function filterOptions() {
+        var q = (input.value || "").toLowerCase();
+        for (var i = 0; i < select.options.length; i++) {
+          var opt = select.options[i];
+          if (!opt.value) { opt.hidden = false; continue; }
+          var match = opt.value.toLowerCase().indexOf(q) !== -1;
+          opt.hidden = !match;
+        }
+      }
+      function pickFromSelect() {
+        if (select.value) input.value = select.value;
+      }
+      input.addEventListener('input', filterOptions);
+      select.addEventListener('change', pickFromSelect);
+
+      // setează select-ul pe valoarea curentă, dacă există
+      (function syncInitial(){
+        var val = input.value;
+        for (var i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === val) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+      })();
+
+      // arată/ascunde câmpurile în funcție de mod
+      function toggleFields() {
+        var mode = document.getElementById('mode').value;
+        var reserveLbl = document.getElementById('reserveLbl');
+        var yearLbl = document.getElementById('yearLbl');
+        if (mode === 'by_reserve_year') { reserveLbl.style.display='block'; yearLbl.style.display='block'; }
+        if (mode === 'by_reserve_all_years') { reserveLbl.style.display='block'; yearLbl.style.display='block'; document.getElementById('year').value=''; yearLbl.style.display='none'; }
+        if (mode === 'by_year_all_reserves') { reserveLbl.style.display='none'; input.value=''; select.selectedIndex=0; yearLbl.style.display='block'; }
+      }
+      document.getElementById('mode').addEventListener('change', toggleFields);
+      toggleFields();
+    })();
+  </script>
+</body>
+</html>
