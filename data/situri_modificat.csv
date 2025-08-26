@@ -1,0 +1,63 @@
+codul_sitului,denumirea,suprafata,numar_specii_pasi,alte_specii,habitate,latitudine,longitudine,STE,CONJ
+MD0000001,Prutul de Jos,1721.0,53,18,8,28.0724,45.6176,True,False
+MD0000002,Pădurea Domnească,6113.0,45,19,3,27.4181,47.5847,False,False
+MD0000003,Plaiul Fagului,5850.0,20,14,3,28.0726,47.3009,False,False
+MD0000003,Plaiul Fagului,58.500,20,14,3,28.0726,47.3009,False,False
+MD0000004,Codru,64.980,19,16,4,28.3358,47.0831,False,False
+MD0000005,Unguri- Holoșnița,111.800,23,21,7,28.0458,48.2864,False,False
+MD0000006,Caracușeni,69.920,7,14,3,26.8288,48.2873,False,False
+MD0000007,Codrii Orheiului,286.400,15,10,3,28.735,47.3111,False,False
+MD0000008,Bahmut- Hârjauca,132.600,19,6,3,28.1392,47.3256,False,False
+MD0000009,Codrii Tigheci,64.660,15,4,2,28.3651,46.3376,True,False
+MD00000010,Codrii Strășenilor,185.000,17,10,4,28.5458,47.0667,False,False
+MD00000011,Prutul de Mijloc,326.300,31,24,3,27.3029,47.7406,False,False
+MD00000012,Lacurile Prutului de Jos,164.200,44,14,9,28.0875,45.8644,True,False
+MD00000013,Nistrul de Jos, 59200,48,22,15,29.8258,46.5744,True,False
+MD00000014,Stâncile Nistrene,44.580,15,17,3,28.2497,48.1567,False,False
+MD00000015,Rezina,38.980,12,17,1,28.9144,47.655,False,False
+MD00000016,Stepa Bugeacului,49610,32,10,2,28.615,46.1069,True,False
+MD00000017,Stepa Bălțului,124.600,3,5,2,28.4429,47.7755,False,False
+MD00000018,Pădurea Hârbovăț,38.210,9,9,4,29.3775,46.8728,True,False
+MD00000019,Pădurea Hâncești,112.900,18,8,4,28.4914,46.8421,True,False
+MD00000020,Poiana Curătura,"6,950",7,7,2,28.8673,47.8901,False,False
+MD00000021,Climăuții de Jos,14.820,6,7,1,28.8055,47.9438,False,False
+MD00000022,Cărbuna,6.780,3,4,2,28.8663,46.717,False,False
+MD00000023,Lunca Baraboi,3.300,2,1, ,27.6539,48.091,False,False
+MD00000024,Luncile Bursuceni,300,2,1,1,27.9753,47.5036,False,False
+MD00000025,Luncile Drăgănești,460,2,1,1,28.2714,28.2714,False,False
+MD00000026,Pădurea Molești-Răzeni,3.860,3,3,2,28.8158,46.7266,False,False
+MD00000027,La castel,7.600,11,9,5,27.1512,48.1399,False,False
+MD00000028,Vila „Nisporeni”,54.510,15,5,2,28.2397,47.0279,False,False
+MD00000029,Zăbriceni,5.950,7,3,2,27.2343,48.0716,False,False
+MD00000030,Fetești,7.540,7,8,4,27.1164,48.1801,False,False
+MD00000031,La 33 de vaduri,2.650,8,2,1,27.5711,48.4327,False,False
+MD00000032,Lunca mlăștinoasă Maramonovca- Cubolta,2.120,6,2, ,27.7958,48.1919,False,False
+MD00000033,Lunca mlăștinoasă Maramonovca- Căinari,1.080,5,2, ,27.8514,48.2139,False,False
+MD00000034,Aria naturală protejată Mestecăniș,500,7,2,4,27.3841,48.4089,False,False
+MD00000035,Aria naturală protejată Ocnița,1.010,4,2,3,27.3841,48.3837,False,False
+MD00000036,Aria naturală protejată Telița,6.160,5,11,5,29.3377,46.995,False,False
+MD00000037,Zberoaia-Prut,3.810,2,1,2,28.0922,46.9532,False,False
+MD00000038,Ostianova,2.780,9,1,4,28.5156,46.4717,True,False
+MD00000039,Măcărești-Prut,1.880,3,5,3,27.6536,47.0647,False,False
+MD00000040,Aria naturală protejată Trebujeni,10.640,9,12,3,28.9412,47.3137,True,False
+MD00000041,Aria naturală Seliște-Leu,2.860,4,3,5,28.0909,47.0985,False,False
+MD00000042,Aria naturală Nemțeni,2.880,4,3,5,28.102,46.9151,False,False
+MD00000043,Lunca Ialpug,620,3,3,7,28.5886,46.6224,True,False
+MD00000044,Lebăda Albă,1.000,3,4,5,28.2327,46.4847,True,False
+MD00000045,Lunca Antonești,1.770,7,2,8,28.2059,46.3327,True,False
+MD00000046,Canionul Vărăncău,7.310,6,7,5,28.4375,48.0438,False,False
+MD00000047,Dancu-Prut,1.770,6,2,4,28.1858,46.745,True,False
+MD00000048,Chizlear-Stepa,3.010,4,2,4,28.53,46.6474,True,False
+MD00000049,Zolonceni,2.250,9,2,4,29.1162,47.2353,True,False
+MD00000050,Dubăsarii Vechi,11.140,10,13,7,29.2561,47.1389,True,False
+MD00000051,Aflorimentul Goian,3.130,3,5,2,28.8758,47.1364,True,False
+MD00000052,Cimișeni,6.610,5,2,2,29.0651,47.0271,True,False
+MD00000053,Sculeni-Prut,1.530,5,4,5,27.5889,47.3297,False,False
+MD00000054,Chioselia,5.520,8,3,3,28.3771,46.1588,True,False
+MD00000055,Limanul Cahul-Etulia,6.400,24,4,7,28.436,45.5257,True,False
+MD00000056,Pohrebeni,9.980,11,8,4,28.8785,47.5737,False,False
+MD00000057,Matrașanca- Orhei,1.280,3,3,3,28.9099,47.4804,False,False
+MD00000058,Rădoaia,14.300,16,6,5,28.1199,47.7689,False,False
+MD00000059,Sectorul de stepă Vrănești,1.470,6,6,4,28.0934,47.6084,False,False
+MD00000060,Dobrușa,30.320,18,7,6,28.6488,47.8017,False,False
+MD00000061,Vâșcăuți,2.050,12,8,4,29.0699,47.4146,False,False
