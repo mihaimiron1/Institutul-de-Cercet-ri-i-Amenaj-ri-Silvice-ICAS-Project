@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path                      # ← needed
 from django.http import JsonResponse              # ← for the tiny JSON endpoint
-from .models import Species, Reserve, Association, Occurrence, ReserveAssociationYear
+from .models import Species, Reserve, Association, Occurrence, ReserveAssociationYear, Habitat, Site, SiteHabitat
 
 
 @admin.register(Species)
@@ -74,3 +74,21 @@ class ReserveAssociationYearAdmin(admin.ModelAdmin):
     autocomplete_fields = ["association", "reserve"]
     list_display = ["association", "reserve", "year"]
     list_filter = ["year"]
+
+
+@admin.register(Habitat)
+class HabitatAdmin(admin.ModelAdmin):
+    list_display = ("name_romanian", "name_english", "code")
+    search_fields = ("name_romanian", "name_english", "code")
+
+@admin.register(Site)
+class SiteAdmin(admin.ModelAdmin):
+    list_display = ("name", "code", "surface_ha", "bird_species_count", "habitats_count", "ste", "conj")
+    search_fields = ("name", "code")
+    list_filter = ("ste", "conj")
+
+@admin.register(SiteHabitat)
+class SiteHabitatAdmin(admin.ModelAdmin):
+    list_display = ("site", "habitat", "year", "surface")
+    list_filter = ("year",)
+    search_fields = ("site__name", "habitat__name_romanian", "habitat__name_english")

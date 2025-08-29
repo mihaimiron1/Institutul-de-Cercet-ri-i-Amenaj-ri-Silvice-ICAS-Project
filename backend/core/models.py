@@ -139,3 +139,71 @@ class ReserveAssociationYear(models.Model):
 
     def __str__(self):
         return f"{self.association} @ {self.reserve} ({self.year})"
+
+
+
+class Habitat(models.Model):
+    name_english  = models.CharField(max_length=255, unique=True, db_index=True)
+    name_romanian = models.CharField(max_length=255, unique=True, db_index=True)
+    code          = models.CharField(max_length=64, blank=True, null=True, db_index=True)
+    notes         = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "core_habitat"
+
+    def __str__(self):
+        return self.name_romanian or self.name_english
+
+
+class Site(models.Model):
+    # din CSV: codul_sitului, denumirea, suprafata, numar_specii_pasari,
+    #          alte_specii, habitate, latitudine, longitudine, STE, CONJ
+    code                 = models.CharField("codul_sitului", max_length=32, unique=True, db_index=True)
+    name                 = models.CharField("denumirea", max_length=255, unique=True, db_index=True)
+    surface_ha           = models.DecimalField("suprafata (ha)", max_digits=12, decimal_places=2)
+    bird_species_count   = models.IntegerField("numar_specii_pasari")
+    other_species_count  = models.IntegerField("alte_specii")
+    habitats_count       = models.IntegerField("habitate")
+
+    latitude             = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude            = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+
+    ste                  = models.BooleanField("STE")   # Sit de Importanță Europeană?
+    conj                 = models.BooleanField("CONJ")
+
+    notes                = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "core_site"
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["code"]),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class SiteHabitat(models.Model):
+    site    = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="site_habitats")
+    habitat = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="habitat_sites")
+
+    year    = models.SmallIntegerField(blank=True, null=True, db_index=True)
+    surface = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  
+    notes   = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "core_site_habitat"
+        unique_together = (("site", "habitat", "year"),)
+
+    def __str__(self):
+        base = f"{self.site} ↔ {self.habitat}"
+        return f"{base} ({self.year})" if self.year else base
