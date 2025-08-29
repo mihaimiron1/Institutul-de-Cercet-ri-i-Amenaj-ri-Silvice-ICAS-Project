@@ -1,26 +1,46 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from core.models import Species, Reserve, Association, ReserveAssociationYear, Occurrence
+
+from core.models import (
+    Species, Reserve, Association, ReserveAssociationYear,
+    Occurrence, Habitat, Site, SiteHabitat
+)
 
 class Command(BaseCommand):
-    help = "Create default groups and assign permissions"
+    help = "Creează grupurile Administrators și Contributors și le atașează permisiunile potrivite"
 
     def handle(self, *args, **kwargs):
         admins, _ = Group.objects.get_or_create(name="Administrators")
         contrib, _ = Group.objects.get_or_create(name="Contributors")
 
-        # Administrators: full perms on toate modelele din app
-        for model in [Species, Reserve, Association, ReserveAssociationYear, Occurrence]:
-            ct = ContentType.objects.get_for_model(model)
-            perms = Permission.objects.filter(content_type=ct)
-            admins.permissions.add(*perms)
+        # --- Administrators: toate permisiunile pe toate modelele aplicației ---
+        admin_models = [Species, Reserve, Association, ReserveAssociationYear,
+                        Occurrence, Habitat, Site, SiteHabitat]
 
-        # Contributors: doar CRUD pe date (ajustează după nevoie)
-        for model in [Occurrence, Species, Reserve, Association]:
-            ct = ContentType.objects.get_for_model(model)
-            for codename in ["add", "change", "delete", "view"]:
-                p = Permission.objects.get(content_type=ct, codename=f"{codename}_{model._meta.model_name}")
-                contrib.permissions.add(p)
+        ct_map = ContentType.objects.get_for_models(*admin_models)
+        admin_perms = set()
+        for model, ct in ct_map.items():
+            admin_perms.update(Permission.objects.filter(content_type=ct))
 
-        self.stdout.write(self.style.SUCCESS("Groups & perms initialized"))
+        # dacă vrei să sincronizezi exact perm-urile (recomandat):
+        admins.permissions.set(admin_perms)
+        # dacă preferi să nu atingi ce există deja, folosește:
+        # admins.permissions.add(*admin_perms)
+
+        # --- Contributors: add/change/view pe Occurrence și SiteHabitat (fără delete) ---
+        contrib_models = [Occurrence, SiteHabitat]
+        contrib_perms = set()
+        for model in contrib_models:
+            ct = ct_map.get(model) or ContentType.objects.get_for_model(model)
+            codes = [f"add_{model._meta.model_name}",
+                     f"change_{model._meta.model_name}",
+                     f"view_{model._meta.model_name}"]
+            contrib_perms.update(Permission.objects.filter(content_type=ct, codename__in=codes))
+
+        contrib.permissions.set(contrib_perms)
+        # sau: contrib.permissions.add(*contrib_perms)
+
+        self.stdout.write(self.style.SUCCESS(
+            f"OK: Administrators({len(admin_perms)}) & Contributors({len(contrib_perms)}) permisiuni setate."
+        ))

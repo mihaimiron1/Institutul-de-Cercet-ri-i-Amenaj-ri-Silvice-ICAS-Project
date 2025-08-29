@@ -1,6 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
-from django.db import models
 
 class Reserve(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -166,7 +166,7 @@ class Site(models.Model):
     surface_ha           = models.DecimalField("suprafata (ha)", max_digits=12, decimal_places=2)
     bird_species_count   = models.IntegerField("numar_specii_pasari")
     other_species_count  = models.IntegerField("alte_specii")
-    habitats_count       = models.IntegerField("habitate")
+    habitats_count       = models.IntegerField("habitate",blank=True, null=True,default=0,)
 
     latitude             = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude            = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -194,7 +194,7 @@ class SiteHabitat(models.Model):
     site    = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="site_habitats")
     habitat = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="site_habitats")
     year    = models.PositiveSmallIntegerField()
-    surface = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    surface = models.DecimalField(max_digits=12, decimal_places=2,blank=True, null=True,validators=[MinValueValidator(0)])
     notes   = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
