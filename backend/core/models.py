@@ -192,18 +192,22 @@ class Site(models.Model):
 
 class SiteHabitat(models.Model):
     site    = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="site_habitats")
-    habitat = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="habitat_sites")
-
-    year    = models.SmallIntegerField(blank=True, null=True, db_index=True)
-    surface = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  
+    habitat = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="site_habitats")
+    year    = models.PositiveSmallIntegerField()
+    surface = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     notes   = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "core_site_habitat"
-        unique_together = (("site", "habitat", "year"),)
+        constraints = [
+            models.UniqueConstraint(fields=["site", "habitat", "year"], name="uniq_site_habitat_year")
+        ]
+        indexes = [
+            models.Index(fields=["year"]),
+            models.Index(fields=["site", "year"]),
+            models.Index(fields=["habitat", "year"]),
+        ]
 
     def __str__(self):
-        base = f"{self.site} ↔ {self.habitat}"
-        return f"{base} ({self.year})" if self.year else base
+        return f"{self.site} – {self.habitat} ({self.year})"

@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Filtre Site–Habitat</title>
+  <style>
+    body{font-family:system-ui,Arial;padding:20px}
+    form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+    label{display:flex;flex-direction:column;font-size:.95rem}
+    table{border-collapse:collapse;width:100%}
+    th,td{border:1px solid #ddd;padding:6px 8px}
+    th{background:#f3f3f3;text-align:left}
+  </style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+
+  <form method="get">
+    <label>
+      Mod
+      <select name="mode" id="mode">
+        <option value="by_site"    {% if mode == 'by_site' %}selected{% endif %}>Habitate în site</option>
+        <option value="by_habitat" {% if mode == 'by_habitat' %}selected{% endif %}>Site-uri pentru habitat</option>
+        <option value="by_year"    {% if mode == 'by_year' %}selected{% endif %}>Toate în anul</option>
+      </select>
+    </label>
+
+    <label id="siteLbl">
+      Site (după nume)
+      <input name="site_name" list="sites" value="{{ site_name|default_if_none:'' }}" autocomplete="off">
+      <datalist id="sites">
+        {% for s in sites %}<option value="{{ s }}">{% endfor %}
+      </datalist>
+    </label>
+
+    <label id="habLbl">
+      Habitat (RO/EN/Cod)
+      <input name="habitat_name" list="habitats" value="{{ habitat_name|default_if_none:'' }}" autocomplete="off">
+      <datalist id="habitats">
+        {% for h in habitats %}<option value="{{ h }}">{% endfor %}
+      </datalist>
+    </label>
+
+    <label id="yearLbl">
+      An
+      <input type="number" name="year" min="1900" max="2100" value="{{ year|default_if_none:'' }}">
+    </label>
+
+    <button type="submit">Caută</button>
+
+    {% if qs %}
+      <a href="?{{ request.GET.urlencode }}&export=csv">Export CSV</a>
+      <a href="?{{ request.GET.urlencode }}&export=xlsx">Export XLSX</a>
+    {% endif %}
+  </form>
+
+  <script>
+    const modeSel = document.getElementById('mode');
+    const siteLbl = document.getElementById('siteLbl');
+    const habLbl  = document.getElementById('habLbl');
+    const yearLbl = document.getElementById('yearLbl');
+    function refresh() {
+      const m = modeSel.value;
+      siteLbl.style.display = (m === 'by_site') ? 'block' : 'none';
+      habLbl.style.display  = (m === 'by_habitat') ? 'block' : 'none';
+      yearLbl.style.display = (m === 'by_year') ? 'block' : 'none';
+    }
+    modeSel.addEventListener('change', refresh);
+    refresh();
+  </script>
+
+  {% if qs %}
+  <table>
+    <thead>
+      <tr>
+        <th>Site</th>
+        <th>Habitat (RO)</th>
+        <th>Habitat (EN)</th>
+        <th>Cod habitat</th>
+        <th>An</th>
+        <th>Suprafață (ha)</th>
+        <th>Notițe</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in qs %}
+      <tr>
+        <td>{{ r.site.name }}</td>
+        <td>{{ r.habitat.name_romanian }}</td>
+        <td>{{ r.habitat.name_english }}</td>
+        <td>{{ r.habitat.code }}</td>
+        <td>{{ r.year }}</td>
+        <td>{{ r.surface }}</td>
+        <td>{{ r.notes }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Nimic de afișat. Alege un mod și completează criteriile.</p>
+  {% endif %}
+</body>
+</html>
