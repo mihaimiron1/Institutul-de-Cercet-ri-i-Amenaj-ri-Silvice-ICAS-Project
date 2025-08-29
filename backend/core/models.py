@@ -171,7 +171,7 @@ class Site(models.Model):
     latitude             = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude            = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
-    ste                  = models.BooleanField("STE")   # Sit de Importanță Europeană?
+    ste                  = models.BooleanField("STE")   
     conj                 = models.BooleanField("CONJ")
 
     notes                = models.TextField(blank=True, null=True)

@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Filtre Plante (Occurrences)</title>
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;margin:1rem 2rem}
+    form{display:grid;grid-template-columns:repeat(4,minmax(200px,1fr));gap:.75rem;align-items:end}
+    label{display:flex;flex-direction:column;gap:.25rem}
+    input,select,button{padding:.45rem .6rem}
+    table{border-collapse:collapse;width:100%;margin-top:1rem}
+    th,td{border:1px solid #ddd;padding:.4rem .6rem}
+    th{background:#f6f6f6;text-align:left}
+    .muted{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>Filtre Plante (Occurrences)</h1>
+
+  <form method="get" action="">
+    <label>
+      Mod filtrare
+      <select name="mode" id="mode">
+        <option value="by_reserve_all"  {% if mode == 'by_reserve_all' %}selected{% endif %}>
+  1) Plante (toate) în rezervația X
+</option>
+
+<option value="by_reserve_rare" {% if mode == 'by_reserve_rare' %}selected{% endif %}>
+  2) Plante rare în rezervația X
+</option>
+
+<option value="by_raion_all"    {% if mode == 'by_raion_all' %}selected{% endif %}>
+  3) Plante (toate) pe raion
+</option>
+
+<option value="by_raion_rare"   {% if mode == 'by_raion_rare' %}selected{% endif %}>
+  4) Plante rare pe raion
+</option>
+      </select>
+    </label>
+
+    <label id="reserveLbl">
+      Rezervație (după nume)
+      <!-- input liber + dropdown cu căutare simplă -->
+      <input type="text" name="reserve_name" id="reserveInput" value="{{ reserve_name|default_if_none:'' }}" autocomplete="off" placeholder="ex: Codrii Țigheciului">
+      <select id="reserveSelect">
+        <option value="">— alege din listă —</option>
+        {% for r in all_reserves %}
+          <option value="{{ r.name }}">{{ r.name }}</option>
+        {% endfor %}
+      </select>
+      <span class="muted">Poți scrie parțial și apoi selecta din listă.</span>
+    </label>
+
+    <label id="raionLbl">
+      Raion
+      <select name="raion" id="raion">
+        <option value="">— alege raion —</option>
+        {% for rn in all_raions %}
+          <option value="{{ rn }}" {% if rn == raion %}selected{% endif %}>{{ rn }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <button type="submit">Filtrează</button>
+  </form>
+
+  {% if error %}
+    <p style="color:#b00">{{ error }}</p>
+  {% endif %}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rezervație</th>
+        <th>Raion</th>
+        <th>Specie (științific)</th>
+        <th>Specie (popular)</th>
+        <th>An</th>
+        <th>Rară?</th>
+        <th>Lat</th>
+        <th>Lon</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.reserve }}</td>
+          <td>{{ r.raion }}</td>
+          <td>{{ r.species_sci }}</td>
+          <td>{{ r.species_pop }}</td>
+          <td>{{ r.year }}</td>
+          <td>{{ r.rare }}</td>
+          <td>{{ r.lat }}</td>
+          <td>{{ r.lon }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8">Niciun rezultat.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    // sincronizează inputul cu selectul pentru rezervații + căutare live
+    (function(){
+      var input = document.getElementById('reserveInput');
+      var select = document.getElementById('reserveSelect');
+      function filterOptions(){
+        var q = (input.value||"").toLowerCase();
+        for (var i = 0; i < select.options.length; i++){
+          var opt = select.options[i];
+          if (!opt.value){ opt.hidden = false; continue; }
+          opt.hidden = opt.value.toLowerCase().indexOf(q) === -1;
+        }
+      }
+      function pickFromSelect(){
+        if (select.value) input.value = select.value;
+      }
+      input.addEventListener('input', filterOptions);
+      select.addEventListener('change', pickFromSelect);
+      // select pe valoarea inițială, dacă există
+      (function syncInitial(){
+        var val = input.value;
+        for (var i=0;i<select.options.length;i++){
+          if (select.options[i].value === val){ select.selectedIndex = i; break; }
+        }
+      })();
+    })();
+
+    // ascunde/arată câmpurile în funcție de mod
+    (function(){
+      var modeSel = document.getElementById('mode');
+      var reserveLbl = document.getElementById('reserveLbl');
+      var raionLbl = document.getElementById('raionLbl');
+      function toggle(){
+        var m = modeSel.value;
+        if (m === 'by_reserve_all' || m === 'by_reserve_rare'){
+          reserveLbl.style.display = 'block';
+          raionLbl.style.display = 'none';
+          document.getElementById('raion').value = '';
+        } else {
+          reserveLbl.style.display = 'none';
+          raionLbl.style.display = 'block';
+          document.getElementById('reserveInput').value = '';
+          document.getElementById('reserveSelect').selectedIndex = 0;
+        }
+      }
+      modeSel.addEventListener('change', toggle);
+      toggle();
+    })();
+  </script>
+</body>
+</html>

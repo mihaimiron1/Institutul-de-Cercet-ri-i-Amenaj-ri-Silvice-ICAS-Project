@@ -1,4 +1,4 @@
-codul_sitului,denumirea,suprafata,numar_specii_pasi,alte_specii,habitate,latitudine,longitudine,STE,CONJ
+codul_sitului,denumirea,suprafata,numar_specii_pasari,alte_specii,habitate,latitudine,longitudine,STE,CONJ
 MD0000001,Prutul de Jos,1721.0,53,18,8,28.0724,45.6176,True,False
 MD0000002,Pădurea Domnească,6113.0,45,19,3,27.4181,47.5847,False,False
 MD0000003,Plaiul Fagului,5850.0,20,14,3,28.0726,47.3009,False,False
