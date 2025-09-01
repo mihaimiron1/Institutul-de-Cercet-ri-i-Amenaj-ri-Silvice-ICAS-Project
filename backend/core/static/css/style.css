@@ -104,11 +104,9 @@ html, body{
 .card{ padding: var(--sp-3); }
 .kpi{ padding: var(--sp-3) var(--sp-4); }
 
-.kpi .kpi-value{
-  font-size: var(--fs-28);
-  font-weight: 700;
-  letter-spacing: .2px;
-}
+.kpi .kpi-value { font-size: 2rem; line-height: 1.1; }
+.kpi { padding: 18px; }
+
 .kpi .kpi-label{
   color: var(--muted);
   margin-top: 4px;
@@ -122,8 +120,9 @@ html, body{
 
 /* Grile fluide: nu se suprapun pe ecrane mici */
 .grid{ display:grid; gap: var(--sp-3); }
-.grid-5{ grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-.tiles{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+@media (min-width: 1100px) {
+  .grid.grid-5 { grid-template-columns: repeat(3, 1fr); } /* 3 coloane */
+}.tiles{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .actions{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 
 .tile{
@@ -271,6 +270,26 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 }
 
 /* spațiere mai mică sub bara de căutare, fiind în top */
-.search-hero + .grid,
 .search-hero + .tiles,
 .search-hero + .card { margin-top: 10px; }
+
+.search-hero { padding-top: 12px; }
+.search-hero .searchbar {
+  width: 100%;
+  max-width: 100%;      /* nu mai limita la 600-700px */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+.search-hero .searchbar input {
+  flex: 1;              /* ocupă tot ce rămâne */
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}

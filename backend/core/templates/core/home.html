@@ -57,23 +57,7 @@
     </div>
   </div>
 
-  <!-- Tiles -->
-  <div class="tiles mt-4">
-    <a class="tile" href="{% url 'associations_filters' %}">
-      <h3>Filtrări</h3>
-      <p class="muted">Asociații, habitate, date de apariții — interogări rapide & export.</p>
-    </a>
-
-    <a class="tile" href="{% url 'vizualizari_home' %}">
-      <h3>Vizualizări</h3>
-      <p class="muted">Tabele & grafice pregătite pentru analiză și prezentare.</p>
-    </a>
-
-    <a class="tile" href="{% url 'comparatii_home' %}">
-      <h3>Comparații</h3>
-      <p class="muted">Compară ani, rezervații sau habitate între ele.</p>
-    </a>
-  </div>
+  
 
   <!-- Admin (doar pentru cei cu dreptul de a adăuga sau staff) -->
   {% if request.user.is_authenticated %}
@@ -83,16 +67,6 @@
       </div>
     {% endif %}
   {% endif %}
-
-  <!-- Noutăți -->
-  <div class="card mt-4">
-    <h3>Noutăți</h3>
-    <ul class="bullets">
-      <li>Importuri site-uri & habitate finalizate</li>
-      <li>Export CSV/XLSX pe filtrări</li>
-      <li>Pagină nouă de Comparații (placeholder)</li>
-    </ul>
-  </div>
 
 </section>
 
