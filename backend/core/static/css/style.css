@@ -1,0 +1,206 @@
+/* =========================
+   ResNat — UI Refresh (v2)
+   ========================= */
+
+/* --------- Paletă & tipografie --------- */
+:root{
+  /* Culori de bază (light) */
+  --bg:           #f6faf7;   /* fundal foarte deschis, nuanță verzuie */
+  --surface:      #ffffff;   /* panouri/tile */
+  --text:         #0d2214;   /* text principal */
+  --muted:        #637d6b;   /* text secundar */
+  --line:         #e2ece5;   /* borduri/ delimitări subtile */
+  --shadow:       0 2px 8px rgba(5, 24, 12, .06);
+
+  /* Brand */
+  --brand:        #2f7d32;
+  --brand-600:    #2b6f2d;
+  --brand-50:     #e7f4e8;
+
+  /* Accente neutre */
+  --accent:       #0f1f15;   /* pentru texte pe buton brand */
+  --danger:       #b52b3b;
+  --warn:         #b58b2b;
+
+  /* Raze & spacing */
+  --r-lg: 14px;
+  --r-md: 10px;
+  --r-sm: 8px;
+
+  --sp-1: 8px;
+  --sp-2: 12px;
+  --sp-3: 16px;
+  --sp-4: 20px;
+  --sp-5: 28px;
+
+  /* Tipografie */
+  --fs-12: .75rem;
+  --fs-14: .875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-22: 1.375rem;
+  --fs-28: 1.75rem;
+}
+
+html, body{
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+/* Container consistent pe toate paginile */
+.container{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+/* --------- Topbar --------- */
+.topbar{
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.brand{
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+  font-size: var(--fs-18);
+}
+.nav{ display:flex; align-items:center; gap: 8px; }
+.nav a{
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+}
+.nav a:hover{ background: var(--brand-50); }
+
+/* --------- Headline / subtitlu --------- */
+.hero{ margin: 10px 0 6px; }
+.hero h1{
+  margin: 0 0 6px;
+  font-size: var(--fs-22);
+  font-weight: 700;
+}
+.muted{ color: var(--muted); }
+
+/* --------- Carduri, tile-uri, KPI --------- */
+.card, .tile, .kpi{
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+}
+.card{ padding: var(--sp-3); }
+.kpi{ padding: var(--sp-3) var(--sp-4); }
+
+.kpi .kpi-value{
+  font-size: var(--fs-28);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.kpi .kpi-label{
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: var(--fs-14);
+}
+.kpi .kpi-sub{
+  color: var(--muted);
+  font-size: var(--fs-12);
+  margin-top: 2px;
+}
+
+/* Grile fluide: nu se suprapun pe ecrane mici */
+.grid{ display:grid; gap: var(--sp-3); }
+.grid-5{ grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.tiles{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.actions{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.tile{
+  display:block;
+  padding: var(--sp-4);
+  text-decoration: none;
+  color: inherit;
+  transition: transform .08s ease, box-shadow .08s ease, border-color .08s ease;
+  border: 1px solid var(--line);
+}
+.tile:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(5, 24, 12, .08);
+  border-color: color-mix(in oklab, var(--brand) 30%, var(--line));
+}
+.tile h3{ margin: 0 0 6px; font-size: var(--fs-18); }
+.tile p{ margin: 0; color: var(--muted); }
+
+/* --------- Form controls / butoane --------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background: var(--brand);
+  color: #fff !important;
+  border: none;
+  padding: 9px 14px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn:hover{ background: var(--brand-600); }
+.btn-outline{
+  background: transparent;
+  color: var(--brand) !important;
+  border: 1px solid var(--brand);
+}
+.btn-outline:hover{
+  background: var(--brand-50);
+}
+
+input[type="text"], input[type="search"], select{
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: #fff;
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgba(0,0,0,.02);
+}
+input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.quick-search{
+  display:flex; align-items:center; gap: 8px; flex-wrap: wrap;
+}
+.quick-search small{ color: var(--muted); }
+
+/* --------- Utilities --------- */
+.mb-2{ margin-bottom: var(--sp-2); }
+.mt-3{ margin-top: var(--sp-3); }
+.mt-4{ margin-top: var(--sp-4); }
+
+.user-pill{
+  padding: 4px 10px;
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+/* --------- Secțiuni home --------- */
+.stats{ grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.footer{ color: var(--muted); padding: 12px 16px 36px; font-size: var(--fs-14); }
+
+/* Focus vizibil pentru accesibilitate */
+:focus-visible{
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}

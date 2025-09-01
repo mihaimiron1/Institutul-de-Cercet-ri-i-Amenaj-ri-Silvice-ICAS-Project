@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}ResNat · Home{% endblock %}
+{% block content %}
+
+<section class="container">
+
+  <!-- Hero: un singur mesaj -->
+  <div class="hero">
+    <h1>Bun venit în ResNat, {{ request.user.username }}!</h1>
+    <p class="muted">Instrumente pentru cercetare: filtrări rapide, vizualizări și comparații.</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-5">
+    <div class="card kpi">
+      <div class="kpi-value">{{ stats.species }}</div>
+      <div class="kpi-label">Specii</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-value">{{ stats.reserves }}</div>
+      <div class="kpi-label">Rezervații</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-value">{{ stats.sites }}</div>
+      <div class="kpi-label">Site-uri</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-value">{{ stats.habitats }}</div>
+      <div class="kpi-label">Habitate</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-value">{{ stats.occurrences }}</div>
+      <div class="kpi-label">Observații</div>
+      {% if stats.last_occurrence_at %}
+        <div class="kpi-sub">ult. update: {{ stats.last_occurrence_at|date:"Y-m-d" }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tiles -->
+  <div class="tiles mt-4">
+    <a class="tile" href="{% url 'associations_filters' %}">
+      <h3>Filtrări</h3>
+      <p class="muted">Asociații, habitate, date de apariții — interogări rapide & export.</p>
+    </a>
+
+    <a class="tile" href="{% url 'vizualizari_home' %}">
+      <h3>Vizualizări</h3>
+      <p class="muted">Tabele & grafice pregătite pentru analiză și prezentare.</p>
+    </a>
+
+    <a class="tile" href="{% url 'comparatii_home' %}">
+      <h3>Comparații</h3>
+      <p class="muted">Compară ani, rezervații sau habitate între ele.</p>
+    </a>
+  </div>
+
+  <!-- Căutare rapidă -->
+  <div class="card mt-4">
+    <form class="quick-search" action="{% url 'occurrences_filters' %}" method="get">
+      <label for="q">Căutare rapidă</label>
+      <div style="display:flex; gap:8px; align-items:center; max-width:740px;">
+        <input id="q" name="reserve_name" type="text"
+               placeholder="Ex: Pădurea Domnească, Plaiul Fagului, MD0000001…">
+        <input type="hidden" name="mode" value="by_reserve_all">
+        <button type="submit" class="btn">Caută</button>
+      </div>
+      <small class="muted">Sugestie: scrie numele unei rezervații și intri direct în filtrare.</small>
+    </form>
+  </div>
+
+  <!-- Admin (doar pentru cei cu dreptul de a adăuga sau staff) -->
+  {% if request.user.is_authenticated %}
+  {% if perms.core.add_occurrence or request.user.is_staff %}
+    <div class="mt-3">
+      <a href="/admin/" class="btn btn-outline">Adăugări / Administrare</a>
+    </div>
+  {% endif %}
+{% endif %}
+
+  <!-- Noutăți -->
+  <div class="card mt-4">
+    <h3>Noutăți</h3>
+    <ul class="bullets">
+      <li>Importuri site-uri & habitate finalizate</li>
+      <li>Export CSV/XLSX pe filtrări</li>
+      <li>Pagină nouă de Comparații (placeholder)</li>
+    </ul>
+  </div>
+
+</section>
+
+<script>
+  // scurtături tastatură (opțional)
+  document.addEventListener('keydown', (e) => {
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if (e.key === 'f') window.location.href = "{% url 'associations_filters' %}";
+    if (e.key === 'v') window.location.href = "{% url 'vizualizari_home' %}";
+    if (e.key === 'c') window.location.href = "{% url 'comparatii_home' %}";
+    {% if request.user.is_authenticated %}
+  {% if perms.core.add_occurrence or request.user.is_staff %}
+    if (e.key === 'a') window.location.href = "/admin/";
+  {% endif %}
+{% endif %}
+
+  });
+</script>
+
+{% endblock %}
