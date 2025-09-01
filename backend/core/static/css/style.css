@@ -204,3 +204,73 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
   outline-offset: 2px;
   border-radius: 6px;
 }
+
+/* ===== HERO SEARCH (bara de căutare sus) ===== */
+.search-hero{ margin:18px auto 10px; }
+.welcome{
+  margin: 14px 0 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.brand-word{ color: var(--brand, #2f7d32); }
+
+/* bara tip „pill”, cu umbră moale */
+.searchbar{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f3f6f3;
+  border: 1px solid var(--border, #dfe7df);
+  border-radius: 999px;
+  padding: 10px 12px 10px 42px; /* spațiu pentru icon */
+  box-shadow:
+    0 2px 0 rgba(0,0,0,.02),
+    0 8px 18px rgba(47,125,50,.08); /* verde subtil */
+  max-width: 640px;
+}
+.searchbar:focus-within{
+  border-color: var(--brand, #2f7d32);
+  box-shadow:
+    0 2px 0 rgba(0,0,0,.02),
+    0 10px 22px rgba(47,125,50,.12);
+}
+
+/* icon lupă pe stânga */
+.search-icon{
+  position: absolute;
+  left: 14px;
+  color: #8aa18d; /* gri-verzui */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* input + buton */
+.searchbar input[type="search"]{
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: 0.98rem;
+  color: var(--text, #0e1a0f);
+}
+.searchbar input::placeholder{
+  color: #7e9581;
+}
+
+.search-btn{
+  background: var(--brand, #2f7d32);
+  color: #fff;
+  border: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: not-allowed;            /* momentan nefuncțional */
+  opacity: .6;
+}
+
+/* spațiere mai mică sub bara de căutare, fiind în top */
+.search-hero + .grid,
+.search-hero + .tiles,
+.search-hero + .card { margin-top: 10px; }
