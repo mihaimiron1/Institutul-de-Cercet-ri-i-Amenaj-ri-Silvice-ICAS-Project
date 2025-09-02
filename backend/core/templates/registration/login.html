@@ -1,23 +1,54 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>Autentificare</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Autentificare · ResNat</title>
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
-<body>
-  <h2>Autentificare</h2>
-  {% if form.errors %}
-    <p style="color:red;">Utilizator sau parolă greșită.</p>
-  {% endif %}
-  <form method="post">
-    {% csrf_token %}
-    <label for="id_username">Username:</label>
-    {{ form.username }}<br><br>
+<body class="auth-body">
+  <main class="auth-wrap">
+    <section class="auth-card" role="dialog" aria-labelledby="authTitle" aria-describedby="authDesc">
+      <h1 id="authTitle" class="brand">Autentificare</h1>
+      <p id="authDesc" class="muted">Acces permis doar utilizatorilor autorizați.</p>
 
-    <label for="id_password">Password:</label>
-    {{ form.password }}<br><br>
+      {% if form.errors %}
+        <div class="alert">Nume de utilizator sau parolă incorecte.</div>
+      {% endif %}
 
-    <button type="submit">Logare</button>
-  </form>
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <label for="id_username">Utilizator</label>
+        <input type="text" id="id_username" name="username" autofocus required placeholder="nume_utilizator">
+
+        <label for="id_password">Parolă</label>
+        <div class="password-wrap">
+          <input type="password" id="id_password" name="password" required placeholder="••••••••">
+          <button type="button" class="eye" aria-label="Arată/ascunde parola"></button>
+        </div>
+
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+
+      <p class="muted help">Ai uitat parola? Contactează administratorul.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const btn = document.querySelector('.eye');
+      const input = document.getElementById('id_password');
+      if (btn && input) {
+        btn.addEventListener('click', () => {
+          const isPwd = input.type === 'password';
+          input.type = isPwd ? 'text' : 'password';
+          btn.classList.toggle('on', isPwd);
+          btn.setAttribute('aria-label', isPwd ? 'Ascunde parola' : 'Arată parola');
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

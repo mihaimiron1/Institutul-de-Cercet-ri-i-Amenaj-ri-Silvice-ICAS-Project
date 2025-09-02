@@ -111,6 +111,14 @@ line-height: 1.1;
 }
 .kpi { padding: 18px; }
 
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+}
+
 .kpi .kpi-label {
 color: var(--muted);
 font-size: 1rem;
