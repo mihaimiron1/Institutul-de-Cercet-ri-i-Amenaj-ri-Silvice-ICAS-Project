@@ -333,3 +333,39 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
   outline: 0;
   background: transparent;
 }
+
+/* ===== Vizualizări: grid & tiles color ===== */
+.viz-grid{
+  display:grid;
+  gap:18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 6px 0 24px;
+}
+
+.viz-tile{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:18px;
+  border-radius:16px;
+  color:#102214;             /* text închis pt contrast bun */
+  text-decoration:none;
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow: 0 6px 16px rgba(0,0,0,.06);
+  transition: transform .08s ease, box-shadow .12s ease, filter .12s ease;
+}
+.viz-tile:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.10);
+  filter: saturate(1.05);
+}
+
+.viz-title{ font-weight:800; letter-spacing:.2px; font-size:1.15rem; }
+.viz-sub{ font-size:.95rem; }
+
+/* paletă prietenoasă cu tema ResNat */
+.viz-green  { background: #dff2e1; border-color:#cfe6d2; }  /* Specii – verde */
+.viz-teal   { background: #d9f0ee; border-color:#c7e5e2; }  /* Rezervații – teal/sea green */
+.viz-orange { background: #ffe9d6; border-color:#ffd9b8; }  /* Asociații – portocaliu deschis */
+.viz-olive  { background: #e8efd9; border-color:#d8e5c2; }  /* Situri – olive/planty */
+.viz-red    { background: #ffe3e1; border-color:#ffd0cc; }  /* Habitate – roșu cald (soft) */

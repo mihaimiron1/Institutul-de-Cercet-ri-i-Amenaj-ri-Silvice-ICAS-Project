@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.db.models import Max
 from django.utils.timezone import localtime
+from django.shortcuts import render
 
 
 
@@ -93,13 +94,22 @@ def home(request):
     }
     return render(request, "core/home.html", context)
 
+
+
+@login_required
+def coming_soon(request):
+    return render(request, "core/coming_soon.html")
+
+
+
 @login_required
 def vizualizari_home(request):
-    # stub simplu până facem charts reale
-    return render(request, "core/coming_soon.html", {
-        "title": "Vizualizări (Charts)",
-        "subtitle": "Aici vor fi grafice și hărți interactive."
-    })
+    # HUB-ul cu cele 5 casete
+    return render(request, "core/vizualizari_home.html")
+
+@login_required
+def coming_soon(request):
+    return render(request, "core/coming_soon.html")
 
 @login_required
 def comparatii_home(request):

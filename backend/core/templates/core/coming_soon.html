@@ -1,14 +1,11 @@
 {% extends "base.html" %}
-{% block title %}ResNat · {{ title }}{% endblock %}
-
+{% block title %}În curând · ResNat{% endblock %}
 {% block content %}
-  <section class="hero">
-    <h1>{{ title }}</h1>
-    {% if subtitle %}<p class="muted">{{ subtitle }}</p>{% endif %}
-  </section>
-
-  <div class="coming-soon">
-    <p>În curând aici vei putea explora datele prin grafice/analize.</p>
-    <p class="muted">Între timp, folosește <a href="{% url 'associations_filters' %}">Filtrările</a>.</p>
+<section class="container">
+  <div class="card">
+    <h2>În curând</h2>
+    <p class="muted">Această secțiune este în lucru. Revino curând.</p>
+    <p><a href="{% url 'vizualizari_home' %}" class="btn">Înapoi la Vizualizări</a></p>
   </div>
+</section>
 {% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Vizualizări · ResNat{% endblock %}
+
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Vizualizări</h1>
+    <p class="muted">Alege ce vrei să explorezi. Fiecare casetă te duce la o pagină dedicată.</p>
+  </header>
+
+  <div class="viz-grid">
+    <a href="{% url 'viz_specii' %}" class="viz-tile viz-green">
+      <div class="viz-title">Specii</div>
+      <div class="viz-sub muted">Liste, detalii, distribuție</div>
+    </a>
+
+    <a href="{% url 'viz_rez' %}" class="viz-tile viz-teal">
+      <div class="viz-title">Rezervații</div>
+      <div class="viz-sub muted">Hartă, tabele, meta‑date</div>
+    </a>
+
+    <a href="{% url 'viz_asoc' %}" class="viz-tile viz-orange">
+      <div class="viz-title">Asociații</div>
+      <div class="viz-sub muted">Relații și evoluții pe ani</div>
+    </a>
+
+    <a href="{% url 'viz_situri' %}" class="viz-tile viz-olive">
+      <div class="viz-title">Situri</div>
+      <div class="viz-sub muted">Site‑uri & habitate aferente</div>
+    </a>
+
+    <a href="{% url 'viz_habitate' %}" class="viz-tile viz-red">
+      <div class="viz-title">Habitate</div>
+      <div class="viz-sub muted">Clasificare & coduri</div>
+    </a>
+  </div>
+</section>
+{% endblock %}
