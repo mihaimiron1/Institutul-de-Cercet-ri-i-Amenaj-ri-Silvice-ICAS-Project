@@ -19,7 +19,8 @@ urlpatterns = [
 
     # auth (ai deja LoginView configurat prin template)
     path("accounts/login/", auth_views.LoginView.as_view(), name="login"),
-    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
+        path("accounts/logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
+
 
     # home + pagini
     path("", core_views.home, name="home"),
@@ -31,7 +32,6 @@ urlpatterns = [
     path("comparatii/", views.comparatii_home, name="comparatii_home"),
     
 
-    
 
 
 

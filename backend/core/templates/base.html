@@ -1,6 +1,5 @@
-<!-- core/templates/base.html -->
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
 <head>
   <meta charset="utf-8">
@@ -9,21 +8,30 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+
+  <!-- Topbar / Navbar -->
   <header class="topbar">
     <div class="container topbar-inner">
-      <a class="brand" href="{% url 'home' %}">ResNat</a>
+      <!-- Logo/brand mai mare -->
+      <a class="brand brand-lg" href="{% url 'home' %}">ResNat</a>
+
       <nav class="nav">
         <a href="{% url 'associations_filters' %}">Filtrări</a>
         <a href="{% url 'vizualizari_home' %}">Vizualizări</a>
         <a href="{% url 'comparatii_home' %}">Comparații</a>
 
-        {% if request.user.is_authenticated %}
+        {% if request.user.is_staff %}
           <a href="/admin/" class="btn btn-outline">Adăugări</a>
         {% endif %}
 
         {% if request.user.is_authenticated %}
           <span class="user-pill">{{ request.user.username }}</span>
-          <a href="{% url 'logout' %}" class="btn">Logout</a>
+
+          <!-- Logout trebuie să fie POST (Django 5 -> 405 pe GET) -->
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn">Logout</button>
+          </form>
         {% else %}
           <a href="{% url 'login' %}" class="btn">Login</a>
         {% endif %}
@@ -31,12 +39,12 @@
     </div>
   </header>
 
-  <main class="container">
-    {% block content %}{% endblock %}
-  </main>
+  {% block content %}{% endblock %}
 
   <footer class="footer container">
-    <small>© {{ now|date:"Y" }} ResNat</small>
+    © ResNat
   </footer>
+
+  {% block extra_js %}{% endblock %}
 </body>
 </html>
