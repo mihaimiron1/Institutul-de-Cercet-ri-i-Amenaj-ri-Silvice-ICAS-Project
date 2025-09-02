@@ -81,8 +81,6 @@ def home(request):
         "reserves": Reserve.objects.count(),
         "sites": Site.objects.count(),
         "habitats": Habitat.objects.count(),
-        "occurrences": Occurrence.objects.count(),
-        "last_occurrence_at": Occurrence.objects.aggregate(last=Max("created_at"))["last"],
     }
 
     context = {

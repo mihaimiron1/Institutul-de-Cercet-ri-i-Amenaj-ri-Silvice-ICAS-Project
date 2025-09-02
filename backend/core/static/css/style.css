@@ -104,13 +104,17 @@ html, body{
 .card{ padding: var(--sp-3); }
 .kpi{ padding: var(--sp-3) var(--sp-4); }
 
-.kpi .kpi-value { font-size: 2rem; line-height: 1.1; }
+.kpi .kpi-value {
+font-size: 2.4rem;
+font-weight: 500;
+line-height: 1.1;
+}
 .kpi { padding: 18px; }
 
-.kpi .kpi-label{
-  color: var(--muted);
-  margin-top: 4px;
-  font-size: var(--fs-14);
+.kpi .kpi-label {
+color: var(--muted);
+font-size: 1rem;
+margin-top: 6px;
 }
 .kpi .kpi-sub{
   color: var(--muted);
@@ -118,12 +122,38 @@ html, body{
   margin-top: 2px;
 }
 
+.kpi-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+.kpi-grid {
+grid-template-columns: 1fr;
+}}
+
+.card.kpi {
+padding: 42px 20px;
+border-radius: 14px;
+color: var(--brand);
+
+}
 /* Grile fluide: nu se suprapun pe ecrane mici */
 .grid{ display:grid; gap: var(--sp-3); }
-@media (min-width: 1100px) {
+@media (min-width: 1200px) {
+  .brand { font-size: 1.75rem; }
   .grid.grid-5 { grid-template-columns: repeat(3, 1fr); } /* 3 coloane */
 }.tiles{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .actions{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.brand {
+font-size: 1.6rem;     
+font-weight: 800;
+letter-spacing: .2px;
+text-decoration: none;
+}
 
 .tile{
   display:block;
@@ -192,6 +222,8 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
   border-radius: 999px;
   color: var(--muted);
 }
+
+.topbar { padding: 8px 0; }
 
 /* --------- Secțiuni home --------- */
 .stats{ grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
@@ -280,7 +312,7 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 10px 28px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 999px;
