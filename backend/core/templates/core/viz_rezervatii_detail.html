@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}{{ r.name }} · ResNat{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>{{ r.name }}</h1>
+    <p class="muted">{{ r.category|default:"—" }}{% if r.subcategory %} · {{ r.subcategory }}{% endif %}</p>
+  </header>
+
+  <div class="card" id="reserve-card">
+    <div class="mb-2" id="reserve-desc" data-desc="reserve">
+      <strong>Descriere</strong>
+      <div class="muted">{{ r.description|default:"" }}</div>
+    </div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div>
+        <strong>Raion</strong>
+        <div class="muted">{{ r.raion|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Amplasare</strong>
+        <div class="muted">{{ r.amplasare|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Proprietar</strong>
+        <div class="muted">{{ r.proprietar|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Suprafață (ha)</strong>
+        <div class="muted">{{ r.suprafata_ha|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Categoria</strong>
+        <div class="muted">{{ r.category|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Subcategoria</strong>
+        <div class="muted">{{ r.subcategory|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Coordonate (lat, lon)</strong>
+        <div class="muted">{% if r.latitude and r.longitude %}{{ r.latitude }}, {{ r.longitude }}{% else %}—{% endif %}</div>
+      </div>
+    </div>
+
+    {% if r.diversitatea_fitocenotica %}
+    <div class="mt-4">
+      <strong>Diversitatea fitocenotică</strong>
+      <div class="muted">{{ r.diversitatea_fitocenotica }}</div>
+    </div>
+    {% endif %}
+
+    {% if r.notes %}
+    <div class="mt-4">
+      <strong>Note</strong>
+      <div class="muted">{{ r.notes }}</div>
+    </div>
+    {% endif %}
+
+    <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
+      <a href="{% url 'viz_rez' %}" class="btn btn-outline">Înapoi la rezervații</a>
+      {% if is_admin %}
+      <button id="btn-edit-reserve" class="btn" aria-label="Editează descriere"><span aria-hidden="true">✎</span> Edit</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if r.latitude and r.longitude %}
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <div id="reserve-map" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
+  {% endif %}
+</section>
+{% block extra_js %}
+  {% if r.latitude and r.longitude %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function(){
+      if (!document.getElementById('reserve-map')) return;
+      var lat = {{ r.latitude|floatformat:"6" }};
+      var lon = {{ r.longitude|floatformat:"6" }};
+      var mdCenter = [47.0, 28.5];
+      var map = L.map('reserve-map', { center: [lat, lon] || mdCenter, zoom: 8, scrollWheelZoom: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+      var marker = L.marker([lat, lon]).addTo(map); marker.bindPopup(`{{ r.name|escapejs }}`); map.setView([lat, lon], 10);
+    })();
+  </script>
+  {% endif %}
+  <script>
+    (function(){
+      var btn = document.getElementById('btn-edit-reserve');
+      if (!btn) return;
+      var card = document.getElementById('reserve-card');
+      var desc = document.getElementById('reserve-desc');
+
+      function autosize(textarea){ textarea.style.height='auto'; textarea.style.height = Math.min(textarea.scrollHeight, 360) + 'px'; }
+      function toast(msg){ var t=document.createElement('div'); t.setAttribute('role','status'); t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
+
+      btn.addEventListener('click', function(){
+        var current = {{ r.description|default:""|escapejs }};
+        var editor = document.createElement('div');
+        editor.innerHTML = '<strong id="r-desc-label">Descriere</strong>\n<textarea aria-labelledby="r-desc-label" id="reserve-textarea" rows="6" style="width:100%; margin-top:6px; padding:10px; line-height:1.5; border:1px solid var(--line); border-radius:10px; outline: 2px solid transparent;" placeholder="Adaugă o descriere…"></textarea>\n<div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">\n  <button type="button" id="cancel-edit-r" class="btn btn-outline">Cancel</button>\n  <button type="button" id="save-edit-r" class="btn">Save</button>\n</div>';
+        desc.replaceWith(editor);
+        var textarea = editor.querySelector('#reserve-textarea');
+        textarea.value = current || '';
+        autosize(textarea);
+        textarea.addEventListener('input', function(){ autosize(textarea); });
+        textarea.focus();
+        function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
+        function setLoading(on){ var b=editor.querySelector('#save-edit-r'); b.disabled=!!on; b.textContent = on?'Saving…':'Save'; textarea.disabled=!!on; }
+        editor.addEventListener('keydown', function(e){ if ((e.ctrlKey||e.metaKey)&&e.key==='Enter') editor.querySelector('#save-edit-r').click(); if (e.key==='Escape') editor.querySelector('#cancel-edit-r').click(); });
+        editor.querySelector('#cancel-edit-r').addEventListener('click', function(){ editor.replaceWith(desc); });
+        editor.querySelector('#save-edit-r').addEventListener('click', async function(){
+          setLoading(true);
+          try {
+            var fd = new FormData(); fd.append('description', textarea.value);
+            const resp = await fetch('{% url "update_reserve_description" r.id %}', { method:'POST', headers:{ 'X-Requested-With':'fetch', 'X-CSRFToken': getCookie('csrftoken') }, body: fd });
+            if (!resp.ok) throw new Error('Save failed');
+            const data = await resp.json();
+            desc.querySelector('.muted').textContent = data.description || '';
+            editor.replaceWith(desc);
+            toast('Salvat');
+          } catch(e){ toast('Eroare la salvare'); }
+          finally { setLoading(false); }
+        });
+      });
+    })();
+  </script>
+{% endblock %}
+{% endblock %}
+

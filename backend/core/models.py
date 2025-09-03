@@ -11,6 +11,9 @@ class Reserve(models.Model):
     category = models.CharField(max_length=120, blank=True, null=True)
     subcategory = models.CharField(max_length=120, blank=True, null=True)
 
+    # Descriere editabilă de către administratori
+    description = models.TextField(blank=True, null=True)
+
     # ✅ câmpurile care lipsesc
     diversitatea_fitocenotica = models.TextField(blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
@@ -36,6 +39,9 @@ class Species(models.Model):
     familia = models.CharField(max_length=120, blank=True, null=True)
     habitat = models.CharField(max_length=120, blank=True, null=True)
     localitatea = models.CharField(max_length=255, blank=True, null=True)
+
+    # Descriere editabilă de către administratori
+    description = models.TextField(blank=True, null=True)
 
     silvice = models.BooleanField(default=False)
     pajisti_sau_stepice = models.BooleanField(default=False) 

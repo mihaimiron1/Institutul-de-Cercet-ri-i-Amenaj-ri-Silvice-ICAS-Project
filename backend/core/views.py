@@ -23,6 +23,8 @@ import csv
 from io import StringIO, BytesIO
 import unicodedata
 import difflib
+from django.utils.html import strip_tags
+from django.http import JsonResponse
 
 class _Echo:
     def write(self, value):  # csv.writer cere un .write()
@@ -175,17 +177,128 @@ def viz_specii(request):
 @login_required
 def viz_specii_detail(request, pk: int):
     species = get_object_or_404(Species, pk=pk)
+    points_qs = (Occurrence.objects
+                 .filter(species=species)
+                 .exclude(latitude__isnull=True)
+                 .exclude(longitude__isnull=True))
+
+    # transformăm într-o listă simplă pentru template (lat, lon, label)
+    points = []
+    for o in points_qs:
+        try:
+            lat = float(o.latitude)
+            lon = float(o.longitude)
+        except (TypeError, ValueError):
+            continue
+        label = f"{species.denumire_stiintifica} — {o.reserve.name} ({o.year})" if getattr(o, "reserve", None) else species.denumire_stiintifica
+        points.append({
+            "lat": lat,
+            "lon": lon,
+            "label": label,
+        })
+
+    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
     return render(request, "core/viz_specii_detail.html", {
         "s": species,
+        "points": points,
+        "is_admin": is_admin,
     })
 
 @login_required
 def viz_rezervatii(request):
-    return render(request, "core/viz_rezervatii.html")
+    """Listă de rezervații în carduri, cu căutare tolerantă (diacritice/typo)."""
+    q = (request.GET.get("q") or "").strip()
+    qs = Reserve.objects.all()
+
+    def _normalize_text(value: str) -> str:
+        if not value:
+            return ""
+        decomposed = unicodedata.normalize("NFKD", str(value))
+        no_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+        return no_accents.lower().strip()
+
+    def _fuzzy_ratio(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        return difflib.SequenceMatcher(None, a, b).ratio()
+
+    if not q:
+        qs = qs.order_by("name")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        norm_q = _normalize_text(q)
+        candidates = list(qs.only(
+            "id", "name", "raion", "amplasare", "proprietar", "category", "subcategory"
+        ))
+        scored = []
+        for r in candidates:
+            fields = [
+                _normalize_text(r.name),
+                _normalize_text(r.raion),
+                _normalize_text(r.amplasare),
+                _normalize_text(r.proprietar),
+                _normalize_text(r.category),
+                _normalize_text(r.subcategory),
+            ]
+            best = 0.0
+            substr_bonus = 0.0
+            for f in fields:
+                if not f:
+                    continue
+                if norm_q in f:
+                    substr_bonus = max(substr_bonus, 0.15)
+                best = max(best, _fuzzy_ratio(norm_q, f))
+            total_score = best + substr_bonus
+            if total_score >= 0.55:
+                scored.append((total_score, r))
+
+        scored.sort(key=lambda t: (-t[0], _normalize_text(t[1].name)))
+        ordered = [r for _, r in scored]
+        paginator, page_obj = _paginate(request, ordered, default=24)
+
+    return render(request, "core/viz_rezervatii.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+    })
 
 @login_required
 def viz_asociatii(request):
     return render(request, "core/viz_asociatii.html")
+
+@login_required
+def viz_rezervatii_detail(request, pk: int):
+    r = get_object_or_404(Reserve, pk=pk)
+    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    return render(request, "core/viz_rezervatii_detail.html", {"r": r, "is_admin": is_admin})
+
+@login_required
+def update_species_description(request, pk: int):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
+    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    species = get_object_or_404(Species, pk=pk)
+    raw = request.POST.get("description", "")
+    safe = strip_tags(raw)
+    species.description = safe
+    species.save(update_fields=["description", "updated_at"])
+    return JsonResponse({"ok": True, "description": safe})
+
+@login_required
+def update_reserve_description(request, pk: int):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
+    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    reserve = get_object_or_404(Reserve, pk=pk)
+    raw = request.POST.get("description", "")
+    safe = strip_tags(raw)
+    reserve.description = safe
+    reserve.save(update_fields=["description", "updated_at"])
+    return JsonResponse({"ok": True, "description": safe})
 
 @login_required
 def viz_situri(request):
