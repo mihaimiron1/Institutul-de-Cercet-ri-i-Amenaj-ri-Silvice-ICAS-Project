@@ -12,34 +12,38 @@
       <strong>Descriere</strong>
       <div class="muted">{{ r.description|default:"" }}</div>
     </div>
-    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+    <div class="grid" id="reserve-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div>
+        <strong>Nume</strong>
+        <div class="muted" data-f="name">{{ r.name }}</div>
+      </div>
       <div>
         <strong>Raion</strong>
-        <div class="muted">{{ r.raion|default:"—" }}</div>
+        <div class="muted" data-f="raion">{{ r.raion|default:"—" }}</div>
       </div>
       <div>
         <strong>Amplasare</strong>
-        <div class="muted">{{ r.amplasare|default:"—" }}</div>
+        <div class="muted" data-f="amplasare">{{ r.amplasare|default:"—" }}</div>
       </div>
       <div>
         <strong>Proprietar</strong>
-        <div class="muted">{{ r.proprietar|default:"—" }}</div>
+        <div class="muted" data-f="proprietar">{{ r.proprietar|default:"—" }}</div>
       </div>
       <div>
         <strong>Suprafață (ha)</strong>
-        <div class="muted">{{ r.suprafata_ha|default:"—" }}</div>
+        <div class="muted" data-f="suprafata_ha">{{ r.suprafata_ha|default:"—" }}</div>
       </div>
       <div>
         <strong>Categoria</strong>
-        <div class="muted">{{ r.category|default:"—" }}</div>
+        <div class="muted" data-f="category">{{ r.category|default:"—" }}</div>
       </div>
       <div>
         <strong>Subcategoria</strong>
-        <div class="muted">{{ r.subcategory|default:"—" }}</div>
+        <div class="muted" data-f="subcategory">{{ r.subcategory|default:"—" }}</div>
       </div>
       <div>
-        <strong>Coordonate (lat, lon)</strong>
-        <div class="muted">{% if r.latitude and r.longitude %}{{ r.latitude }}, {{ r.longitude }}{% else %}—{% endif %}</div>
+        <strong>Coordonate</strong>
+        <div class="muted" data-f="coords">{% if r.latitude and r.longitude %}{{ r.latitude }}, {{ r.longitude }}{% else %}—{% endif %}</div>
       </div>
     </div>
 
@@ -60,7 +64,7 @@
     <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
       <a href="{% url 'viz_rez' %}" class="btn btn-outline">Înapoi la rezervații</a>
       {% if is_admin %}
-      <button id="btn-edit-reserve" class="btn" aria-label="Editează descriere"><span aria-hidden="true">✎</span> Edit</button>
+      <button id="btn-edit-reserve" class="btn" aria-label="Editează metadate"><span aria-hidden="true">✎</span> Edit</button>
       {% endif %}
     </div>
   </div>
@@ -83,6 +87,7 @@
   <script>
     (function(){
       if (!document.getElementById('reserve-map')) return;
+      if (window.__reserveMapInit) return; window.__reserveMapInit = true;
       var lat = {{ r.latitude|floatformat:"6" }};
       var lon = {{ r.longitude|floatformat:"6" }};
       var mdCenter = [47.0, 28.5];
@@ -93,44 +98,297 @@
   </script>
   {% endif %}
   <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      var btn = document.getElementById('btn-edit-reserve');
-      if (!btn) return;
+    (function(){
       var card = document.getElementById('reserve-card');
-      var desc = document.getElementById('reserve-desc');
+      var meta = document.getElementById('reserve-meta');
 
-      function autosize(textarea){ textarea.style.height='auto'; textarea.style.height = Math.min(textarea.scrollHeight, 360) + 'px'; }
       function toast(msg){ var t=document.createElement('div'); t.setAttribute('role','status'); t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
+      function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
+      function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class=\"muted\" style=\"margin:0 0 12px;\">Save before leaving?</p>\n    <div style=\"display:flex; gap:8px; justify-content:flex-end;\">\n      <button type=\"button\" id=\"guard-stay\" class=\"btn btn-outline\">Stay</button>\n      <button type=\"button\" id=\"guard-discard\" class=\"btn btn-outline\">Discard</button>\n      <button type=\"button\" id=\"guard-save\" class=\"btn\">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
 
-      btn.addEventListener('click', function(){
-        var current = {{ r.description|default:""|escapejs }};
-        var editor = document.createElement('div');
-        editor.innerHTML = '<strong id="r-desc-label">Descriere</strong>\n<textarea aria-labelledby="r-desc-label" id="reserve-textarea" rows="6" style="width:100%; margin-top:6px; padding:10px; line-height:1.5; border:1px solid var(--line); border-radius:10px; outline: 2px solid transparent;" placeholder="Adaugă o descriere…"></textarea>\n<div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">\n  <button type="button" id="cancel-edit-r" class="btn btn-outline">Cancel</button>\n  <button type="button" id="save-edit-r" class="btn">Save</button>\n</div>';
-        desc.replaceWith(editor);
-        var textarea = editor.querySelector('#reserve-textarea');
-        textarea.value = current || '';
-        autosize(textarea);
-        textarea.addEventListener('input', function(){ autosize(textarea); });
-        textarea.focus();
-        function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
-        function setLoading(on){ var b=editor.querySelector('#save-edit-r'); b.disabled=!!on; b.textContent = on?'Saving…':'Save'; textarea.disabled=!!on; }
-        editor.addEventListener('keydown', function(e){ if ((e.ctrlKey||e.metaKey)&&e.key==='Enter') editor.querySelector('#save-edit-r').click(); if (e.key==='Escape') editor.querySelector('#cancel-edit-r').click(); });
-        editor.querySelector('#cancel-edit-r').addEventListener('click', function(){ editor.replaceWith(desc); });
-        editor.querySelector('#save-edit-r').addEventListener('click', async function(){
+      document.addEventListener('click', function(ev){
+        var btn = ev.target.closest('#btn-edit-reserve');
+        if (!btn) return;
+
+        // Store original values for comparison
+        var originalValues = {};
+        var inputs = {};
+        var dirty = false;
+
+        // Convert metadata fields to inputs
+        function createInput(field, type, placeholder) {
+          var el = meta.querySelector('[data-f="' + field + '"]');
+          var val = (el.textContent.trim() === '—') ? '' : el.textContent.trim();
+          originalValues[field] = val;
+          
+          var input;
+          if (type === 'text') {
+            // Use textarea for text fields with autosizing
+            input = document.createElement('textarea');
+            input.rows = 1;
+            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; min-height:1.5em; max-height:12em; resize:none; overflow-y:auto; line-height:1.5;';
+            autosize(input);
+          } else {
+            // Use input for numeric fields
+            input = document.createElement('input');
+            input.type = type;
+            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
+          }
+          
+          input.name = field;
+          input.placeholder = placeholder || '';
+          input.value = val;
+          
+          el.replaceWith(input);
+          inputs[field] = input;
+          
+          input.addEventListener('input', function(){ 
+            dirty = true; 
+            updateSaveButton();
+            if (type === 'text') autosize(input);
+          });
+        }
+
+        // Autosize function for textareas
+        function autosize(textarea) {
+          textarea.style.height = 'auto';
+          var scrollHeight = textarea.scrollHeight;
+          var minHeight = parseFloat(getComputedStyle(textarea).lineHeight) * 1.5; // 1.5 lines
+          var maxHeight = parseFloat(getComputedStyle(textarea).lineHeight) * 12; // 12 lines max
+          textarea.style.height = Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px';
+        }
+
+        // Special handling for coordinates
+        function createCoordInputs() {
+          var coordsEl = meta.querySelector('[data-f="coords"]');
+          var coordsWrap = document.createElement('div');
+          coordsWrap.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:6px;';
+          
+          var lat = document.createElement('input');
+          lat.type = 'number';
+          lat.name = 'latitude';
+          lat.placeholder = 'Lat (-90..90)';
+          lat.step = '0.000001';
+          lat.min = '-90';
+          lat.max = '90';
+          
+          var lon = document.createElement('input');
+          lon.type = 'number';
+          lon.name = 'longitude';
+          lon.placeholder = 'Lon (-180..180)';
+          lon.step = '0.000001';
+          lon.min = '-180';
+          lon.max = '180';
+          
+          lat.style.cssText = lon.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
+          
+          var parts = coordsEl.textContent.split(',');
+          var latVal = (parts[0]||'').trim() === '—' ? '' : (parts[0]||'').trim();
+          var lonVal = (parts[1]||'').trim() === '—' ? '' : (parts[1]||'').trim();
+          
+          lat.value = latVal;
+          lon.value = lonVal;
+          originalValues.latitude = latVal;
+          originalValues.longitude = lonVal;
+          
+          coordsWrap.appendChild(lat);
+          coordsWrap.appendChild(lon);
+          coordsEl.replaceWith(coordsWrap);
+          
+          inputs.latitude = lat;
+          inputs.longitude = lon;
+          
+          lat.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
+          lon.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
+        }
+
+        // Create all inputs
+        createInput('name', 'text', 'Nume');
+        createInput('raion', 'text', 'Raion');
+        createInput('amplasare', 'text', 'Amplasare');
+        createInput('proprietar', 'text', 'Proprietar');
+        createInput('suprafata_ha', 'number', 'Suprafață (ha)');
+        createInput('category', 'text', 'Categoria');
+        createInput('subcategory', 'text', 'Subcategoria');
+        createCoordInputs();
+
+        // Replace Edit button with Save/Cancel
+        var controlsWrap = document.createElement('div');
+        controlsWrap.style.cssText = 'display:flex; gap:8px; justify-content:flex-end;';
+        controlsWrap.innerHTML = '<button type="button" id="cancel-edit-r" class="btn btn-outline">Cancel</button><button type="button" id="save-edit-r" class="btn" disabled>Save</button>';
+        btn.replaceWith(controlsWrap);
+
+        var btnSave = controlsWrap.querySelector('#save-edit-r');
+        var btnCancel = controlsWrap.querySelector('#cancel-edit-r');
+
+        function setLoading(on) {
+          btnSave.disabled = !!on;
+          btnSave.textContent = on ? 'Saving…' : 'Save';
+          Object.values(inputs).forEach(function(input) { input.disabled = !!on; });
+        }
+
+        function updateSaveButton() {
+          var hasChanges = false;
+          for (var field in inputs) {
+            var val = (inputs[field].value || '').trim();
+            if (val !== (originalValues[field] || '')) {
+              hasChanges = true;
+              break;
+            }
+          }
+          btnSave.disabled = !hasChanges;
+        }
+
+        // Focus first input
+        inputs.name.focus();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btnSave.disabled) {
+            btnSave.click();
+          }
+          if (e.key === 'Escape') {
+            btnCancel.click();
+          }
+        });
+
+        // Unsaved changes guard
+        function beforeUnload(e) {
+          if (dirty) {
+            e.preventDefault();
+            e.returnValue = '';
+          }
+        }
+        window.addEventListener('beforeunload', beforeUnload);
+
+        // Internal navigation guard
+        document.addEventListener('click', function(e) {
+          var a = e.target.closest('a');
+          if (!a || !dirty) return;
+          e.preventDefault();
+          var m = buildGuardModal();
+          document.body.appendChild(m);
+          m.querySelector('#guard-stay').focus();
+          m.querySelector('#guard-stay').onclick = function() { m.remove(); };
+          m.querySelector('#guard-discard').onclick = function() {
+            window.removeEventListener('beforeunload', beforeUnload);
+            window.location.href = a.href;
+          };
+          m.querySelector('#guard-save').onclick = async function() {
+            await doSave(true, a.href);
+          };
+        }, true);
+
+        // Cancel button
+        btnCancel.addEventListener('click', function() {
+          window.removeEventListener('beforeunload', beforeUnload);
+          // Restore original display for regular fields
+          for (var field in inputs) {
+            if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            display.textContent = (originalValues[field] || '') === '' ? '—' : originalValues[field];
+            inputs[field].replaceWith(display);
+          }
+          // Restore coordinates display
+          var coordsDisplay = document.createElement('div');
+          coordsDisplay.className = 'muted';
+          coordsDisplay.setAttribute('data-f', 'coords');
+          if (originalValues.latitude && originalValues.longitude) {
+            coordsDisplay.textContent = originalValues.latitude + ', ' + originalValues.longitude;
+          } else {
+            coordsDisplay.textContent = '—';
+          }
+          inputs.latitude.parentNode.replaceWith(coordsDisplay);
+          // Restore Edit button
+          controlsWrap.replaceWith(btn);
+        });
+
+        // Save function
+        async function doSave(navigateAfter, href) {
           setLoading(true);
           try {
-            var fd = new FormData(); fd.append('description', textarea.value);
-            const resp = await fetch('{% url "update_reserve_description" r.id %}', { method:'POST', headers:{ 'X-Requested-With':'fetch', 'X-CSRFToken': getCookie('csrftoken') }, body: fd });
-            if (!resp.ok) throw new Error('Save failed');
+            var fd = new FormData();
+            // Send only changed fields
+            for (var field in inputs) {
+              var val = (inputs[field].value || '').trim();
+              fd.append(field, val);
+            }
+            
+            const resp = await fetch('{% url "update_reserve_meta" r.id %}', {
+              method: 'POST',
+              headers: {
+                'X-Requested-With': 'fetch',
+                'X-CSRFToken': getCookie('csrftoken')
+              },
+              body: fd
+            });
+            
+            if (!resp.ok) {
+              var errorData = await resp.json();
+              throw new Error(errorData.error || 'Save failed');
+            }
+            
             const data = await resp.json();
-            desc.querySelector('.muted').textContent = data.description || '';
-            editor.replaceWith(desc);
-            toast('Salvat');
-          } catch(e){ toast('Eroare la salvare'); }
-          finally { setLoading(false); }
+            
+            // Update UI with new values
+            for (var field in data.changed || {}) {
+              if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
+              var display = document.createElement('div');
+              display.className = 'muted';
+              display.setAttribute('data-f', field);
+              display.textContent = (data.changed[field] == null || data.changed[field] === '') ? '—' : data.changed[field];
+              inputs[field].replaceWith(display);
+            }
+            
+            // Handle coordinates separately
+            if ('latitude' in (data.changed || {}) || 'longitude' in (data.changed || {})) {
+              var coordsDisplay = document.createElement('div');
+              coordsDisplay.className = 'muted';
+              coordsDisplay.setAttribute('data-f', 'coords');
+              var latv = data.changed.latitude !== undefined ? data.changed.latitude : originalValues.latitude;
+              var lonv = data.changed.longitude !== undefined ? data.changed.longitude : originalValues.longitude;
+              if (latv && lonv) {
+                coordsDisplay.textContent = latv + ', ' + lonv;
+              } else {
+                coordsDisplay.textContent = '—';
+              }
+              inputs.latitude.parentNode.replaceWith(coordsDisplay);
+            }
+            
+            window.removeEventListener('beforeunload', beforeUnload);
+            toast('Saved');
+            
+            if (navigateAfter && href) {
+              window.location.href = href;
+            } else {
+              // Restore all non-coordinate fields to display mode
+              for (var field in inputs) {
+                if (field === 'latitude' || field === 'longitude') continue; // Already handled above
+                var display = document.createElement('div');
+                display.className = 'muted';
+                display.setAttribute('data-f', field);
+                var currentVal = inputs[field].value.trim();
+                display.textContent = currentVal === '' ? '—' : currentVal;
+                inputs[field].replaceWith(display);
+              }
+              // Restore Edit button
+              controlsWrap.replaceWith(btn);
+            }
+          } catch (e) {
+            toast('Save error: ' + e.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        // Save button
+        btnSave.addEventListener('click', function() {
+          if (!btnSave.disabled) doSave(false);
         });
-      });
-    });
+      }, true);
+    })();
   </script>
 {% endblock %}
 {% endblock %}

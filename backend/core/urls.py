@@ -43,6 +43,7 @@ urlpatterns = [
     path("vizualizari/rezervatii/", views.viz_rezervatii, name="viz_rez"),
     path("vizualizari/rezervatii/<int:pk>/", views.viz_rezervatii_detail, name="viz_rez_detail"),
     path("vizualizari/rezervatii/<int:pk>/update-description/", views.update_reserve_description, name="update_reserve_description"),
+    path("vizualizari/rezervatii/<int:pk>/update-meta/", views.update_reserve_meta, name="update_reserve_meta"),
     path("vizualizari/asociatii/", views.viz_asociatii, name="viz_asoc"),
     path("vizualizari/situri/", views.viz_situri, name="viz_situri"),
     path("vizualizari/habitate/", views.viz_habitate, name="viz_habitate"),
