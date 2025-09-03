@@ -93,7 +93,7 @@
   </script>
   {% endif %}
   <script>
-    (function(){
+    document.addEventListener('DOMContentLoaded', function(){
       var btn = document.getElementById('btn-edit-reserve');
       if (!btn) return;
       var card = document.getElementById('reserve-card');
@@ -130,7 +130,7 @@
           finally { setLoading(false); }
         });
       });
-    })();
+    });
   </script>
 {% endblock %}
 {% endblock %}

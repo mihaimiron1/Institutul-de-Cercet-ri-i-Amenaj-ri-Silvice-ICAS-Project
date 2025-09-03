@@ -114,7 +114,7 @@
   </script>
   {% endif %}
   <script>
-    (function(){
+    document.addEventListener('DOMContentLoaded', function(){
       var btn = document.getElementById('btn-edit-species');
       if (!btn) return;
       var card = document.getElementById('species-card');
@@ -169,7 +169,7 @@
           finally { setLoading(false); }
         });
       });
-    })();
+    });
   </script>
 {% endblock %}
 {% endblock %}
