@@ -5,11 +5,11 @@
 /* --------- Paletă & tipografie --------- */
 :root{
   /* Culori de bază (light) */
-  --bg:           #f6faf7;   /* fundal foarte deschis, nuanță verzuie */
+  --bg:           #f7faf7;   /* fundal foarte deschis, nuanță verzuie */
   --surface:      #ffffff;   /* panouri/tile */
-  --text:         #0d2214;   /* text principal */
-  --muted:        #637d6b;   /* text secundar */
-  --line:         #e2ece5;   /* borduri/ delimitări subtile */
+  --text:         #0e1a0f;   /* text principal */
+  --muted:        #54715a;   /* text secundar */
+  --line:         #dfe7df;   /* borduri/ delimitări subtile */
   --shadow:       0 2px 8px rgba(5, 24, 12, .06);
 
   /* Brand */
@@ -21,6 +21,13 @@
   --accent:       #0f1f15;   /* pentru texte pe buton brand */
   --danger:       #b52b3b;
   --warn:         #b58b2b;
+
+  /* Vizualizări - paletă naturală */
+  --green:        #2f7d32;        /* Specii (primary) */
+  --orange:       #f4a261;        /* Rezervații */
+  --terracotta:   #e76f51;        /* Asociații */
+  --teal:         #2a9d8f;        /* Situri */
+  --olive:        #718355;        /* Habitate */
 
   /* Raze & spacing */
   --r-lg: 14px;
@@ -71,10 +78,11 @@ html, body{
   justify-content: space-between;
 }
 .brand{
-  font-weight: 700;
+  font-weight: 800;
   color: var(--brand);
   text-decoration: none;
-  font-size: var(--fs-18);
+  font-size: 1.75rem;
+  letter-spacing: 0.2px;
 }
 .nav{ display:flex; align-items:center; gap: 8px; }
 .nav a{
@@ -322,7 +330,7 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
   gap: 10px;
   padding: 10px 28px;
   background: #fff;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0,0,0,.06);
 }

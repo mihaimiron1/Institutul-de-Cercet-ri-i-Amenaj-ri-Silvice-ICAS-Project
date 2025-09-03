@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Habitate · ResNat{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Habitate</h1>
+    <p class="muted">Explorează clasificarea și codurile habitatelor</p>
+  </header>
+  
+  <div class="card">
+    <h2>În curând</h2>
+    <p class="muted">Această secțiune va conține:</p>
+    <ul class="muted">
+      <li>Clasificarea completă a habitatelor</li>
+      <li>Coduri și denumiri (română/engleză)</li>
+      <li>Distribuția geografică</li>
+      <li>Statistici și analize</li>
+    </ul>
+    <p><a href="{% url 'vizualizari_home' %}" class="btn">Înapoi la Vizualizări</a></p>
+  </div>
+</section>
+{% endblock %}

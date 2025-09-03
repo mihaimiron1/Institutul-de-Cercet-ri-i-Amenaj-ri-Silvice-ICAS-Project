@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Situri · ResNat{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Situri</h1>
+    <p class="muted">Explorează site-urile și habitatele aferente</p>
+  </header>
+  
+  <div class="card">
+    <h2>În curând</h2>
+    <p class="muted">Această secțiune va conține:</p>
+    <ul class="muted">
+      <li>Lista completă de site-uri</li>
+      <li>Habitatele asociate fiecărui site</li>
+      <li>Suprafețele și distribuția</li>
+      <li>Filtrare și căutare avansată</li>
+    </ul>
+    <p><a href="{% url 'vizualizari_home' %}" class="btn">Înapoi la Vizualizări</a></p>
+  </div>
+</section>
+{% endblock %}

@@ -37,11 +37,12 @@ urlpatterns = [
 
 
     path("vizualizari/", views.vizualizari_home, name="vizualizari_home"),
-    path("vizualizari/specii/", views.coming_soon, name="viz_specii"),
-    path("vizualizari/rezervatii/", views.coming_soon, name="viz_rez"),
-    path("vizualizari/asociatii/", views.coming_soon, name="viz_asoc"),
-    path("vizualizari/situri/", views.coming_soon, name="viz_situri"),
-    path("vizualizari/habitate/", views.coming_soon, name="viz_habitate"),
+    path("vizualizari/specii/", views.viz_specii, name="viz_specii"),
+    path("vizualizari/specii/<int:pk>/", views.viz_specii_detail, name="viz_specii_detail"),
+    path("vizualizari/rezervatii/", views.viz_rezervatii, name="viz_rez"),
+    path("vizualizari/asociatii/", views.viz_asociatii, name="viz_asoc"),
+    path("vizualizari/situri/", views.viz_situri, name="viz_situri"),
+    path("vizualizari/habitate/", views.viz_habitate, name="viz_habitate"),
 
 
 

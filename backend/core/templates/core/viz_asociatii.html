@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Asociații · ResNat{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Asociații</h1>
+    <p class="muted">Explorează asociațiile vegetale din rezervații</p>
+  </header>
+  
+  <div class="card">
+    <h2>În curând</h2>
+    <p class="muted">Această secțiune va conține:</p>
+    <ul class="muted">
+      <li>Relațiile dintre rezervații și asociații</li>
+      <li>Evoluția asociațiilor pe ani</li>
+      <li>Grafice și vizualizări temporale</li>
+      <li>Analize comparative</li>
+    </ul>
+    <p><a href="{% url 'vizualizari_home' %}" class="btn">Înapoi la Vizualizări</a></p>
+  </div>
+</section>
+{% endblock %}

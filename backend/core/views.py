@@ -1,5 +1,6 @@
 # core/views.py
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, Http404, StreamingHttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
@@ -20,6 +21,8 @@ from .models import (
 # CSV/XLSX
 import csv
 from io import StringIO, BytesIO
+import unicodedata
+import difflib
 
 class _Echo:
     def write(self, value):  # csv.writer cere un .write()
@@ -110,6 +113,87 @@ def vizualizari_home(request):
 @login_required
 def coming_soon(request):
     return render(request, "core/coming_soon.html")
+
+@login_required
+def viz_specii(request):
+    """Listă cu căutare tolerantă (case/diacritice) și paginare pe carduri."""
+    q = (request.GET.get("q") or "").strip()
+    qs = Species.objects.all()
+
+    def _normalize_text(value: str) -> str:
+        if not value:
+            return ""
+        decomposed = unicodedata.normalize("NFKD", str(value))
+        no_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+        return no_accents.lower().strip()
+
+    def _fuzzy_ratio(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        return difflib.SequenceMatcher(None, a, b).ratio()
+
+    if not q:
+        qs = qs.order_by("denumire_stiintifica")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        norm_q = _normalize_text(q)
+        candidates = list(qs.only(
+            "id", "denumire_stiintifica", "denumire_populara", "familia", "clasa", "habitat", "localitatea"
+        ))
+        scored = []
+        for s in candidates:
+            fields = [
+                _normalize_text(s.denumire_stiintifica),
+                _normalize_text(s.denumire_populara),
+                _normalize_text(s.familia),
+                _normalize_text(s.clasa),
+                _normalize_text(s.habitat),
+                _normalize_text(s.localitatea),
+            ]
+            best = 0.0
+            substr_bonus = 0.0
+            for f in fields:
+                if not f:
+                    continue
+                if norm_q in f:
+                    substr_bonus = max(substr_bonus, 0.15)
+                best = max(best, _fuzzy_ratio(norm_q, f))
+            total_score = best + substr_bonus
+            if total_score >= 0.55:
+                scored.append((total_score, s))
+
+        scored.sort(key=lambda t: (-t[0], _normalize_text(t[1].denumire_stiintifica)))
+        ordered = [s for _, s in scored]
+        paginator, page_obj = _paginate(request, ordered, default=24)
+
+    return render(request, "core/viz_specii.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+    })
+
+@login_required
+def viz_specii_detail(request, pk: int):
+    species = get_object_or_404(Species, pk=pk)
+    return render(request, "core/viz_specii_detail.html", {
+        "s": species,
+    })
+
+@login_required
+def viz_rezervatii(request):
+    return render(request, "core/viz_rezervatii.html")
+
+@login_required
+def viz_asociatii(request):
+    return render(request, "core/viz_asociatii.html")
+
+@login_required
+def viz_situri(request):
+    return render(request, "core/viz_situri.html")
+
+@login_required
+def viz_habitate(request):
+    return render(request, "core/viz_habitate.html")
 
 @login_required
 def comparatii_home(request):
