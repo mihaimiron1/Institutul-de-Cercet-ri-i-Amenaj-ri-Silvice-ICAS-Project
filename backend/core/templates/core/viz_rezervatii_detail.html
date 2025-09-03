@@ -176,18 +176,9 @@
       var lat = {{ r.latitude|floatformat:"6" }};
       var lon = {{ r.longitude|floatformat:"6" }};
       var mdCenter = [47.0, 28.5];
-      var map = L.map('reserve-map', { 
-        center: [lat, lon] || mdCenter, 
-        zoom: 8, 
-        scrollWheelZoom: true 
-      });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
-        maxZoom: 19, 
-        attribution: '&copy; OpenStreetMap contributors' 
-      }).addTo(map);
-      var marker = L.marker([lat, lon]).addTo(map); 
-      marker.bindPopup('{{ r.name|escapejs }}'); 
-      map.setView([lat, lon], 10);
+      var map = L.map('reserve-map', { center: [lat, lon] || mdCenter, zoom: 8, scrollWheelZoom: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+      var marker = L.marker([lat, lon]).addTo(map); marker.bindPopup(`{{ r.name|escapejs }}`); map.setView([lat, lon], 10);
     })();
   </script>
   {% endif %}
@@ -204,14 +195,10 @@
         var btn = ev.target.closest('#btn-edit-reserve');
         if (!btn) return;
 
-        // State & values
-        var state = 'EDITING'; // VIEW → EDITING → SAVING → VIEW
-        var originalValues = {}; // raw originals for UI restore
-        var initialValues = {};  // normalized snapshot used for dirty checks
+        // Store original values for comparison
+        var originalValues = {};
         var inputs = {};
         var dirty = false;
-        var beforeUnloadHandler = null;
-        var internalNavHandler = null;
 
         // Convert metadata fields to inputs
         function createInput(field, type, placeholder) {
@@ -241,7 +228,7 @@
           inputs[field] = input;
           
           input.addEventListener('input', function(){ 
-            checkDirtyState();
+            dirty = true; 
             updateSaveButton();
             if (type === 'text') autosize(input);
           });
@@ -304,8 +291,8 @@
           inputs.latitude = lat;
           inputs.longitude = lon;
           
-          lat.addEventListener('input', function(){ checkDirtyState(); updateSaveButton(); });
-          lon.addEventListener('input', function(){ checkDirtyState(); updateSaveButton(); });
+          lat.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
+          lon.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
         }
 
         // Set edit mode attribute for CSS
@@ -320,98 +307,6 @@
         createInput('category', 'text', 'Categoria');
         createInput('subcategory', 'text', 'Subcategoria');
         createCoordInputs();
-
-        // Normalization helpers for consistent comparisons (trim, collapse spaces, normalize line endings, strip diacritics)
-        function normalizeText(value){
-          if (value == null) return '';
-          var s = String(value);
-          // Normalize Unicode and strip diacritics
-          try { s = s.normalize('NFD').replace(/\p{Diacritic}+/gu, ''); } catch(_) {}
-          // Normalize line endings to \n, trim lines, collapse multiple spaces
-          s = s.replace(/\r\n?|\u2028|\u2029/g, '\n');
-          // Collapse spaces but preserve newlines
-          s = s.split('\n').map(function(line){ return line.replace(/\s+/g, ' ').trim(); }).join('\n');
-          return s.trim();
-        }
-
-        function snapshotInitialValues(){
-          for (var field in inputs){
-            var val = (inputs[field].value || '');
-            initialValues[field] = normalizeText(val);
-          }
-        }
-
-        function currentNormalized(field){
-          var val = (inputs[field].value || '');
-          return normalizeText(val);
-        }
-
-        function checkDirtyState(){
-          var wasDirty = dirty;
-          if (state !== 'EDITING') { dirty = false; updateGuards(); return; }
-          dirty = false;
-          for (var field in inputs){
-            if (currentNormalized(field) !== (initialValues[field] || '')){ dirty = true; break; }
-          }
-          if (dirty !== wasDirty) updateGuards();
-        }
-
-        function attachBeforeUnload(){
-          if (beforeUnloadHandler) return;
-          beforeUnloadHandler = function(e){
-            if (dirty && state === 'EDITING') { e.preventDefault(); e.returnValue = ''; }
-          };
-          window.addEventListener('beforeunload', beforeUnloadHandler);
-        }
-
-        function detachBeforeUnload(){
-          if (!beforeUnloadHandler) return;
-          window.removeEventListener('beforeunload', beforeUnloadHandler);
-          beforeUnloadHandler = null;
-        }
-
-        function attachInternalNavGuard(){
-          if (internalNavHandler) return;
-          internalNavHandler = function(e){
-            var a = e.target.closest('a');
-            if (!a) return;
-            if (!dirty || state !== 'EDITING') return; // only guard when dirty while editing
-            e.preventDefault();
-            var m = buildGuardModal();
-            document.body.appendChild(m);
-            m.querySelector('#guard-stay').focus();
-            m.querySelector('#guard-stay').onclick = function(){ m.remove(); };
-            m.querySelector('#guard-discard').onclick = function(){
-              detachBeforeUnload();
-              document.removeEventListener('click', internalNavHandler, true); internalNavHandler = null;
-              window.location.href = a.href;
-            };
-            m.querySelector('#guard-save').onclick = async function(){ await doSave(true, a.href); };
-          };
-          document.addEventListener('click', internalNavHandler, true);
-        }
-
-        function detachInternalNavGuard(){
-          if (!internalNavHandler) return;
-          document.removeEventListener('click', internalNavHandler, true);
-          internalNavHandler = null;
-        }
-
-        function updateGuards(){
-          if (dirty && state === 'EDITING'){
-            attachBeforeUnload();
-            attachInternalNavGuard();
-          } else {
-            detachBeforeUnload();
-            // keep internal guard detached if not dirty
-            // it will be re-attached on demand
-          }
-        }
-
-        // Take immutable snapshot after inputs created
-        snapshotInitialValues();
-        checkDirtyState();
-        updateSaveButton();
 
         // Replace Edit button with Save/Cancel
         var controlsWrap = document.createElement('div');
@@ -442,7 +337,6 @@
 
         // Focus first input
         inputs.name.focus();
-<<<<<<< HEAD
         
         // Ensure all textareas expand to fit content immediately after render
         requestAnimationFrame(function() {
@@ -452,8 +346,6 @@
             }
           });
         });
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -464,17 +356,6 @@
             btnCancel.click();
           }
         });
-<<<<<<< HEAD
-        // Initialize guards according to current dirty state
-        updateGuards();
-
-        // Cancel button
-        btnCancel.addEventListener('click', function() {
-          detachBeforeUnload();
-          detachInternalNavGuard();
-          // Remove edit mode attribute
-          meta.removeAttribute('data-edit-mode');
-=======
 
         // Unsaved changes guard
         function beforeUnload(e) {
@@ -506,7 +387,8 @@
         // Cancel button
         btnCancel.addEventListener('click', function() {
           window.removeEventListener('beforeunload', beforeUnload);
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
+          // Remove edit mode attribute
+          meta.removeAttribute('data-edit-mode');
           // Restore original display for regular fields
           for (var field in inputs) {
             if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
@@ -528,20 +410,10 @@
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
           // Restore Edit button
           controlsWrap.replaceWith(btn);
-<<<<<<< HEAD
-          // Reset state/dirty
-          state = 'VIEW';
-          dirty = false;
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
         });
 
         // Save function
         async function doSave(navigateAfter, href) {
-<<<<<<< HEAD
-          state = 'SAVING';
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
           setLoading(true);
           try {
             var fd = new FormData();
@@ -592,22 +464,14 @@
               inputs.latitude.parentNode.replaceWith(coordsDisplay);
             }
             
-<<<<<<< HEAD
-            detachBeforeUnload();
-            detachInternalNavGuard();
-=======
             window.removeEventListener('beforeunload', beforeUnload);
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
             toast('Saved');
             
             if (navigateAfter && href) {
               window.location.href = href;
             } else {
-<<<<<<< HEAD
               // Remove edit mode attribute
               meta.removeAttribute('data-edit-mode');
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
               // Restore all non-coordinate fields to display mode
               for (var field in inputs) {
                 if (field === 'latitude' || field === 'longitude') continue; // Already handled above
@@ -620,24 +484,11 @@
               }
               // Restore Edit button
               controlsWrap.replaceWith(btn);
-<<<<<<< HEAD
-              // Update state and clear dirty; refresh snapshots
-              state = 'VIEW';
-              dirty = false;
-              // Update originals from server-changed values for future edits
-              Object.assign(originalValues, data.changed || {});
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
             }
           } catch (e) {
             toast('Save error: ' + e.message);
           } finally {
             setLoading(false);
-<<<<<<< HEAD
-            if (state === 'SAVING') state = 'EDITING'; // return to editing if not navigated
-            checkDirtyState(); // re-evaluate dirty state
-=======
->>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
           }
         }
 
