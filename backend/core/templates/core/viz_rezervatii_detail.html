@@ -442,6 +442,7 @@
 
         // Focus first input
         inputs.name.focus();
+<<<<<<< HEAD
         
         // Ensure all textareas expand to fit content immediately after render
         requestAnimationFrame(function() {
@@ -451,6 +452,8 @@
             }
           });
         });
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -461,6 +464,7 @@
             btnCancel.click();
           }
         });
+<<<<<<< HEAD
         // Initialize guards according to current dirty state
         updateGuards();
 
@@ -470,6 +474,39 @@
           detachInternalNavGuard();
           // Remove edit mode attribute
           meta.removeAttribute('data-edit-mode');
+=======
+
+        // Unsaved changes guard
+        function beforeUnload(e) {
+          if (dirty) {
+            e.preventDefault();
+            e.returnValue = '';
+          }
+        }
+        window.addEventListener('beforeunload', beforeUnload);
+
+        // Internal navigation guard
+        document.addEventListener('click', function(e) {
+          var a = e.target.closest('a');
+          if (!a || !dirty) return;
+          e.preventDefault();
+          var m = buildGuardModal();
+          document.body.appendChild(m);
+          m.querySelector('#guard-stay').focus();
+          m.querySelector('#guard-stay').onclick = function() { m.remove(); };
+          m.querySelector('#guard-discard').onclick = function() {
+            window.removeEventListener('beforeunload', beforeUnload);
+            window.location.href = a.href;
+          };
+          m.querySelector('#guard-save').onclick = async function() {
+            await doSave(true, a.href);
+          };
+        }, true);
+
+        // Cancel button
+        btnCancel.addEventListener('click', function() {
+          window.removeEventListener('beforeunload', beforeUnload);
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
           // Restore original display for regular fields
           for (var field in inputs) {
             if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
@@ -491,14 +528,20 @@
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
           // Restore Edit button
           controlsWrap.replaceWith(btn);
+<<<<<<< HEAD
           // Reset state/dirty
           state = 'VIEW';
           dirty = false;
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
         });
 
         // Save function
         async function doSave(navigateAfter, href) {
+<<<<<<< HEAD
           state = 'SAVING';
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
           setLoading(true);
           try {
             var fd = new FormData();
@@ -549,15 +592,22 @@
               inputs.latitude.parentNode.replaceWith(coordsDisplay);
             }
             
+<<<<<<< HEAD
             detachBeforeUnload();
             detachInternalNavGuard();
+=======
+            window.removeEventListener('beforeunload', beforeUnload);
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
             toast('Saved');
             
             if (navigateAfter && href) {
               window.location.href = href;
             } else {
+<<<<<<< HEAD
               // Remove edit mode attribute
               meta.removeAttribute('data-edit-mode');
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
               // Restore all non-coordinate fields to display mode
               for (var field in inputs) {
                 if (field === 'latitude' || field === 'longitude') continue; // Already handled above
@@ -570,18 +620,24 @@
               }
               // Restore Edit button
               controlsWrap.replaceWith(btn);
+<<<<<<< HEAD
               // Update state and clear dirty; refresh snapshots
               state = 'VIEW';
               dirty = false;
               // Update originals from server-changed values for future edits
               Object.assign(originalValues, data.changed || {});
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
             }
           } catch (e) {
             toast('Save error: ' + e.message);
           } finally {
             setLoading(false);
+<<<<<<< HEAD
             if (state === 'SAVING') state = 'EDITING'; // return to editing if not navigated
             checkDirtyState(); // re-evaluate dirty state
+=======
+>>>>>>> 6da8e665eaff81d29ad37b6d6c794ea0bc660595
           }
         }
 
