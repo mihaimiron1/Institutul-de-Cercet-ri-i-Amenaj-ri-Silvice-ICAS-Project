@@ -25,6 +25,7 @@ import unicodedata
 import difflib
 from django.utils.html import strip_tags
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 class _Echo:
     def write(self, value):  # csv.writer cere un .write()
@@ -197,7 +198,7 @@ def viz_specii_detail(request, pk: int):
             "label": label,
         })
 
-    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     return render(request, "core/viz_specii_detail.html", {
         "s": species,
         "points": points,
@@ -269,14 +270,14 @@ def viz_asociatii(request):
 @login_required
 def viz_rezervatii_detail(request, pk: int):
     r = get_object_or_404(Reserve, pk=pk)
-    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     return render(request, "core/viz_rezervatii_detail.html", {"r": r, "is_admin": is_admin})
 
 @login_required
 def update_species_description(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
-    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     if not is_admin:
         return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
     species = get_object_or_404(Species, pk=pk)
@@ -290,7 +291,7 @@ def update_species_description(request, pk: int):
 def update_reserve_description(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
-    is_admin = request.user.groups.filter(name__iexact="Administrators").exists()
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     if not is_admin:
         return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
     reserve = get_object_or_404(Reserve, pk=pk)
@@ -299,6 +300,74 @@ def update_reserve_description(request, pk: int):
     reserve.description = safe
     reserve.save(update_fields=["description", "updated_at"])
     return JsonResponse({"ok": True, "description": safe})
+
+
+@login_required
+@require_POST
+def update_reserve_meta(request, pk: int):
+    """Update selected Reserve fields. Admins only. Returns changed fields."""
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    reserve = get_object_or_404(Reserve, pk=pk)
+
+    def norm_text(v):
+        return strip_tags((v or "").strip())
+
+    changed = {}
+    # Text fields
+    for field in ("name", "raion", "amplasare", "proprietar", "subcategory", "category"):
+        if field in request.POST:
+            val = norm_text(request.POST.get(field))
+            if getattr(reserve, field) != val:
+                setattr(reserve, field, val or None)
+                changed[field] = val
+
+    # Numeric area
+    if "suprafata_ha" in request.POST:
+        raw = (request.POST.get("suprafata_ha") or "").strip()
+        if raw != "":
+            try:
+                num = float(raw)
+                if num < 0:
+                    return JsonResponse({"ok": False, "error": "Area must be positive"}, status=400)
+            except ValueError:
+                return JsonResponse({"ok": False, "error": "Invalid area"}, status=400)
+        else:
+            num = None
+        if reserve.suprafata_ha != num:
+            reserve.suprafata_ha = num
+            changed["suprafata_ha"] = num
+
+    # Coordinates
+    lat = request.POST.get("latitude")
+    lon = request.POST.get("longitude")
+    if lat is not None or lon is not None:
+        def parse_or_none(x):
+            x = (x or "").strip()
+            return None if x == "" else float(x)
+        try:
+            lat_v = parse_or_none(lat)
+            lon_v = parse_or_none(lon)
+            if lat_v is not None and not (-90.0 <= lat_v <= 90.0):
+                return JsonResponse({"ok": False, "error": "Latitude out of range"}, status=400)
+            if lon_v is not None and not (-180.0 <= lon_v <= 180.0):
+                return JsonResponse({"ok": False, "error": "Longitude out of range"}, status=400)
+        except ValueError:
+            return JsonResponse({"ok": False, "error": "Invalid coordinates"}, status=400)
+        if reserve.latitude != lat_v:
+            reserve.latitude = lat_v
+            changed["latitude"] = lat_v
+        if reserve.longitude != lon_v:
+            reserve.longitude = lon_v
+            changed["longitude"] = lon_v
+
+    if not changed:
+        return JsonResponse({"ok": True, "changed": {}}, status=200)
+
+    reserve.save()
+    return JsonResponse({"ok": True, "changed": changed})
 
 @login_required
 def viz_situri(request):

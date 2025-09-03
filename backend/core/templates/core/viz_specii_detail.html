@@ -100,10 +100,12 @@
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
+  {{ points|json_script:"species-points-data" }}
   <script>
     (function(){
       if (!document.getElementById('species-map')) return;
-      var points = {{ points|safe }};
+      if (window.__speciesMapInit) return; window.__speciesMapInit = true;
+      var points = JSON.parse(document.getElementById('species-points-data').textContent);
       var mdCenter = [47.0, 28.5];
       var map = L.map('species-map', { center: mdCenter, zoom: 7, scrollWheelZoom: true });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
@@ -114,9 +116,7 @@
   </script>
   {% endif %}
   <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      var btn = document.getElementById('btn-edit-species');
-      if (!btn) return;
+    (function(){
       var card = document.getElementById('species-card');
       var desc = document.getElementById('species-desc');
 
@@ -130,12 +130,21 @@
         t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)';
         t.textContent = msg; document.body.appendChild(t); setTimeout(()=>{ t.remove(); }, 1800);
       }
+      function getCookie(name){ var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : ''; }
+      function buildGuardModal(){
+        var wrap = document.createElement('div');
+        wrap.id='unsaved-guard';
+        wrap.innerHTML = '<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class="muted" style="margin:0 0 12px;">Save before leaving?</p>\n    <div style="display:flex; gap:8px; justify-content:flex-end;">\n      <button type="button" id="guard-stay" class="btn btn-outline">Stay</button>\n      <button type="button" id="guard-discard" class="btn btn-outline">Discard</button>\n      <button type="button" id="guard-save" class="btn">Save and leave</button>\n    </div>\n  </div>\n</div>';
+        return wrap;
+      }
 
-      btn.addEventListener('click', function(){
-        var current = {{ s.description|default:""|escapejs }};
+      document.addEventListener('click', function(ev){
+        var btn = ev.target.closest('#btn-edit-species');
+        if (!btn) return;
+        var current = "{{ s.description|default:''|escapejs }}";
         // swap display with editor
         var editor = document.createElement('div');
-        editor.innerHTML = '<strong id="desc-label">Descriere</strong>\n<textarea aria-labelledby="desc-label" id="species-textarea" rows="6" style="width:100%; margin-top:6px; padding:10px; line-height:1.5; border:1px solid var(--line); border-radius:10px; outline: 2px solid transparent;" placeholder="Adaugă o descriere…"></textarea>\n<div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">\n  <button type="button" id="cancel-edit" class="btn btn-outline">Cancel</button>\n  <button type="button" id="save-edit" class="btn">Save</button>\n</div>';
+        editor.innerHTML = '<strong id="desc-label">Descriere</strong>\n<textarea aria-labelledby="desc-label" id="species-textarea" rows="6" style="width:100%; margin-top:6px; padding:10px; line-height:1.5; border:1px solid var(--line); border-radius:10px; outline: 2px solid transparent;" placeholder="Adaugă o descriere…"></textarea>\n<div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">\n  <button type="button" id="cancel-edit" class="btn btn-outline">Cancel</button>\n  <button type="button" id="save-edit" class="btn" disabled>Save</button>\n</div>';
         desc.replaceWith(editor);
         var textarea = editor.querySelector('#species-textarea');
         textarea.value = current || '';
@@ -143,33 +152,57 @@
         textarea.addEventListener('input', function(){ autosize(textarea); });
         textarea.focus();
 
-        function getCookie(name){ var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : ''; }
-        function setLoading(on){ var btnSave = editor.querySelector('#save-edit'); btnSave.disabled = !!on; btnSave.textContent = on ? 'Saving…' : 'Save'; textarea.disabled = !!on; }
+        var btnSave = editor.querySelector('#save-edit');
+        var dirty = false;
+        function setLoading(on){ btnSave.disabled = !!on; btnSave.textContent = on ? 'Saving…' : 'Save'; textarea.disabled = !!on; }
+        function setDisabledState(){
+          var trimmed = (textarea.value || '').replace(/\s+$/,'');
+          btnSave.disabled = (trimmed === (current || '')) || trimmed.length === 0;
+        }
+        setDisabledState();
+        textarea.addEventListener('input', function(){ dirty = (textarea.value !== (current || '')); setDisabledState(); });
 
         editor.addEventListener('keydown', function(e){
-          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') editor.querySelector('#save-edit').click();
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btnSave.disabled) btnSave.click();
           if (e.key === 'Escape') editor.querySelector('#cancel-edit').click();
         });
 
-        editor.querySelector('#cancel-edit').addEventListener('click', function(){ editor.replaceWith(desc); });
+        // Unsaved changes guard for navigation
+        var guardActive = false, pendingNavHref=null;
+        function beforeUnload(e){ if (dirty){ e.preventDefault(); e.returnValue=''; } }
+        window.addEventListener('beforeunload', beforeUnload);
+        document.addEventListener('click', function(e){
+          var a = e.target.closest('a');
+          if (!a || !dirty) return;
+          e.preventDefault();
+          var modal = buildGuardModal(); document.body.appendChild(modal);
+          modal.querySelector('#guard-stay').focus();
+          modal.querySelector('#guard-stay').onclick = function(){ modal.remove(); };
+          modal.querySelector('#guard-discard').onclick = function(){ window.removeEventListener('beforeunload', beforeUnload); window.location.href = a.href; };
+          modal.querySelector('#guard-save').onclick = async function(){ await doSave(true, a.href); };
+        }, true);
 
-        editor.querySelector('#save-edit').addEventListener('click', async function(){
+        editor.querySelector('#cancel-edit').addEventListener('click', function(){ window.removeEventListener('beforeunload', beforeUnload); editor.replaceWith(desc); });
+
+        async function doSave(navigateAfter, href){
           setLoading(true);
           try {
-            var fd = new FormData();
-            fd.append('description', textarea.value);
+            var fd = new FormData(); fd.append('description', (textarea.value || '').replace(/\s+$/,''));
             const resp = await fetch('{% url "update_species_description" s.id %}', { method:'POST', headers:{ 'X-Requested-With':'fetch', 'X-CSRFToken': getCookie('csrftoken') }, body: fd });
             if (!resp.ok) throw new Error('Save failed');
             const data = await resp.json();
-            // optimistic update
             desc.querySelector('.muted').textContent = data.description || '';
             editor.replaceWith(desc);
-            toast('Salvat');
-          } catch(e){ toast('Eroare la salvare'); }
+            window.removeEventListener('beforeunload', beforeUnload);
+            toast('Saved');
+            if (navigateAfter && href) window.location.href = href;
+          } catch(e){ toast('Save error'); }
           finally { setLoading(false); }
-        });
-      });
-    });
+        }
+
+        btnSave.addEventListener('click', function(){ if (!btnSave.disabled) doSave(false); });
+      }, true);
+    })();
   </script>
 {% endblock %}
 {% endblock %}

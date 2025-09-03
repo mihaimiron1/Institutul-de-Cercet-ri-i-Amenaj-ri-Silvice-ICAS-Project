@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
 
 from core.models import (
@@ -41,6 +41,22 @@ class Command(BaseCommand):
         contrib.permissions.set(contrib_perms)
         # sau: contrib.permissions.add(*contrib_perms)
 
+        # Backfill is_staff based on Administrator membership (superusers unchanged)
+        updated_true = 0
+        updated_false = 0
+        for u in User.objects.all():
+            if u.is_superuser:
+                continue
+            is_admin = u.groups.filter(name__iexact="Administrators").exists()
+            if u.is_staff != is_admin:
+                u.is_staff = is_admin
+                u.save(update_fields=["is_staff"])
+                if is_admin:
+                    updated_true += 1
+                else:
+                    updated_false += 1
+
         self.stdout.write(self.style.SUCCESS(
-            f"OK: Administrators({len(admin_perms)}) & Contributors({len(contrib_perms)}) permisiuni setate."
+            f"OK: Admin perms={len(admin_perms)}, Contributor perms={len(contrib_perms)}. "
+            f"Backfilled is_staff true: {updated_true}, false: {updated_false}."
         ))
