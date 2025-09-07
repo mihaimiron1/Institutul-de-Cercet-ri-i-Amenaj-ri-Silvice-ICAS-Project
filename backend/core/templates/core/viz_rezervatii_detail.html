@@ -191,14 +191,26 @@
       function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
       function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class=\"muted\" style=\"margin:0 0 12px;\">Save before leaving?</p>\n    <div style=\"display:flex; gap:8px; justify-content:flex-end;\">\n      <button type=\"button\" id=\"guard-stay\" class=\"btn btn-outline\">Stay</button>\n      <button type=\"button\" id=\"guard-discard\" class=\"btn btn-outline\">Discard</button>\n      <button type=\"button\" id=\"guard-save\" class=\"btn\">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
 
+      // Normalize history to a clean VIEW state on load
+      try { history.replaceState({}, '', location.href); } catch(_) {}
+      window.addEventListener('popstate', function(){
+        // Always force view mode if any edit state lingered
+        meta.removeAttribute('data-edit-mode');
+      });
+
       document.addEventListener('click', function(ev){
         var btn = ev.target.closest('#btn-edit-reserve');
         if (!btn) return;
 
-        // Store original values for comparison
-        var originalValues = {};
+        // State & values
+        var state = 'EDITING'; // VIEW → EDITING → SAVING → VIEW
+        var originalValues = {}; // raw originals for UI restore
+        var initialValues = {};  // immutable snapshot for dirty checks
         var inputs = {};
         var dirty = false;
+        var beforeUnloadHandler = null;
+        var internalNavHandler = null;
+        var keydownHandler = null;
 
         // Convert metadata fields to inputs
         function createInput(field, type, placeholder) {
@@ -228,7 +240,7 @@
           inputs[field] = input;
           
           input.addEventListener('input', function(){ 
-            dirty = true; 
+            computeDirty();
             updateSaveButton();
             if (type === 'text') autosize(input);
           });
@@ -291,8 +303,8 @@
           inputs.latitude = lat;
           inputs.longitude = lon;
           
-          lat.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
-          lon.addEventListener('input', function(){ dirty = true; updateSaveButton(); });
+          lat.addEventListener('input', function(){ computeDirty(); updateSaveButton(); });
+          lon.addEventListener('input', function(){ computeDirty(); updateSaveButton(); });
         }
 
         // Set edit mode attribute for CSS
@@ -318,21 +330,41 @@
         var btnCancel = controlsWrap.querySelector('#cancel-edit-r');
 
         function setLoading(on) {
-          btnSave.disabled = !!on;
+          btnSave.disabled = !!on; // Keep enabled generally; only disable during actual save
           btnSave.textContent = on ? 'Saving…' : 'Save';
+          if (btnCancel) btnCancel.disabled = !!on;
           Object.values(inputs).forEach(function(input) { input.disabled = !!on; });
         }
 
-        function updateSaveButton() {
-          var hasChanges = false;
-          for (var field in inputs) {
-            var val = (inputs[field].value || '').trim();
-            if (val !== (originalValues[field] || '')) {
-              hasChanges = true;
-              break;
-            }
+        // Normalization helper for comparisons
+        function normalizeText(value){
+          if (value == null) return '';
+          var s = String(value);
+          s = s.replace(/\r\n?|\u2028|\u2029/g, '\n');
+          s = s.split('\n').map(function(line){ return line.replace(/\s+/g, ' ').trim(); }).join('\n');
+          return s.trim();
+        }
+
+        function snapshotInitialValues(){
+          initialValues = {};
+          for (var field in inputs){
+            initialValues[field] = normalizeText(inputs[field].value || '');
           }
-          btnSave.disabled = !hasChanges;
+        }
+
+        function computeDirty(){
+          var wasDirty = dirty;
+          dirty = false;
+          for (var field in inputs){
+            var curr = normalizeText(inputs[field].value || '');
+            if (curr !== (initialValues[field] || '')){ dirty = true; break; }
+          }
+          if (dirty !== wasDirty) updateGuards();
+        }
+
+        function updateSaveButton(){
+          // Keep Save enabled in EDITING regardless of dirty; only disable if not in EDITING
+          btnSave.disabled = state !== 'EDITING';
         }
 
         // Focus first input
@@ -347,46 +379,69 @@
           });
         });
 
+        // Snapshot and initialize guards
+        snapshotInitialValues();
+        computeDirty();
+        updateSaveButton();
+        updateGuards();
+
         // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
+        keydownHandler = function(e) {
           if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btnSave.disabled) {
             btnSave.click();
           }
           if (e.key === 'Escape') {
             btnCancel.click();
           }
-        });
+        };
+        document.addEventListener('keydown', keydownHandler);
 
-        // Unsaved changes guard
-        function beforeUnload(e) {
-          if (dirty) {
-            e.preventDefault();
-            e.returnValue = '';
-          }
+        // Guards attach/detach
+        function attachBeforeUnload(){
+          if (beforeUnloadHandler) return;
+          beforeUnloadHandler = function(e){ if (dirty && state === 'EDITING'){ e.preventDefault(); e.returnValue = ''; } };
+          window.addEventListener('beforeunload', beforeUnloadHandler);
         }
-        window.addEventListener('beforeunload', beforeUnload);
-
-        // Internal navigation guard
-        document.addEventListener('click', function(e) {
-          var a = e.target.closest('a');
-          if (!a || !dirty) return;
-          e.preventDefault();
-          var m = buildGuardModal();
-          document.body.appendChild(m);
-          m.querySelector('#guard-stay').focus();
-          m.querySelector('#guard-stay').onclick = function() { m.remove(); };
-          m.querySelector('#guard-discard').onclick = function() {
-            window.removeEventListener('beforeunload', beforeUnload);
-            window.location.href = a.href;
+        function detachBeforeUnload(){
+          if (!beforeUnloadHandler) return;
+          window.removeEventListener('beforeunload', beforeUnloadHandler);
+          beforeUnloadHandler = null;
+        }
+        function attachInternalNavGuard(){
+          if (internalNavHandler) return;
+          internalNavHandler = function(e){
+            var a = e.target.closest('a');
+            if (!a) return;
+            if (!dirty || state !== 'EDITING') return;
+            e.preventDefault();
+            var m = buildGuardModal();
+            document.body.appendChild(m);
+            m.querySelector('#guard-stay').focus();
+            m.querySelector('#guard-stay').onclick = function(){ m.remove(); };
+            m.querySelector('#guard-discard').onclick = function(){
+              detachBeforeUnload();
+              document.removeEventListener('click', internalNavHandler, true); internalNavHandler = null;
+              window.location.href = a.href;
+            };
+            m.querySelector('#guard-save').onclick = async function(){ await doSave(true, a.href); };
           };
-          m.querySelector('#guard-save').onclick = async function() {
-            await doSave(true, a.href);
-          };
-        }, true);
+          document.addEventListener('click', internalNavHandler, true);
+        }
+        function detachInternalNavGuard(){
+          if (!internalNavHandler) return;
+          document.removeEventListener('click', internalNavHandler, true);
+          internalNavHandler = null;
+        }
+        function updateGuards(){
+          if (dirty && state === 'EDITING') { attachBeforeUnload(); attachInternalNavGuard(); }
+          else { detachBeforeUnload(); detachInternalNavGuard(); }
+        }
 
         // Cancel button
         btnCancel.addEventListener('click', function() {
-          window.removeEventListener('beforeunload', beforeUnload);
+          detachBeforeUnload();
+          detachInternalNavGuard();
+          if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
           // Remove edit mode attribute
           meta.removeAttribute('data-edit-mode');
           // Restore original display for regular fields
@@ -410,10 +465,31 @@
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
           // Restore Edit button
           controlsWrap.replaceWith(btn);
+          // Clean state
+          state = 'VIEW';
+          dirty = false;
+          try { history.replaceState({}, '', location.href); } catch(_) {}
         });
 
         // Save function
         async function doSave(navigateAfter, href) {
+          // Recompute dirty at click time
+          computeDirty();
+          if (!dirty) {
+            // No-op save: treat as success and exit edit mode cleanly
+            detachBeforeUnload();
+            detachInternalNavGuard();
+            if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
+            toast('Saved');
+            meta.removeAttribute('data-edit-mode');
+            controlsWrap.replaceWith(btn);
+            state = 'VIEW';
+            dirty = false;
+            try { history.replaceState({}, '', location.href); } catch(_) {}
+            return;
+          }
+
+          state = 'SAVING';
           setLoading(true);
           try {
             var fd = new FormData();
@@ -464,7 +540,9 @@
               inputs.latitude.parentNode.replaceWith(coordsDisplay);
             }
             
-            window.removeEventListener('beforeunload', beforeUnload);
+            detachBeforeUnload();
+            detachInternalNavGuard();
+            if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
             toast('Saved');
             
             if (navigateAfter && href) {
@@ -484,11 +562,18 @@
               }
               // Restore Edit button
               controlsWrap.replaceWith(btn);
+              // Refresh snapshot and state
+              snapshotInitialValues();
+              dirty = false;
+              state = 'VIEW';
+              updateGuards();
+              try { history.replaceState({}, '', location.href); } catch(_) {}
             }
           } catch (e) {
             toast('Save error: ' + e.message);
           } finally {
             setLoading(false);
+            if (state === 'SAVING') { state = 'EDITING'; updateGuards(); }
           }
         }
 
