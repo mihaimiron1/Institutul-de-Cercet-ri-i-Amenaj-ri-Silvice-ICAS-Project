@@ -64,7 +64,7 @@
     <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
       <a href="{% url 'viz_rez' %}" class="btn btn-outline">Înapoi la rezervații</a>
       {% if is_admin %}
-      <button id="actionBtn" class="btn" aria-label="Editează metadate"><span aria-hidden="true">✎</span> Edit</button>
+      <button id="actionBtn" class="btn" aria-label="Editează metadate" data-mode="view">Edit</button>
       {% endif %}
     </div>
   </div>
@@ -78,7 +78,7 @@
     crossorigin=""
   />
 
-  <div id="reserve-map" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
+  <div id="reserve-map" data-lat="{{ r.latitude|floatformat:'6' }}" data-lon="{{ r.longitude|floatformat:'6' }}" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
   {% endif %}
 </section>
 {% endblock %}
@@ -175,8 +175,9 @@
     (function(){
       if (!document.getElementById('reserve-map')) return;
       if (window.__reserveMapInit) return; window.__reserveMapInit = true;
-      var lat = {{ r.latitude|floatformat:"6" }};
-      var lon = {{ r.longitude|floatformat:"6" }};
+      var mapEl = document.getElementById('reserve-map');
+      var lat = parseFloat(mapEl.getAttribute('data-lat'));
+      var lon = parseFloat(mapEl.getAttribute('data-lon'));
       var mdCenter = [47.0, 28.5];
       var map = L.map('reserve-map', { center: [lat, lon] || mdCenter, zoom: 8, scrollWheelZoom: true });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
@@ -189,6 +190,7 @@
       var card = document.getElementById('reserve-card');
       var meta = document.getElementById('reserve-meta');
       var btn = document.getElementById('actionBtn');
+      var formEl = null;
 
       function toast(msg){ var t=document.createElement('div'); t.setAttribute('role','status'); t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
       function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
@@ -204,23 +206,35 @@
       var internalNavHandler = null;
       var keydownHandler = null;
 
-      // Normalize history to a clean VIEW state on load
-      try { history.replaceState({}, '', location.href); } catch(_) {}
-      window.addEventListener('popstate', function(){
-        // Always force view mode if any edit state lingered
-        meta.removeAttribute('data-edit-mode');
-        mode = 'VIEW';
-      });
+      function syncButtonLabel(){
+        var state = (btn && btn.getAttribute('data-mode')) || 'view';
+        if (state.toLowerCase() === 'edit') {
+          btn.innerHTML = 'Save';
+          btn.setAttribute('aria-label', 'Salvează modificările');
+        } else {
+          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+          btn.setAttribute('aria-label', 'Editează metadate');
+        }
+      }
 
-      // Single click handler that branches by mode
+      // Initialize state from URL
+      try {
+        var sp = new URLSearchParams(location.search);
+        if (sp.get('edit') === '1' && btn) {
+          btn.setAttribute('data-mode', 'edit');
+        }
+      } catch(_) {}
+      syncButtonLabel();
+
+      // Single click handler that branches by button data-mode
       btn.addEventListener('click', function(ev) {
         ev.preventDefault();
-        if (mode === 'VIEW') {
+        var bmode = (btn.getAttribute('data-mode') || 'view').toLowerCase();
+        if (bmode === 'view') {
           enterEdit();
-        } else if (mode === 'EDITING') {
-          doSave();
+        } else if (bmode === 'edit') {
+          if (formEl) { formEl.requestSubmit(); }
         }
-        // SAVING mode: button is disabled, no action
       });
 
         // Convert metadata fields to inputs
@@ -358,10 +372,22 @@
       // Enter edit mode
       function enterEdit() {
         mode = 'EDITING';
+        if (btn) { btn.setAttribute('data-mode', 'edit'); syncButtonLabel(); }
+        replaceUrlQuery({ edit: '1' });
         
         // Set edit mode attribute for CSS
         meta.setAttribute('data-edit-mode', 'true');
         
+        // Wrap editable area in a form for requestSubmit
+        if (!formEl) {
+          formEl = document.createElement('form');
+          formEl.id = 'reserve-edit-form';
+          formEl.method = 'post';
+          meta.parentNode.insertBefore(formEl, meta);
+          formEl.appendChild(meta);
+          formEl.addEventListener('submit', function(e){ e.preventDefault(); doSave(); });
+        }
+
         // Create all inputs
         createInput('name', 'text', 'Nume');
         createInput('raion', 'text', 'Raion');
@@ -372,9 +398,8 @@
         createInput('subcategory', 'text', 'Subcategoria');
         createCoordInputs();
 
-        // Toggle the same button to Save mode
-        btn.innerHTML = 'Save';
-        btn.setAttribute('aria-label', 'Salvează modificările');
+        // Ensure button shows Save
+        syncButtonLabel();
 
         // Focus first input
         inputs.name.focus();
@@ -433,12 +458,17 @@
           }
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
           // Restore Edit button
-        btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
-        btn.setAttribute('aria-label', 'Editează metadate');
+        if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
           // Clean state
         mode = 'VIEW';
         dirty = false;
-        try { history.replaceState({}, '', location.href); } catch(_) {}
+        replaceUrlQuery({ edit: null });
+        // unwrap form
+        if (formEl && meta.parentNode === formEl) {
+          formEl.parentNode.insertBefore(meta, formEl);
+          formEl.remove();
+          formEl = null;
+        }
       }
 
       // Save function
@@ -478,11 +508,15 @@
           }
           
           // Restore Edit button
-          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
-          btn.setAttribute('aria-label', 'Editează metadate');
+          if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
           mode = 'VIEW';
           dirty = false;
-          try { history.replaceState({}, '', location.href); } catch(_) {}
+          replaceUrlQuery({ edit: null });
+          if (formEl && meta.parentNode === formEl) {
+            formEl.parentNode.insertBefore(meta, formEl);
+            formEl.remove();
+            formEl = null;
+          }
           return;
         }
 
@@ -554,14 +588,18 @@
           }
           
           // Restore Edit button
-          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
-          btn.setAttribute('aria-label', 'Editează metadate');
+          if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
           // Refresh snapshot and state
           snapshotInitialValues();
           dirty = false;
           mode = 'VIEW';
           updateGuards();
-          try { history.replaceState({}, '', location.href); } catch(_) {}
+          replaceUrlQuery({ edit: null });
+          if (formEl && meta.parentNode === formEl) {
+            formEl.parentNode.insertBefore(meta, formEl);
+            formEl.remove();
+            formEl = null;
+          }
         } catch (e) {
           toast('Save error: ' + e.message);
         } finally {
@@ -628,6 +666,21 @@
       function updateGuards(){
         if (dirty && mode === 'EDITING') { attachBeforeUnload(); attachInternalNavGuard(); }
         else { detachBeforeUnload(); detachInternalNavGuard(); }
+      }
+
+      function replaceUrlQuery(changes){
+        try {
+          var u = new URL(location.href);
+          var sp = u.searchParams;
+          Object.keys(changes || {}).forEach(function(k){ var v = changes[k]; if (v == null || v === '') sp.delete(k); else sp.set(k, v); });
+          u.search = sp.toString();
+          history.replaceState({}, '', u.toString());
+        } catch(_) {}
+      }
+
+      // If URL had ?edit=1, enter edit
+      if (btn && (btn.getAttribute('data-mode') || 'view').toLowerCase() === 'edit') {
+        enterEdit();
       }
     })();
   </script>
