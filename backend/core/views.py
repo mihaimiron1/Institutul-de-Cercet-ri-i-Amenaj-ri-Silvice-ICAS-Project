@@ -501,9 +501,13 @@ def update_reserve_meta(request, pk: int):
             reserve.suprafata_ha = num
             changed["suprafata_ha"] = num
 
-    # Coordinates
+    # Coordinates (accept both 'latitude/longitude' and 'latitudine/longitudine')
     lat = request.POST.get("latitude")
     lon = request.POST.get("longitude")
+    if lat is None and "latitudine" in request.POST:
+        lat = request.POST.get("latitudine")
+    if lon is None and "longitudine" in request.POST:
+        lon = request.POST.get("longitudine")
     if lat is not None or lon is not None:
         def parse_or_none(x):
             x = (x or "").strip()
@@ -973,6 +977,46 @@ def update_site_meta(request, pk: int):
         if site.longitude != lon_v:
             site.longitude = lon_v
             changed["longitude"] = lon_v
+
+    # Integers
+    if "bird_species_count" in request.POST:
+        raw = (request.POST.get("bird_species_count") or "").strip()
+        if raw == "":
+            val = None
+        else:
+            try:
+                val = int(raw)
+                if val < 0:
+                    return JsonResponse({"ok": False, "error": "Bird species count must be >= 0"}, status=400)
+            except ValueError:
+                return JsonResponse({"ok": False, "error": "Invalid bird species count"}, status=400)
+        if site.bird_species_count != val:
+            site.bird_species_count = val
+            changed["bird_species_count"] = val
+
+    if "other_species_count" in request.POST:
+        raw = (request.POST.get("other_species_count") or "").strip()
+        if raw == "":
+            val2 = None
+        else:
+            try:
+                val2 = int(raw)
+                if val2 < 0:
+                    return JsonResponse({"ok": False, "error": "Other species count must be >= 0"}, status=400)
+            except ValueError:
+                return JsonResponse({"ok": False, "error": "Invalid other species count"}, status=400)
+        if site.other_species_count != val2:
+            site.other_species_count = val2
+            changed["other_species_count"] = val2
+
+    # Booleans for biogeographic flags
+    for bfield in ("ste", "conj"):
+        if bfield in request.POST:
+            sval = (request.POST.get(bfield) or "").strip().lower()
+            newb = sval in ("true", "1", "yes", "on")
+            if getattr(site, bfield) != newb:
+                setattr(site, bfield, newb)
+                changed[bfield] = newb
 
     if not changed:
         return JsonResponse({"ok": True, "changed": {}}, status=200)

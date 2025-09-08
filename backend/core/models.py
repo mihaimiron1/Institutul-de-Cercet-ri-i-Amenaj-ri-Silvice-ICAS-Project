@@ -182,6 +182,9 @@ class Site(models.Model):
 
     notes                = models.TextField(blank=True, null=True)
 
+    # New editable metadata
+    other_species        = models.TextField(blank=True, default="")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
