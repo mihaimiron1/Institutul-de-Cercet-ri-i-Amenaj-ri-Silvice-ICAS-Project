@@ -4,19 +4,45 @@
 <section class="container">
   <header class="hero">
     <h1>Habitate</h1>
-    <p class="muted">Explorează clasificarea și codurile habitatelor</p>
+    <p class="muted">Explorează clasificarea și codurile habitatelor din baza de date ResNat</p>
   </header>
-  
-  <div class="card">
-    <h2>În curând</h2>
-    <p class="muted">Această secțiune va conține:</p>
-    <ul class="muted">
-      <li>Clasificarea completă a habitatelor</li>
-      <li>Coduri și denumiri (română/engleză)</li>
-      <li>Distribuția geografică</li>
-      <li>Statistici și analize</li>
-    </ul>
-    <p><a href="{% url 'vizualizari_home' %}" class="btn">Înapoi la Vizualizări</a></p>
+
+  <form method="get" class="card mb-2">
+    <div class="quick-search">
+      <input type="search" name="q" value="{{ q }}" placeholder="Caută habitat…" />
+      <button class="btn" type="submit">Caută</button>
+      {% if q %}<a class="btn btn-outline" href="?">Reset</a>{% endif %}
+    </div>
+  </form>
+
+  <div class="grid tiles" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+    {% for h in page_obj.object_list %}
+    <a class="tile" href="{% url 'viz_habitate_detail' h.id %}">
+      <h3>{{ h.name_romanian }}</h3>
+      {% if h.name_english %}<p class="muted">{{ h.name_english }}</p>{% endif %}
+      {% if h.code %}<p class="muted">Cod: {{ h.code }}</p>{% endif %}
+    </a>
+    {% empty %}
+    <div class="muted">Nu s-au găsit rezultate.</div>
+    {% endfor %}
   </div>
+
+  {% if paginator.num_pages > 1 %}
+  <nav class="mt-3" aria-label="Paginare habitate">
+    <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-outline" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">Înapoi</a>
+      {% else %}
+        <button class="btn btn-outline" disabled>Înapoi</button>
+      {% endif %}
+      <span class="muted">Pagina {{ page_obj.number }} / {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a class="btn" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">Înainte</a>
+      {% else %}
+        <button class="btn" disabled>Înainte</button>
+      {% endif %}
+    </div>
+  </nav>
+  {% endif %}
 </section>
 {% endblock %}

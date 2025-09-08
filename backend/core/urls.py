@@ -52,6 +52,8 @@ urlpatterns = [
     path("vizualizari/situri/<int:pk>/", views.viz_situri_detail, name="viz_sit_detail"),
     path("vizualizari/situri/<int:pk>/update-meta/", views.update_site_meta, name="update_site_meta"),
     path("vizualizari/habitate/", views.viz_habitate, name="viz_habitate"),
+    path("vizualizari/habitate/<int:pk>/", views.viz_habitate_detail, name="viz_habitate_detail"),
+    path("vizualizari/habitate/<int:pk>/update-meta/", views.update_habitat_meta, name="update_habitat_meta"),
 
 
 

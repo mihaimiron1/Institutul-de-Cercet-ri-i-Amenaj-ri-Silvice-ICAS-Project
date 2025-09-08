@@ -576,7 +576,110 @@ def viz_situri(request):
 
 @login_required
 def viz_habitate(request):
-    return render(request, "core/viz_habitate.html")
+    """Listă de habitate cu căutare tolerantă (diacritice/typo) și paginare, ca la Rezervații.
+
+    Implementare fuzzy în Postgres: unaccent + trigram similarity/word-similarity.
+    """
+    q = (request.GET.get("q") or "").strip()
+    qs = Habitat.objects.all()
+
+    if not q:
+        qs = qs.order_by("name_romanian")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        # Normalize query (lowercase). Unaccent is applied on both sides at SQL level
+        q_norm = (q or "").lower().strip()
+
+        # Use PostgreSQL unaccent
+        class Unaccent(Func):
+            function = "unaccent"
+            output_field = CharField()
+
+        name_ro_u = Unaccent(Lower(F("name_romanian")))
+        name_en_u = Unaccent(Lower(F("name_english")))
+        code_u = Unaccent(Lower(F("code")))
+        q_u = Unaccent(Lower(Value(q_norm, output_field=CharField())))
+
+        qs = qs.annotate(
+            name_ro_u=name_ro_u,
+            name_en_u=name_en_u,
+            code_u=code_u,
+            sim_ro=TrigramSimilarity(name_ro_u, q_u),
+            sim_en=TrigramSimilarity(name_en_u, q_u),
+            sim_code=TrigramSimilarity(code_u, q_u),
+            wsim_ro=TrigramWordSimilarity(q_u, name_ro_u) if TrigramWordSimilarity else Value(0.0, output_field=FloatField()),
+            wsim_en=TrigramWordSimilarity(q_u, name_en_u) if TrigramWordSimilarity else Value(0.0, output_field=FloatField()),
+            starts_ro=Case(
+                When(name_ro_u__startswith=q_norm, then=1),
+                default=0,
+                output_field=IntegerField(),
+            ),
+            starts_en=Case(
+                When(name_en_u__startswith=q_norm, then=1),
+                default=0,
+                output_field=IntegerField(),
+            ),
+            starts_code=Case(
+                When(code_u__startswith=q_norm, then=1),
+                default=0,
+                output_field=IntegerField(),
+            ),
+        ).filter(
+            Q(name_ro_u__icontains=q_norm) | 
+            Q(name_en_u__icontains=q_norm) | 
+            Q(code_u__icontains=q_norm) |
+            Q(sim_ro__gt=0.25) | 
+            Q(sim_en__gt=0.25) | 
+            Q(sim_code__gt=0.25) |
+            Q(wsim_ro__gt=0.20) | 
+            Q(wsim_en__gt=0.20)
+        ).order_by(
+            "-starts_ro", "-starts_en", "-starts_code",
+            Greatest("wsim_ro", "wsim_en", "sim_ro", "sim_en", "sim_code").desc(),
+            "name_romanian"
+        )
+
+        paginator, page_obj = _paginate(request, qs, default=24)
+
+    return render(request, "core/viz_habitate.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+    })
+
+@login_required
+def viz_habitate_detail(request, pk: int):
+    h = get_object_or_404(Habitat, pk=pk)
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    return render(request, "core/viz_habitate_detail.html", {"h": h, "is_admin": is_admin})
+
+@login_required
+@require_POST
+def update_habitat_meta(request, pk: int):
+    """Update Habitat fields (admins only)."""
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    h = get_object_or_404(Habitat, pk=pk)
+
+    def norm_text(v):
+        return strip_tags((v or "").strip()) or None
+
+    changed = {}
+    # Habitat model fields: name_romanian, name_english, code, notes
+    for field in ("name_romanian", "name_english", "code", "notes"):
+        if field in request.POST:
+            val = norm_text(request.POST.get(field))
+            if getattr(h, field) != val:
+                setattr(h, field, val)
+                changed[field] = val
+
+    if not changed:
+        return JsonResponse({"ok": True, "changed": {}}, status=200)
+
+    h.save()
+    return JsonResponse({"ok": True, "changed": changed})
 
 @login_required
 def comparatii_home(request):
