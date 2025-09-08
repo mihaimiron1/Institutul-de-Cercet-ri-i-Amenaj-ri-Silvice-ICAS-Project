@@ -76,10 +76,16 @@
 
 {% block extra_css %}
 <style>
+  /* Edit-mode responsive grid similar to reserves */
+  @media (min-width: 768px) {
+    #association-meta[data-edit-mode="true"] { grid-template-columns: repeat(4, 1fr); }
+    #association-meta[data-edit-mode="true"] [data-span="2"] { grid-column: span 2; }
+  }
+
   #association-meta input,
   #association-meta textarea { width: 100% !important; box-sizing: border-box; min-width: 0; }
   #association-meta > div { min-width: 0; overflow: hidden; max-width: 100%; word-wrap: break-word; }
-  #association-meta textarea { transition: height 120ms ease; white-space: pre-wrap; overflow-wrap: anywhere; hyphens: auto; }
+  #association-meta textarea { transition: height 120ms ease; white-space: pre-wrap; overflow-wrap: anywhere; hyphens: auto; word-break: break-word; resize: none; overflow: hidden; }
 </style>
 {% endblock %}
 
@@ -107,16 +113,76 @@
       var btn = document.getElementById('actionBtn');
       if (!btn) return;
       function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
-      function syncButton(){ var m=(btn.getAttribute('data-mode')||'view'); btn.innerHTML = (m==='edit')?'Save':'Edit'; }
+      function syncButton(){ var m=(btn.getAttribute('data-mode')||'view'); btn.innerHTML = (m==='edit')?'Save':'Edit'; btn.setAttribute('aria-label', m==='edit'?'Salvează modificările':'Editează metadate'); }
+      function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='\n<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class="muted" style="margin:0 0 12px;">Save before leaving?</p>\n    <div style="display:flex; gap:8px; justify-content:flex-end;">\n      <button type="button" id="guard-stay" class="btn btn-outline">Stay</button>\n      <button type="button" id="guard-discard" class="btn btn-outline">Discard</button>\n      <button type="button" id="guard-save" class="btn">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
+
       syncButton();
       btn.addEventListener('click', function(e){ e.preventDefault(); var m=(btn.getAttribute('data-mode')||'view'); if(m==='view'){ enterEdit(); } else { if(formEl) formEl.requestSubmit(); } });
-      var formEl=null; var inputs={}; var originalValues={}; var dirty=false; var mode='VIEW';
+      var formEl=null; var inputs={}; var originalValues={}; var initialValues={}; var dirty=false; var mode='VIEW';
+      var beforeUnloadHandler=null; var internalNavHandler=null; var pendingNavUrl=null; var keydownHandler=null;
+
       function autosize(t){ t.style.height='auto'; t.style.height=(t.scrollHeight||t.clientHeight)+'px'; }
-      function createInput(field, isTextarea){ var el=meta.querySelector('[data-f="'+field+'"]'); if(!el) return; var val=(el.textContent.trim()==='—')?'':el.textContent.trim(); originalValues[field]=val; var input=isTextarea?document.createElement('textarea'):document.createElement('input'); if(isTextarea){ input.rows=1; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden;'; autosize(input);} else { input.type='text'; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;'; } input.name=field; input.value=val; el.replaceWith(input); inputs[field]=input; input.addEventListener('input', function(){ dirty = input.value.trim() !== (originalValues[field]||''); if(isTextarea) autosize(input); }); }
-      function enterEdit(){ mode='EDITING'; btn.setAttribute('data-mode','edit'); syncButton(); if(!formEl){ formEl=document.createElement('form'); formEl.method='post'; formEl.addEventListener('submit', function(ev){ ev.preventDefault(); doSave(); }); meta.parentNode.insertBefore(formEl, meta); formEl.appendChild(meta);} createInput('name', true); createInput('notes', true); var first=inputs.name||inputs.notes; if(first) first.focus(); }
-      async function doSave(){ var fd=new FormData(); fd.append('csrfmiddlewaretoken', getCookie('csrftoken')); Object.keys(inputs).forEach(function(k){ var curr=inputs[k].value.trim(); var orig=originalValues[k]||''; if(curr!==orig){ fd.append(k, curr); } }); try{ var resp=await fetch('{% url "update_association_meta" a.pk %}', { method:'POST', body: fd, headers:{'X-CSRFToken': getCookie('csrftoken')} }); if(!resp.ok){ throw new Error('Save failed'); } var data=await resp.json(); if(!data.ok){ throw new Error(data.error||'Save failed'); } } catch(e){ alert('Save error: '+e.message); } finally { // restore view
-          Object.keys(inputs).forEach(function(field){ var display=document.createElement('div'); display.className='muted'; display.setAttribute('data-f', field); var v=(inputs[field].value||'').trim(); display.textContent = v===''?'—':v; inputs[field].replaceWith(display); }); inputs={}; originalValues={}; if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; } btn.setAttribute('data-mode','view'); syncButton(); mode='VIEW'; }
+      function normalizeText(value){ if(value==null) return ''; var s=String(value); s=s.replace(/\r\n?|\u2028|\u2029/g,'\n'); s=s.split('\n').map(function(line){ return line.replace(/\s+/g,' ').trim(); }).join('\n'); return s.trim(); }
+      function snapshotInitialValues(){ initialValues={}; Object.keys(inputs).forEach(function(k){ initialValues[k]=normalizeText(inputs[k].value||''); }); }
+      function computeDirty(){ var was=dirty; dirty=false; Object.keys(inputs).some(function(k){ var curr=normalizeText(inputs[k].value||''); if(curr !== (initialValues[k]||'')){ dirty=true; return true; } return false; }); if (dirty!==was) updateGuards(); }
+
+      function attachBeforeUnload(){ if(beforeUnloadHandler) return; beforeUnloadHandler=function(e){ if(dirty && mode==='EDITING'){ e.preventDefault(); e.returnValue=''; return ''; } }; window.addEventListener('beforeunload', beforeUnloadHandler); }
+      function detachBeforeUnload(){ if(beforeUnloadHandler){ window.removeEventListener('beforeunload', beforeUnloadHandler); beforeUnloadHandler=null; } }
+      function attachInternalNavGuard(){ if(internalNavHandler) return; internalNavHandler=function(ev){ var link=ev.target.closest('a[href]'); if(!link) return; if(dirty && mode==='EDITING'){ ev.preventDefault(); var modal=buildGuardModal(); document.body.appendChild(modal); var guardStay=modal.querySelector('#guard-stay'); var guardDiscard=modal.querySelector('#guard-discard'); var guardSave=modal.querySelector('#guard-save'); guardStay.addEventListener('click', function(){ modal.remove(); }); guardDiscard.addEventListener('click', function(){ modal.remove(); finalizeToVIEW(); window.location.href = link.href; }); guardSave.addEventListener('click', async function(){ guardStay.disabled=guardDiscard.disabled=guardSave.disabled=true; pendingNavUrl=link.href; await doSave(true); }); }
+      }; document.addEventListener('click', internalNavHandler, true); }
+      function detachInternalNavGuard(){ if(internalNavHandler){ document.removeEventListener('click', internalNavHandler, true); internalNavHandler=null; } }
+      function updateGuards(){ if(dirty && mode==='EDITING'){ attachBeforeUnload(); attachInternalNavGuard(); } else { detachBeforeUnload(); detachInternalNavGuard(); } }
+      function replaceUrlQuery(changes){ try{ var u=new URL(location.href); var sp=u.searchParams; Object.keys(changes||{}).forEach(function(k){ var v=changes[k]; if(v==null||v==='') sp.delete(k); else sp.set(k,v); }); u.search=sp.toString(); history.replaceState({mode:'VIEW'}, document.title, u.toString()); } catch(_){} }
+
+      function setHistoryView(){ try{ history.replaceState({mode:'VIEW'}, document.title, location.pathname + location.search); } catch(_){} }
+
+      function createInput(field, isTextarea){ var el=meta.querySelector('[data-f="'+field+'"]'); if(!el) return; var val=(el.textContent.trim()==='—')?'':el.textContent.trim(); originalValues[field]=val; var input=isTextarea?document.createElement('textarea'):document.createElement('input'); if(isTextarea){ input.rows=1; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;'; } else { input.type='text'; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;'; } input.name=field; input.value=val; el.replaceWith(input); inputs[field]=input; if(isTextarea){ requestAnimationFrame(function(){ autosize(input); }); } input.addEventListener('input', function(){ computeDirty(); if(isTextarea) autosize(input); }); }
+
+      function enterEdit(){ mode='EDITING'; btn.setAttribute('data-mode','edit'); syncButton(); replaceUrlQuery({edit:'1'}); meta.setAttribute('data-edit-mode','true'); if(!formEl){ formEl=document.createElement('form'); formEl.method='post'; formEl.addEventListener('submit', function(ev){ ev.preventDefault(); doSave(false); }); meta.parentNode.insertBefore(formEl, meta); formEl.appendChild(meta);} createInput('name', true); createInput('notes', true); var first=inputs.name||inputs.notes; if(first) first.focus(); snapshotInitialValues(); computeDirty(); updateGuards(); keydownHandler=function(e){ if((e.ctrlKey||e.metaKey) && e.key==='Enter' && !btn.disabled){ btn.click(); } if(e.key==='Escape'){ cancelEdit(); } }; document.addEventListener('keydown', keydownHandler); }
+
+      function restoreDisplaysFrom(values){ Object.keys(inputs).forEach(function(field){ var display=document.createElement('div'); display.className='muted'; display.setAttribute('data-f', field); var v=(values && values[field] != null)? values[field] : inputs[field].value; v = (v||'').trim(); display.textContent = v===''?'—':v; inputs[field].replaceWith(display); }); }
+
+      function finalizeToVIEW(){
+        if (Object.keys(inputs).length > 0) {
+          var restoreVals={}; Object.keys(inputs).forEach(function(f){ restoreVals[f]= (initialValues && (f in initialValues)) ? initialValues[f] : (originalValues[f]||''); });
+          restoreDisplaysFrom(restoreVals);
+        }
+        inputs={}; originalValues={};
+        if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; }
+        meta.removeAttribute('data-edit-mode');
+        detachBeforeUnload(); detachInternalNavGuard();
+        btn.setAttribute('data-mode','view'); syncButton();
+        mode='VIEW'; dirty=false;
+        replaceUrlQuery({edit:null});
+        setHistoryView();
       }
+
+      function cancelEdit(){ finalizeToVIEW(); }
+
+      async function doSave(fromGuard){ computeDirty(); if(!dirty){ // no-op save, restore view state
+          restoreDisplaysFrom(); inputs={}; originalValues={}; if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; } meta.removeAttribute('data-edit-mode'); btn.setAttribute('data-mode','view'); syncButton(); mode='VIEW'; dirty=false; replaceUrlQuery({edit:null}); setHistoryView(); if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; } return; }
+        mode='SAVING'; btn.disabled=true; btn.textContent='Saving…';
+        try{
+          var fd=new FormData(); fd.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+          Object.keys(inputs).forEach(function(k){ var curr=inputs[k].value.trim(); var orig=originalValues[k]||''; if(curr!==orig){ fd.append(k, curr); } });
+          var resp=await fetch('{% url "update_association_meta" a.pk %}', { method:'POST', body: fd, headers:{'X-CSRFToken': getCookie('csrftoken')} });
+          if(!resp.ok){ throw new Error('Network error'); }
+          var data=await resp.json(); if(!data.ok){ throw new Error(data.error||'Save failed'); }
+          // success: restore view with current values
+          restoreDisplaysFrom(); inputs={}; originalValues={}; if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; }
+          meta.removeAttribute('data-edit-mode'); btn.setAttribute('data-mode','view'); syncButton(); mode='VIEW'; dirty=false; updateGuards(); replaceUrlQuery({edit:null}); setHistoryView();
+          if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; }
+        } catch(e){
+          alert('Save error: '+e.message);
+          mode='EDITING';
+        } finally {
+          btn.disabled=false; syncButton();
+        }
+      }
+
+      // Normalize to VIEW on history navigation
+      window.addEventListener('popstate', function(){ finalizeToVIEW(); });
+      window.addEventListener('pageshow', function(){ finalizeToVIEW(); });
     })();
   </script>
   {% endif %}
