@@ -265,13 +265,67 @@ def viz_rezervatii(request):
 
 @login_required
 def viz_asociatii(request):
-    return render(request, "core/viz_asociatii.html")
+    """Listă de asociații în carduri, cu căutare tolerantă și paginare."""
+    q = (request.GET.get("q") or "").strip()
+    qs = Association.objects.all()
+
+    def _normalize_text(value: str) -> str:
+        if not value:
+            return ""
+        decomposed = unicodedata.normalize("NFKD", str(value))
+        no_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+        return no_accents.lower().strip()
+
+    def _fuzzy_ratio(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        return difflib.SequenceMatcher(None, a, b).ratio()
+
+    if not q:
+        qs = qs.order_by("name")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        norm_q = _normalize_text(q)
+        candidates = list(qs.only("id", "name", "notes"))
+        scored = []
+        for a in candidates:
+            fields = [
+                _normalize_text(a.name),
+                _normalize_text(a.notes),
+            ]
+            best = 0.0
+            substr_bonus = 0.0
+            for f in fields:
+                if not f:
+                    continue
+                if norm_q in f:
+                    substr_bonus = max(substr_bonus, 0.15)
+                best = max(best, _fuzzy_ratio(norm_q, f))
+            total_score = best + substr_bonus
+            if total_score >= 0.55:
+                scored.append((total_score, a))
+
+        scored.sort(key=lambda t: (-t[0], _normalize_text(t[1].name)))
+        ordered = [a for _, a in scored]
+        paginator, page_obj = _paginate(request, ordered, default=24)
+
+    return render(request, "core/viz_asociatii.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+    })
 
 @login_required
 def viz_rezervatii_detail(request, pk: int):
     r = get_object_or_404(Reserve, pk=pk)
     is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     return render(request, "core/viz_rezervatii_detail.html", {"r": r, "is_admin": is_admin})
+
+@login_required
+def viz_asociatii_detail(request, pk: int):
+    a = get_object_or_404(Association, pk=pk)
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    return render(request, "core/viz_asociatii_detail.html", {"a": a, "is_admin": is_admin})
 
 @login_required
 def update_species_description(request, pk: int):
@@ -342,6 +396,34 @@ def update_species_meta(request, pk: int):
     if changed:
         species.save(update_fields=update_fields)
     
+    return JsonResponse({"ok": True, "changed": changed})
+
+@login_required
+@require_POST
+def update_association_meta(request, pk: int):
+    """Update Association fields (admins only)."""
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    a = get_object_or_404(Association, pk=pk)
+
+    def norm_text(v):
+        return strip_tags((v or "").strip()) or None
+
+    changed = {}
+    # Current Association model has only 'name' and 'notes'
+    for field in ("name", "notes"):
+        if field in request.POST:
+            val = norm_text(request.POST.get(field))
+            if getattr(a, field) != val:
+                setattr(a, field, val)
+                changed[field] = val
+
+    if not changed:
+        return JsonResponse({"ok": True, "changed": {}}, status=200)
+
+    a.save()
     return JsonResponse({"ok": True, "changed": changed})
 
 @login_required
