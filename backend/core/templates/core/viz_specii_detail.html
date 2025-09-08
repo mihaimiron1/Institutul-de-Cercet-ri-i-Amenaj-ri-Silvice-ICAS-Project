@@ -1,639 +1,97 @@
 {% extends "base.html" %}
-{% block title %}{{ s.denumire_stiintifica }} · ResNat{% endblock %}
+{% block title %}{{ sp.denumire_stiintifica }} · ResNat{% endblock %}
 {% block content %}
 <section class="container">
   <header class="hero">
-    <h1>{{ s.denumire_stiintifica }}</h1>
-    <p class="muted">{{ s.denumire_populara|default:"—" }}</p>
+    <h1>{{ sp.denumire_stiintifica }}</h1>
+    <p class="muted">{{ sp.denumire_populara|default:"—" }}</p>
   </header>
 
   <div class="card" id="species-card">
     <div class="mb-2" id="species-desc" data-desc="species">
       <strong>Descriere</strong>
-      <div class="muted">{{ s.description|default:"" }}</div>
+      <div class="muted">{{ sp.description|default:"" }}</div>
     </div>
     <div class="grid" id="species-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px;">
-      <div>
+      <div data-span="2" style="grid-column: span 2;">
+        <strong>Denumire științifică</strong>
+        <div class="muted" data-f="denumire_stiintifica">{{ sp.denumire_stiintifica }}</div>
+      </div>
+      <div data-span="2" style="grid-column: span 2;">
         <strong>Nume popular</strong>
-        <div class="muted" data-f="denumire_populara">{{ s.denumire_populara|default:"—" }}</div>
+        <div class="muted" data-f="denumire_populara">{{ sp.denumire_populara|default:"—" }}</div>
       </div>
       <div>
         <strong>Clasă</strong>
-        <div class="muted" data-f="clasa">{{ s.clasa|default:"—" }}</div>
+        <div class="muted" data-f="clasa">{{ sp.clasa|default:"—" }}</div>
       </div>
       <div>
         <strong>Familie</strong>
-        <div class="muted" data-f="familia">{{ s.familia|default:"—" }}</div>
+        <div class="muted" data-f="familia">{{ sp.familia|default:"—" }}</div>
       </div>
-      <div>
+      <div data-span="2" style="grid-column: span 2;">
         <strong>Habitat</strong>
-        <div class="muted" data-f="habitat">{{ s.habitat|default:"—" }}</div>
+        <div class="muted" data-f="habitat">{{ sp.habitat|default:"—" }}</div>
       </div>
-      <div>
+      <div data-span="2" style="grid-column: span 2;">
         <strong>Localitatea</strong>
-        <div class="muted" data-f="localitatea">{{ s.localitatea|default:"—" }}</div>
-      </div>
-      <div>
-        <strong>Silvice</strong>
-        <div class="muted" data-f="silvice">{{ s.silvice|yesno:"Da,Nu" }}</div>
-      </div>
-      <div>
-        <strong>Pajiști/stepice</strong>
-        <div class="muted" data-f="pajisti_sau_stepice">{{ s.pajisti_sau_stepice|yesno:"Da,Nu" }}</div>
-      </div>
-      <div>
-        <strong>Stâncării</strong>
-        <div class="muted" data-f="stancarii">{{ s.stancarii|yesno:"Da,Nu" }}</div>
-      </div>
-      <div>
-        <strong>Palustre/acvatice</strong>
-        <div class="muted" data-f="palustre_si_acvatice">{{ s.palustre_si_acvatice|yesno:"Da,Nu" }}</div>
-      </div>
-      <div>
-        <strong>Conventia Berna</strong>
-        <div class="muted" data-f="conventia_berna">{{ s.conventia_berna|yesno:"Da,Nu" }}</div>
-      </div>
-      <div>
-        <strong>Directiva Habitate</strong>
-        <div class="muted" data-f="directiva_habitate">{{ s.directiva_habitate|yesno:"Da,Nu" }}</div>
+        <div class="muted" data-f="localitatea">{{ sp.localitatea|default:"—" }}</div>
       </div>
       <div>
         <strong>Cartea Roșie (an)</strong>
-        <div class="muted" data-f="cartea_rosie">{{ s.cartea_rosie|default:"—" }}</div>
+        <div class="muted" data-f="cartea_rosie">{{ sp.cartea_rosie|default:"—" }}</div>
       </div>
       <div>
         <strong>Categoria</strong>
-        <div class="muted" data-f="cartea_rosie_cat">{{ s.cartea_rosie_cat|default:"—" }}</div>
+        <div class="muted" data-f="cartea_rosie_cat">{{ sp.cartea_rosie_cat|default:"—" }}</div>
       </div>
       <div>
         <strong>Frecvență</strong>
-        <div class="muted" data-f="frecventa">{{ s.frecventa|default:"—" }}</div>
+        <div class="muted" data-f="frecventa">{{ sp.frecventa|default:"—" }}</div>
       </div>
+      {% if sp.notes %}
+      <div data-span="2" style="grid-column: span 2;">
+        <strong>Note</strong>
+        <div class="muted" data-f="notes">{{ sp.notes }}</div>
+      </div>
+      {% endif %}
     </div>
-
-    {% if s.notes %}
-    <div class="mt-4">
-      <strong>Note</strong>
-      <div class="muted" data-f="notes">{{ s.notes }}</div>
-    </div>
-    {% endif %}
 
     <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
       <a href="{% url 'viz_specii' %}" class="btn btn-outline">Înapoi la specii</a>
       {% if is_admin %}
-      <button id="actionBtn" class="btn" aria-label="Editează">Edit</button>
+      <button id="actionBtn" class="btn" aria-label="Editează" data-mode="view">Edit</button>
       {% endif %}
     </div>
   </div>
-  {% if s.is_rare and points and points|length > 0 %}
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
 
+  {% if sp.is_rare and points and points|length > 0 %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <div id="species-map" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
   {% endif %}
 </section>
+{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Card expansion and responsive grid */
-  #species-card {
-    transition: height 120ms ease;
-  }
-  
-  /* Responsive grid - long fields span 2 columns on larger screens */
   @media (min-width: 768px) {
-    #species-meta[data-edit-mode="true"] {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    #species-meta[data-edit-mode="true"] [data-span="2"] {
-      grid-column: span 2;
-    }
+    #species-meta[data-edit-mode="true"] { grid-template-columns: repeat(4, 1fr); }
+    #species-meta[data-edit-mode="true"] [data-span="2"] { grid-column: span 2; }
   }
-  
-  /* Allow very long fields to span full row if needed */
-  #species-meta[data-edit-mode="true"] .span-full-row {
-    grid-column: 1 / -1;
-  }
-  
-  /* Ensure inputs are full width and properly styled */
-  #species-meta input,
-  #species-meta textarea,
-  #species-meta select {
-    width: 100% !important;
-    box-sizing: border-box;
-    min-width: 0; /* Allow flex items to shrink below content size */
-  }
-  
-  /* Ensure grid items don't overflow */
-  #species-meta > div {
-    min-width: 0;
-    overflow: hidden;
-    max-width: 100%;
-    word-wrap: break-word;
-    word-break: break-all;
-  }
-  
-  /* Smooth transitions for input height changes */
-  #species-meta textarea {
-    transition: height 120ms ease;
-    word-break: break-word;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    hyphens: auto;
-  }
-  
-  /* Ensure long text wraps properly in both view and edit modes */
-  #species-meta .muted {
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    hyphens: auto;
-    max-width: 100%;
-    overflow: hidden;
-  }
-  
-  /* Prevent horizontal overflow in the grid */
-  #species-meta {
-    overflow: hidden;
-  }
-  
-  /* Ensure textareas don't cause horizontal overflow */
-  #species-meta textarea {
-    max-width: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-  }
-  
-  /* Force text wrapping for very long strings */
-  #species-meta .muted,
-  #species-meta textarea {
-    word-break: break-all;
-    overflow-wrap: break-word;
-  }
-  
-  /* Ensure grid items respect column boundaries */
-  #species-meta > div {
-    max-width: 100%;
-    word-wrap: break-word;
-  }
+  #species-meta input, #species-meta textarea { width:100% !important; box-sizing:border-box; min-width:0; }
+  #species-meta > div { min-width:0; overflow:hidden; max-width:100%; word-wrap:break-word; }
+  #species-meta textarea { transition:height 120ms ease; white-space:pre-wrap; overflow-wrap:anywhere; hyphens:auto; word-break:break-word; resize:none; overflow:hidden; }
 </style>
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    (function(){
-      var card = document.getElementById('species-card');
-      var desc = document.getElementById('species-desc');
-      var meta = document.getElementById('species-meta');
-      var btn = document.getElementById('actionBtn');
-
-      function autosize(textarea){
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 360) + 'px';
-      }
-      function toast(msg){
-        var t = document.createElement('div');
-        t.setAttribute('role','status');
-        t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)';
-        t.textContent = msg; document.body.appendChild(t); setTimeout(()=>{ t.remove(); }, 1800);
-      }
-      function getCookie(name){ var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : ''; }
-      function buildGuardModal(){
-        var wrap = document.createElement('div');
-        wrap.id='unsaved-guard';
-        wrap.innerHTML = '<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class="muted" style="margin:0 0 12px;">Save before leaving?</p>\n    <div style="display:flex; gap:8px; justify-content:flex-end;">\n      <button type="button" id="guard-stay" class="btn btn-outline">Stay</button>\n      <button type="button" id="guard-discard" class="btn btn-outline">Discard</button>\n      <button type="button" id="guard-save" class="btn">Save and leave</button>\n    </div>\n  </div>\n</div>';
-        return wrap;
-      }
-
-      // Global state
-      var mode = 'VIEW'; // VIEW | EDITING | SAVING
-        var originalValues = {}; // raw originals for UI restore
-        var initialValues = {};  // immutable snapshot for dirty checks
-        var inputs = {};
-        var dirty = false;
-        var beforeUnloadHandler = null;
-        var internalNavHandler = null;
-        var keydownHandler = null;
-      var hasGuard = false; // Single source of truth for guard state
-
-      // Normalize history to a clean VIEW state on load
-      try { history.replaceState({}, '', location.href); } catch(_) {}
-      window.addEventListener('popstate', function(){
-        // Always force view mode if any edit state lingered
-        finalizeView();
-      });
-
-      // Update action button based on mode
-      function updateActionButton(mode) {
-        if (mode === 'VIEW') {
-          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
-          btn.setAttribute('aria-label', 'Editează');
-          btn.disabled = false;
-        } else if (mode === 'EDITING') {
-          btn.innerHTML = 'Save';
-          btn.setAttribute('aria-label', 'Salvează modificările');
-          btn.disabled = false;
-        } else if (mode === 'SAVING') {
-          btn.innerHTML = 'Saving…';
-          btn.setAttribute('aria-label', 'Se salvează...');
-          btn.disabled = true;
-        }
-      }
-
-      // Single click handler that branches by mode
-      btn.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        if (mode === 'VIEW') {
-          enterEdit();
-        } else if (mode === 'EDITING') {
-          doSave();
-        }
-        // SAVING mode: button is disabled, no action
-      });
-
-      // Initialize button state
-      updateActionButton(mode);
-
-        // Convert metadata fields to inputs
-        function createInput(field, type, placeholder) {
-          var el = meta.querySelector('[data-f="' + field + '"]');
-          var val = (el.textContent.trim() === '—') ? '' : el.textContent.trim();
-          originalValues[field] = val;
-          
-          var input;
-          if (type === 'text') {
-            // Use textarea for text fields with autosizing
-            input = document.createElement('textarea');
-            input.rows = 1;
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; line-height:1.5; transition:height 120ms ease; word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; hyphens:auto; max-width:100%; overflow-x:hidden; overflow-y:hidden; word-wrap:break-word;';
-            autosize(input);
-          } else if (type === 'boolean') {
-            // Use select for boolean fields
-            input = document.createElement('select');
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
-            input.innerHTML = '<option value="">—</option><option value="true">Da</option><option value="false">Nu</option>';
-            input.value = val === 'Da' ? 'true' : val === 'Nu' ? 'false' : '';
-          } else {
-            // Use input for other fields
-            input = document.createElement('input');
-            input.type = type;
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
-          }
-          
-          input.name = field;
-          input.placeholder = placeholder || '';
-          if (type !== 'boolean') {
-            input.value = val;
-          }
-          
-          el.replaceWith(input);
-          inputs[field] = input;
-          
-          input.addEventListener('input', function(){ 
-            computeDirty();
-            if (type === 'text') autosize(input);
-          });
-        }
-
-        // Autosize function for textareas
-        function autosize(textarea) {
-          textarea.style.height = 'auto';
-          var scrollHeight = textarea.scrollHeight;
-          var lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
-          var minHeight = lineHeight;
-          textarea.style.height = Math.max(scrollHeight, minHeight) + 'px';
-          
-          // If textarea is very tall, make it span full row
-          var parentDiv = textarea.closest('div');
-          if (parentDiv && scrollHeight > 200) {
-            parentDiv.classList.add('span-full-row');
-          } else if (parentDiv) {
-            parentDiv.classList.remove('span-full-row');
-          }
-        }
-
-      // setLoading function removed - using updateActionButton instead
-
-        // Normalization helper for comparisons
-        function normalizeText(value){
-          if (value == null) return '';
-          var s = String(value);
-          s = s.replace(/\r\n?|\u2028|\u2029/g, '\n');
-          s = s.split('\n').map(function(line){ return line.replace(/\s+/g, ' ').trim(); }).join('\n');
-          return s.trim();
-        }
-
-        function snapshotInitialValues(){
-          initialValues = {};
-          for (var field in inputs){
-            if (inputs[field].type === 'select-one') {
-              var val = inputs[field].value;
-              initialValues[field] = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
-            } else {
-              initialValues[field] = normalizeText(inputs[field].value || '');
-            }
-          }
-        }
-
-        function computeDirty(){
-          var wasDirty = dirty;
-          dirty = false;
-          for (var field in inputs){
-            var curr;
-            if (inputs[field].type === 'select-one') {
-              var val = inputs[field].value;
-              curr = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
-            } else {
-              curr = normalizeText(inputs[field].value || '');
-            }
-            if (curr !== (initialValues[field] || '')){ dirty = true; break; }
-          }
-          if (dirty !== wasDirty) updateGuards();
-        }
-
-      // updateSaveButton function removed - using updateActionButton instead
-
-      // Enter edit mode (idempotent)
-      function enterEdit() {
-        if (mode !== 'VIEW') return; // Ignore if not in VIEW mode
-        
-        mode = 'EDITING';
-        // Update button label immediately to avoid later JS errors masking the change
-        updateActionButton(mode);
-        
-        // Set edit mode attribute for CSS
-        meta.setAttribute('data-edit-mode', 'true');
-        
-        // Create all inputs
-        createInput('denumire_populara', 'text', 'Nume popular');
-        createInput('clasa', 'text', 'Clasă');
-        createInput('familia', 'text', 'Familie');
-        createInput('habitat', 'text', 'Habitat');
-        createInput('localitatea', 'text', 'Localitatea');
-        createInput('silvice', 'boolean');
-        createInput('pajisti_sau_stepice', 'boolean');
-        createInput('stancarii', 'boolean');
-        createInput('palustre_si_acvatice', 'boolean');
-        createInput('conventia_berna', 'boolean');
-        createInput('directiva_habitate', 'boolean');
-        createInput('cartea_rosie', 'number', 'Anul');
-        createInput('cartea_rosie_cat', 'text', 'Categoria');
-        createInput('frecventa', 'text', 'Frecvența');
-        createInput('notes', 'text', 'Note');
-
-        // Focus first input
-        inputs.denumire_populara.focus();
-        
-        // Ensure all textareas expand to fit content immediately after render
-        requestAnimationFrame(function() {
-          Object.values(inputs).forEach(function(input) {
-            if (input.tagName === 'TEXTAREA') {
-              autosize(input);
-            }
-          });
-        });
-
-        // Snapshot and initialize guards
-        snapshotInitialValues();
-        computeDirty();
-        updateGuards();
-
-        // Keyboard shortcuts
-        keydownHandler = function(e) {
-          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btn.disabled) {
-            btn.click();
-          }
-          if (e.key === 'Escape') {
-            finalizeView();
-          }
-        };
-        document.addEventListener('keydown', keydownHandler);
-        
-        // Update button state
-        updateActionButton(mode);
-      }
-
-      // Finalize view mode (idempotent)
-      function finalizeView() {
-        // Clean up guards and handlers
-            detachBeforeUnload();
-            detachInternalNavGuard();
-        if (keydownHandler) { 
-          document.removeEventListener('keydown', keydownHandler); 
-          keydownHandler = null; 
-        }
-        
-            // Remove edit mode attribute
-            meta.removeAttribute('data-edit-mode');
-        
-            // Restore original display
-            for (var field in inputs) {
-              var display = document.createElement('div');
-              display.className = 'muted';
-              display.setAttribute('data-f', field);
-              display.textContent = (originalValues[field] || '') === '' ? '—' : originalValues[field];
-              inputs[field].replaceWith(display);
-            }
-        
-            // Clean state
-        mode = 'VIEW';
-            dirty = false;
-        hasGuard = false;
-        
-        // Clear history state
-            try { history.replaceState({}, '', location.href); } catch(_) {}
-        
-        // Update button state
-        updateActionButton(mode);
-      }
-
-      // Cancel edit mode (alias for finalizeView)
-      function cancelEdit() {
-        finalizeView();
-        }
-
-        // Save function
-      async function doSave(navigateAfter, targetHref) {
-          // Recompute dirty at click time
-          computeDirty();
-        
-          if (!dirty) {
-            // No-op save: treat as success and exit edit mode cleanly
-            toast('Saved');
-          finalizeView();
-          if (navigateAfter && targetHref) {
-            window.location.href = targetHref;
-          }
-            return;
-          }
-
-        mode = 'SAVING';
-        updateActionButton(mode);
-        
-          try {
-            var fd = new FormData();
-            // Send only changed fields
-            for (var field in inputs) {
-              var val = (inputs[field].value || '').trim();
-              if (inputs[field].type === 'select-one') {
-                val = val === 'true' ? 'true' : val === 'false' ? 'false' : '';
-              }
-              fd.append(field, val);
-            }
-            
-            const resp = await fetch('{% url "update_species_meta" s.id %}', {
-              method: 'POST',
-              headers: {
-                'X-Requested-With': 'fetch',
-                'X-CSRFToken': getCookie('csrftoken')
-              },
-              body: fd
-            });
-            
-            if (!resp.ok) {
-              var errorData = await resp.json();
-              throw new Error(errorData.error || 'Save failed');
-            }
-            
-            const data = await resp.json();
-            
-            // Update UI with new values
-            for (var field in data.changed || {}) {
-              var display = document.createElement('div');
-              display.className = 'muted';
-              display.setAttribute('data-f', field);
-              var val = data.changed[field];
-              if (field in ['silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice', 'conventia_berna', 'directiva_habitate']) {
-                display.textContent = val ? 'Da' : 'Nu';
-              } else {
-                display.textContent = (val == null || val === '') ? '—' : val;
-              }
-              inputs[field].replaceWith(display);
-            }
-            
-            toast('Saved');
-          finalizeView();
-          
-          if (navigateAfter && targetHref) {
-            window.location.href = targetHref;
-            }
-          } catch (e) {
-            toast('Save error: ' + e.message);
-          mode = 'EDITING';
-          updateActionButton(mode);
-        }
-      }
-
-      // Guards attach/detach with single source of truth
-      function attachBeforeUnload(){
-        if (beforeUnloadHandler || hasGuard) return;
-        beforeUnloadHandler = function(e){ 
-          if (dirty && mode === 'EDITING'){ 
-            e.preventDefault(); 
-            e.returnValue = ''; 
-          } 
-        };
-        window.addEventListener('beforeunload', beforeUnloadHandler);
-        hasGuard = true;
-      }
-      
-      function detachBeforeUnload(){
-        if (!beforeUnloadHandler || !hasGuard) return;
-        window.removeEventListener('beforeunload', beforeUnloadHandler);
-        beforeUnloadHandler = null;
-        hasGuard = false;
-      }
-      
-      function attachInternalNavGuard(){
-        if (internalNavHandler || hasGuard) return;
-        internalNavHandler = function(e){
-          var a = e.target.closest('a');
-          if (!a) return;
-          if (!dirty || mode !== 'EDITING') return;
-          e.preventDefault();
-          var m = buildGuardModal();
-          document.body.appendChild(m);
-          m.querySelector('#guard-stay').focus();
-          
-          // Disable all modal buttons during save
-          var modalButtons = m.querySelectorAll('button');
-          var originalDisabled = [];
-          modalButtons.forEach(function(btn, i) {
-            originalDisabled[i] = btn.disabled;
-            btn.disabled = true;
-          });
-          
-          m.querySelector('#guard-stay').onclick = function(){ 
-            // Re-enable buttons
-            modalButtons.forEach(function(btn, i) {
-              btn.disabled = originalDisabled[i];
-            });
-            m.remove(); 
-          };
-          
-          m.querySelector('#guard-discard').onclick = function(){
-            // Clear guards before navigation
-            detachBeforeUnload();
-            detachInternalNavGuard();
-            window.location.href = a.href;
-          };
-          
-          m.querySelector('#guard-save').onclick = async function(){ 
-            // Set saving state and update button
-            mode = 'SAVING';
-            updateActionButton(mode);
-            
-            try {
-              await doSave(true, a.href);
-              // Modal will be closed by doSave success
-            } catch (e) {
-              // Re-enable modal buttons on error
-              modalButtons.forEach(function(btn, i) {
-                btn.disabled = originalDisabled[i];
-              });
-              mode = 'EDITING';
-              updateActionButton(mode);
-            }
-          };
-        };
-        document.addEventListener('click', internalNavHandler, true);
-        hasGuard = true;
-      }
-      
-      function detachInternalNavGuard(){
-        if (!internalNavHandler || !hasGuard) return;
-        document.removeEventListener('click', internalNavHandler, true);
-        internalNavHandler = null;
-        hasGuard = false;
-      }
-      
-      function updateGuards(){
-        if (dirty && mode === 'EDITING') { 
-          attachBeforeUnload(); 
-          attachInternalNavGuard(); 
-        } else { 
-          detachBeforeUnload(); 
-          detachInternalNavGuard(); 
-        }
-      }
-    })();
-  </script>
-  {% if s.is_rare and points and points|length > 0 %}
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
-  {{ points|json_script:"species-points-data" }}
+  {% if sp.is_rare and points and points|length > 0 %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     (function(){
       if (!document.getElementById('species-map')) return;
       if (window.__speciesMapInit) return; window.__speciesMapInit = true;
-      var points = JSON.parse(document.getElementById('species-points-data').textContent);
+      var points = {{ points|safe }};
       var mdCenter = [47.0, 28.5];
       var map = L.map('species-map', { center: mdCenter, zoom: 7, scrollWheelZoom: true });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
@@ -643,5 +101,48 @@
     })();
   </script>
   {% endif %}
+  {% if is_admin %}
+  <script>
+    (function(){
+      var meta = document.getElementById('species-meta');
+      var btn = document.getElementById('actionBtn');
+      if (!btn) return;
+      function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
+      function syncButton(){ var m=(btn.getAttribute('data-mode')||'view'); btn.innerHTML = (m==='edit')?'Save':'Edit'; btn.setAttribute('aria-label', m==='edit'?'Salvează modificările':'Editează'); }
+      function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='\n<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class="muted" style="margin:0 0 12px;">Save before leaving?</p>\n    <div style="display:flex; gap:8px; justify-content:flex-end;">\n      <button type="button" id="guard-stay" class="btn btn-outline">Stay</button>\n      <button type="button" id="guard-discard" class="btn btn-outline">Discard</button>\n      <button type="button" id="guard-save" class="btn">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
+
+      syncButton();
+      btn.addEventListener('click', function(e){ e.preventDefault(); var m=(btn.getAttribute('data-mode')||'view'); if(m==='view'){ enterEdit(); } else { if(formEl) formEl.requestSubmit(); } });
+      var formEl=null; var inputs={}; var originalValues={}; var initialValues={}; var dirty=false; var mode='VIEW';
+      var beforeUnloadHandler=null; var internalNavHandler=null; var keydownHandler=null; var pendingNavUrl=null;
+
+      function autosize(t){ t.style.height='auto'; t.style.height=(t.scrollHeight||t.clientHeight)+'px'; }
+      function normalizeText(value){ if(value==null) return ''; var s=String(value); s=s.replace(/\r\n?|\u2028|\u2029/g,'\n'); s=s.split('\n').map(function(line){ return line.replace(/\s+/g,' ').trim(); }).join('\n'); return s.trim(); }
+      function snapshotInitialValues(){ initialValues={}; Object.keys(inputs).forEach(function(k){ initialValues[k]=normalizeText(inputs[k].value||''); }); }
+      function computeDirty(){ var was=dirty; dirty=false; Object.keys(inputs).some(function(k){ var curr=normalizeText(inputs[k].value||''); if(curr !== (initialValues[k]||'')){ dirty=true; return true; } return false; }); if (dirty!==was) updateGuards(); }
+
+      function attachBeforeUnload(){ if(beforeUnloadHandler) return; beforeUnloadHandler=function(e){ if(dirty && mode==='EDITING'){ e.preventDefault(); e.returnValue=''; return ''; } }; window.addEventListener('beforeunload', beforeUnloadHandler); }
+      function detachBeforeUnload(){ if(beforeUnloadHandler){ window.removeEventListener('beforeunload', beforeUnloadHandler); beforeUnloadHandler=null; } }
+      function attachInternalNavGuard(){ if(internalNavHandler) return; internalNavHandler=function(ev){ var link=ev.target.closest('a[href]'); if(!link) return; if(dirty && mode==='EDITING'){ ev.preventDefault(); var modal=buildGuardModal(); document.body.appendChild(modal); var guardStay=modal.querySelector('#guard-stay'); var guardDiscard=modal.querySelector('#guard-discard'); var guardSave=modal.querySelector('#guard-save'); guardStay.addEventListener('click', function(){ modal.remove(); }); guardDiscard.addEventListener('click', function(){ modal.remove(); finalizeToVIEW(); window.location.href = link.href; }); guardSave.addEventListener('click', async function(){ guardStay.disabled=guardDiscard.disabled=guardSave.disabled=true; pendingNavUrl=link.href; await doSave(true); }); } }; document.addEventListener('click', internalNavHandler, true); }
+      function detachInternalNavGuard(){ if(internalNavHandler){ document.removeEventListener('click', internalNavHandler, true); internalNavHandler=null; } }
+      function updateGuards(){ if(dirty && mode==='EDITING'){ attachBeforeUnload(); attachInternalNavGuard(); } else { detachBeforeUnload(); detachInternalNavGuard(); } }
+      function replaceUrlQuery(changes){ try{ var u=new URL(location.href); var sp=u.searchParams; Object.keys(changes||{}).forEach(function(k){ var v=changes[k]; if(v==null||v==='') sp.delete(k); else sp.set(k,v); }); u.search=sp.toString(); history.replaceState({mode:'VIEW'}, document.title, u.toString()); } catch(_){} }
+
+      function restoreDisplaysFrom(values){ Object.keys(inputs).forEach(function(field){ var display=document.createElement('div'); display.className='muted'; display.setAttribute('data-f', field); var v=(values && values[field] != null)? values[field] : inputs[field].value; v = (v||'').trim(); display.textContent = v===''?'—':v; inputs[field].replaceWith(display); }); }
+      function finalizeToVIEW(){ detachBeforeUnload(); detachInternalNavGuard(); if(keydownHandler){ document.removeEventListener('keydown', keydownHandler); keydownHandler=null; } meta.removeAttribute('data-edit-mode'); var restoreVals={}; Object.keys(inputs).forEach(function(f){ restoreVals[f]= (initialValues && (f in initialValues)) ? initialValues[f] : (originalValues[f]||''); }); restoreDisplaysFrom(restoreVals); inputs={}; originalValues={}; if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; } btn.setAttribute('data-mode','view'); syncButton(); mode='VIEW'; dirty=false; replaceUrlQuery({edit:null}); try{ history.replaceState({mode:'VIEW'}, document.title, location.pathname + location.search); } catch(_){} }
+
+      function createInput(field, isTextarea){ var el=meta.querySelector('[data-f="'+field+'"]'); if(!el) return; var val=(el.textContent.trim()==='—')?'':el.textContent.trim(); originalValues[field]=val; var input=isTextarea?document.createElement('textarea'):document.createElement('input'); if(isTextarea){ input.rows=1; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;'; requestAnimationFrame(function(){ autosize(input); }); } else { input.type='text'; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;'; } input.name=field; input.value=val; el.replaceWith(input); inputs[field]=input; input.addEventListener('input', function(){ computeDirty(); if(isTextarea) autosize(input); }); }
+
+      function enterEdit(){ mode='EDITING'; btn.setAttribute('data-mode','edit'); syncButton(); replaceUrlQuery({edit:'1'}); meta.setAttribute('data-edit-mode','true'); if(!formEl){ formEl=document.createElement('form'); formEl.method='post'; formEl.addEventListener('submit', function(ev){ ev.preventDefault(); doSave(false); }); meta.parentNode.insertBefore(formEl, meta); formEl.appendChild(meta);} createInput('denumire_populara', true); createInput('clasa', true); createInput('familia', true); createInput('habitat', true); createInput('localitatea', true); createInput('cartea_rosie', false); createInput('cartea_rosie_cat', true); createInput('frecventa', true); if (document.querySelector('[data-f="notes"]')) { createInput('notes', true); } var first=inputs.denumire_populara||inputs.clasa||inputs.familia; if(first) first.focus(); snapshotInitialValues(); computeDirty(); updateGuards(); keydownHandler=function(e){ if((e.ctrlKey||e.metaKey) && e.key==='Enter' && !btn.disabled){ btn.click(); } if(e.key==='Escape'){ finalizeToVIEW(); } }; document.addEventListener('keydown', keydownHandler); }
+
+      async function doSave(fromGuard){ computeDirty(); if(!dirty){ finalizeToVIEW(); if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; } return; } mode='SAVING'; btn.disabled=true; btn.textContent='Saving…'; try{ var fd=new FormData(); fd.append('csrfmiddlewaretoken', getCookie('csrftoken')); Object.keys(inputs).forEach(function(k){ var curr=inputs[k].value.trim(); var orig=originalValues[k]||''; if(curr!==orig){ fd.append(k, curr); } }); var resp=await fetch('{% url "update_species_meta" sp.pk %}', { method:'POST', body: fd, headers:{'X-CSRFToken': getCookie('csrftoken') } }); if(!resp.ok){ throw new Error('Network error'); } var data=await resp.json(); if(!data.ok){ throw new Error(data.error||'Save failed'); } finalizeToVIEW(); if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; } } catch(e){ alert('Save error: '+e.message); mode='EDITING'; } finally { btn.disabled=false; syncButton(); } }
+
+      // Keep VIEW on history navigation
+      window.addEventListener('popstate', function(){ finalizeToVIEW(); });
+      window.addEventListener('pageshow', function(){ finalizeToVIEW(); });
+    })();
+  </script>
+  {% endif %}
 {% endblock %}
-{% endblock %}
+
+

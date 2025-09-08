@@ -177,9 +177,9 @@ def viz_specii(request):
 
 @login_required
 def viz_specii_detail(request, pk: int):
-    species = get_object_or_404(Species, pk=pk)
+    sp = get_object_or_404(Species, pk=pk)
     points_qs = (Occurrence.objects
-                 .filter(species=species)
+                 .filter(species=sp)
                  .exclude(latitude__isnull=True)
                  .exclude(longitude__isnull=True))
 
@@ -191,7 +191,7 @@ def viz_specii_detail(request, pk: int):
             lon = float(o.longitude)
         except (TypeError, ValueError):
             continue
-        label = f"{species.denumire_stiintifica} — {o.reserve.name} ({o.year})" if getattr(o, "reserve", None) else species.denumire_stiintifica
+        label = f"{sp.denumire_stiintifica} — {o.reserve.name} ({o.year})" if getattr(o, "reserve", None) else sp.denumire_stiintifica
         points.append({
             "lat": lat,
             "lon": lon,
@@ -200,7 +200,7 @@ def viz_specii_detail(request, pk: int):
 
     is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
     return render(request, "core/viz_specii_detail.html", {
-        "s": species,
+        "sp": sp,
         "points": points,
         "is_admin": is_admin,
     })
