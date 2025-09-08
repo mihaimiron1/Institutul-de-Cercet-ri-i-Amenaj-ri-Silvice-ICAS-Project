@@ -12,7 +12,7 @@
       <strong>Descriere</strong>
       <div class="muted">{{ s.description|default:"" }}</div>
     </div>
-    <div class="grid" id="species-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px;">
+    <div class="grid" id="species-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
       <div>
         <strong>Nume popular</strong>
         <div class="muted" data-f="denumire_populara">{{ s.denumire_populara|default:"—" }}</div>
@@ -212,38 +212,21 @@
 
       // Global state
       var mode = 'VIEW'; // VIEW | EDITING | SAVING
-        var originalValues = {}; // raw originals for UI restore
-        var initialValues = {};  // immutable snapshot for dirty checks
-        var inputs = {};
-        var dirty = false;
-        var beforeUnloadHandler = null;
-        var internalNavHandler = null;
-        var keydownHandler = null;
-      var hasGuard = false; // Single source of truth for guard state
+      var originalValues = {}; // raw originals for UI restore
+      var initialValues = {};  // immutable snapshot for dirty checks
+      var inputs = {};
+      var dirty = false;
+      var beforeUnloadHandler = null;
+      var internalNavHandler = null;
+      var keydownHandler = null;
 
       // Normalize history to a clean VIEW state on load
       try { history.replaceState({}, '', location.href); } catch(_) {}
       window.addEventListener('popstate', function(){
         // Always force view mode if any edit state lingered
-        finalizeView();
+        meta.removeAttribute('data-edit-mode');
+        mode = 'VIEW';
       });
-
-      // Update action button based on mode
-      function updateActionButton(mode) {
-        if (mode === 'VIEW') {
-          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
-          btn.setAttribute('aria-label', 'Editează');
-          btn.disabled = false;
-        } else if (mode === 'EDITING') {
-          btn.innerHTML = 'Save';
-          btn.setAttribute('aria-label', 'Salvează modificările');
-          btn.disabled = false;
-        } else if (mode === 'SAVING') {
-          btn.innerHTML = 'Saving…';
-          btn.setAttribute('aria-label', 'Se salvează...');
-          btn.disabled = true;
-        }
-      }
 
       // Single click handler that branches by mode
       btn.addEventListener('click', function(ev) {
@@ -256,113 +239,115 @@
         // SAVING mode: button is disabled, no action
       });
 
-      // Initialize button state
-      updateActionButton(mode);
-
-        // Convert metadata fields to inputs
-        function createInput(field, type, placeholder) {
-          var el = meta.querySelector('[data-f="' + field + '"]');
-          var val = (el.textContent.trim() === '—') ? '' : el.textContent.trim();
-          originalValues[field] = val;
-          
-          var input;
-          if (type === 'text') {
-            // Use textarea for text fields with autosizing
-            input = document.createElement('textarea');
-            input.rows = 1;
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; line-height:1.5; transition:height 120ms ease; word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; hyphens:auto; max-width:100%; overflow-x:hidden; overflow-y:hidden; word-wrap:break-word;';
-            autosize(input);
-          } else if (type === 'boolean') {
-            // Use select for boolean fields
-            input = document.createElement('select');
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
-            input.innerHTML = '<option value="">—</option><option value="true">Da</option><option value="false">Nu</option>';
-            input.value = val === 'Da' ? 'true' : val === 'Nu' ? 'false' : '';
-          } else {
-            // Use input for other fields
-            input = document.createElement('input');
-            input.type = type;
-            input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
-          }
-          
-          input.name = field;
-          input.placeholder = placeholder || '';
-          if (type !== 'boolean') {
-            input.value = val;
-          }
-          
-          el.replaceWith(input);
-          inputs[field] = input;
-          
-          input.addEventListener('input', function(){ 
-            computeDirty();
-            updateSaveButton();
-            if (type === 'text') autosize(input);
-          });
-        }
-
-        // Autosize function for textareas
-        function autosize(textarea) {
-          textarea.style.height = 'auto';
-          var scrollHeight = textarea.scrollHeight;
-          var lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
-          var minHeight = lineHeight;
-          textarea.style.height = Math.max(scrollHeight, minHeight) + 'px';
-          
-          // If textarea is very tall, make it span full row
-          var parentDiv = textarea.closest('div');
-          if (parentDiv && scrollHeight > 200) {
-            parentDiv.classList.add('span-full-row');
-          } else if (parentDiv) {
-            parentDiv.classList.remove('span-full-row');
-          }
-        }
-
-      // setLoading function removed - using updateActionButton instead
-
-        // Normalization helper for comparisons
-        function normalizeText(value){
-          if (value == null) return '';
-          var s = String(value);
-          s = s.replace(/\r\n?|\u2028|\u2029/g, '\n');
-          s = s.split('\n').map(function(line){ return line.replace(/\s+/g, ' ').trim(); }).join('\n');
-          return s.trim();
-        }
-
-        function snapshotInitialValues(){
-          initialValues = {};
-          for (var field in inputs){
-            if (inputs[field].type === 'select-one') {
-              var val = inputs[field].value;
-              initialValues[field] = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
-            } else {
-              initialValues[field] = normalizeText(inputs[field].value || '');
-            }
-          }
-        }
-
-        function computeDirty(){
-          var wasDirty = dirty;
-          dirty = false;
-          for (var field in inputs){
-            var curr;
-            if (inputs[field].type === 'select-one') {
-              var val = inputs[field].value;
-              curr = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
-            } else {
-              curr = normalizeText(inputs[field].value || '');
-            }
-            if (curr !== (initialValues[field] || '')){ dirty = true; break; }
-          }
-          if (dirty !== wasDirty) updateGuards();
-        }
-
-      // updateSaveButton function removed - using updateActionButton instead
-
-      // Enter edit mode (idempotent)
-      function enterEdit() {
-        if (mode !== 'VIEW') return; // Ignore if not in VIEW mode
+      // Convert metadata fields to inputs
+      function createInput(field, type, placeholder) {
+        var el = meta.querySelector('[data-f="' + field + '"]');
+        var val = (el.textContent.trim() === '—') ? '' : el.textContent.trim();
+        originalValues[field] = val;
         
+        var input;
+        if (type === 'text') {
+          // Use textarea for text fields with autosizing
+          input = document.createElement('textarea');
+          input.rows = 1;
+          input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; line-height:1.5; transition:height 120ms ease; word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; hyphens:auto; max-width:100%; overflow-x:hidden; overflow-y:hidden; word-wrap:break-word;';
+          autosize(input);
+        } else if (type === 'boolean') {
+          // Use select for boolean fields
+          input = document.createElement('select');
+          input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
+          input.innerHTML = '<option value="">—</option><option value="true">Da</option><option value="false">Nu</option>';
+          input.value = val === 'Da' ? 'true' : val === 'Nu' ? 'false' : '';
+        } else {
+          // Use input for other fields
+          input = document.createElement('input');
+          input.type = type;
+          input.style.cssText = 'width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;';
+        }
+        
+        input.name = field;
+        input.placeholder = placeholder || '';
+        if (type !== 'boolean') {
+          input.value = val;
+        }
+        
+        el.replaceWith(input);
+        inputs[field] = input;
+        
+        input.addEventListener('input', function(){ 
+          computeDirty();
+          updateSaveButton();
+          if (type === 'text') autosize(input);
+        });
+      }
+
+      // Autosize function for textareas
+      function autosize(textarea) {
+        textarea.style.height = 'auto';
+        var scrollHeight = textarea.scrollHeight;
+        var lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
+        var minHeight = lineHeight;
+        textarea.style.height = Math.max(scrollHeight, minHeight) + 'px';
+        
+        // If textarea is very tall, make it span full row
+        var parentDiv = textarea.closest('div');
+        if (parentDiv && scrollHeight > 200) {
+          parentDiv.classList.add('span-full-row');
+        } else if (parentDiv) {
+          parentDiv.classList.remove('span-full-row');
+        }
+      }
+
+      function setLoading(on) {
+        btn.disabled = !!on;
+        btn.innerHTML = on ? '<span aria-hidden="true">⏳</span> Saving…' : '<span aria-hidden="true">💾</span> Save';
+        Object.values(inputs).forEach(function(input) { input.disabled = !!on; });
+      }
+
+      // Normalization helper for comparisons
+      function normalizeText(value){
+        if (value == null) return '';
+        var s = String(value);
+        s = s.replace(/\r\n?|\u2028|\u2029/g, '\n');
+        s = s.split('\n').map(function(line){ return line.replace(/\s+/g, ' ').trim(); }).join('\n');
+        return s.trim();
+      }
+
+      function snapshotInitialValues(){
+        initialValues = {};
+        for (var field in inputs){
+          if (inputs[field].type === 'select-one') {
+            var val = inputs[field].value;
+            initialValues[field] = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
+          } else {
+            initialValues[field] = normalizeText(inputs[field].value || '');
+          }
+        }
+      }
+
+      function computeDirty(){
+        var wasDirty = dirty;
+        dirty = false;
+        for (var field in inputs){
+          var curr;
+          if (inputs[field].type === 'select-one') {
+            var val = inputs[field].value;
+            curr = val === 'true' ? 'Da' : val === 'false' ? 'Nu' : '';
+          } else {
+            curr = normalizeText(inputs[field].value || '');
+          }
+          if (curr !== (initialValues[field] || '')){ dirty = true; break; }
+        }
+        if (dirty !== wasDirty) updateGuards();
+      }
+
+      function updateSaveButton(){
+        // Keep Save enabled in EDITING regardless of dirty; only disable if not in EDITING
+        btn.disabled = mode !== 'EDITING';
+      }
+
+      // Enter edit mode
+      function enterEdit() {
         mode = 'EDITING';
         
         // Set edit mode attribute for CSS
@@ -385,6 +370,10 @@
         createInput('frecventa', 'text', 'Frecvența');
         createInput('notes', 'text', 'Note');
 
+        // Toggle the same button to Save mode
+        btn.innerHTML = '<span aria-hidden="true">💾</span> Save';
+        btn.setAttribute('aria-label', 'Salvează modificările');
+
         // Focus first input
         inputs.denumire_populara.focus();
         
@@ -400,6 +389,7 @@
         // Snapshot and initialize guards
         snapshotInitialValues();
         computeDirty();
+        updateSaveButton();
         updateGuards();
 
         // Keyboard shortcuts
@@ -408,148 +398,162 @@
             btn.click();
           }
           if (e.key === 'Escape') {
-            finalizeView();
+            cancelEdit();
           }
         };
         document.addEventListener('keydown', keydownHandler);
-        
-        // Update button state
-        updateActionButton(mode);
       }
 
-      // Finalize view mode (idempotent)
-      function finalizeView() {
-        // Clean up guards and handlers
-            detachBeforeUnload();
-            detachInternalNavGuard();
-        if (keydownHandler) { 
-          document.removeEventListener('keydown', keydownHandler); 
-          keydownHandler = null; 
-        }
-        
-            // Remove edit mode attribute
-            meta.removeAttribute('data-edit-mode');
-        
-            // Restore original display
-            for (var field in inputs) {
-              var display = document.createElement('div');
-              display.className = 'muted';
-              display.setAttribute('data-f', field);
-              display.textContent = (originalValues[field] || '') === '' ? '—' : originalValues[field];
-              inputs[field].replaceWith(display);
-            }
-        
-            // Clean state
-        mode = 'VIEW';
-            dirty = false;
-        hasGuard = false;
-        
-        // Clear history state
-            try { history.replaceState({}, '', location.href); } catch(_) {}
-        
-        // Update button state
-        updateActionButton(mode);
-      }
-
-      // Cancel edit mode (alias for finalizeView)
+      // Cancel edit mode
       function cancelEdit() {
-        finalizeView();
+        detachBeforeUnload();
+        detachInternalNavGuard();
+        if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
+        // Remove edit mode attribute
+        meta.removeAttribute('data-edit-mode');
+        // Restore original display
+        for (var field in inputs) {
+          var display = document.createElement('div');
+          display.className = 'muted';
+          display.setAttribute('data-f', field);
+          display.textContent = (originalValues[field] || '') === '' ? '—' : originalValues[field];
+          inputs[field].replaceWith(display);
         }
+        // Restore Edit button
+        btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+        btn.setAttribute('aria-label', 'Editează');
+        // Clean state
+        mode = 'VIEW';
+        dirty = false;
+        try { history.replaceState({}, '', location.href); } catch(_) {}
+      }
 
-        // Save function
-      async function doSave(navigateAfter, targetHref) {
-          // Recompute dirty at click time
-          computeDirty();
-        
-          if (!dirty) {
-            // No-op save: treat as success and exit edit mode cleanly
-            toast('Saved');
-          finalizeView();
-          if (navigateAfter && targetHref) {
-            window.location.href = targetHref;
+      // Save function
+      async function doSave() {
+        // Recompute dirty at click time
+        computeDirty();
+        if (!dirty) {
+          // No-op save: treat as success and exit edit mode cleanly
+          detachBeforeUnload();
+          detachInternalNavGuard();
+          if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
+          toast('Saved');
+          meta.removeAttribute('data-edit-mode');
+          
+          // Replace all inputs with read-only values
+          for (var field in inputs) {
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            var currentVal = inputs[field].value.trim();
+            if (inputs[field].type === 'select-one') {
+              currentVal = currentVal === 'true' ? 'Da' : currentVal === 'false' ? 'Nu' : '';
+            }
+            display.textContent = currentVal === '' ? '—' : currentVal;
+            inputs[field].replaceWith(display);
           }
-            return;
-          }
+          
+          // Restore Edit button
+          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+          btn.setAttribute('aria-label', 'Editează');
+          mode = 'VIEW';
+          dirty = false;
+          try { history.replaceState({}, '', location.href); } catch(_) {}
+          return;
+        }
 
         mode = 'SAVING';
-        updateActionButton(mode);
-        
-          try {
-            var fd = new FormData();
-            // Send only changed fields
-            for (var field in inputs) {
-              var val = (inputs[field].value || '').trim();
-              if (inputs[field].type === 'select-one') {
-                val = val === 'true' ? 'true' : val === 'false' ? 'false' : '';
-              }
-              fd.append(field, val);
+        setLoading(true);
+        try {
+          var fd = new FormData();
+          // Send only changed fields
+          for (var field in inputs) {
+            var val = (inputs[field].value || '').trim();
+            if (inputs[field].type === 'select-one') {
+              val = val === 'true' ? 'true' : val === 'false' ? 'false' : '';
             }
-            
-            const resp = await fetch('{% url "update_species_meta" s.id %}', {
-              method: 'POST',
-              headers: {
-                'X-Requested-With': 'fetch',
-                'X-CSRFToken': getCookie('csrftoken')
-              },
-              body: fd
-            });
-            
-            if (!resp.ok) {
-              var errorData = await resp.json();
-              throw new Error(errorData.error || 'Save failed');
-            }
-            
-            const data = await resp.json();
-            
-            // Update UI with new values
-            for (var field in data.changed || {}) {
-              var display = document.createElement('div');
-              display.className = 'muted';
-              display.setAttribute('data-f', field);
-              var val = data.changed[field];
-              if (field in ['silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice', 'conventia_berna', 'directiva_habitate']) {
-                display.textContent = val ? 'Da' : 'Nu';
-              } else {
-                display.textContent = (val == null || val === '') ? '—' : val;
-              }
-              inputs[field].replaceWith(display);
-            }
-            
-            toast('Saved');
-          finalizeView();
+            fd.append(field, val);
+          }
           
-          if (navigateAfter && targetHref) {
-            window.location.href = targetHref;
+          const resp = await fetch('{% url "update_species_meta" s.id %}', {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'fetch',
+              'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: fd
+          });
+          
+          if (!resp.ok) {
+            var errorData = await resp.json();
+            throw new Error(errorData.error || 'Save failed');
+          }
+          
+          const data = await resp.json();
+          
+          // Update UI with new values
+          for (var field in data.changed || {}) {
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            var val = data.changed[field];
+            if (field in ['silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice', 'conventia_berna', 'directiva_habitate']) {
+              display.textContent = val ? 'Da' : 'Nu';
+            } else {
+              display.textContent = (val == null || val === '') ? '—' : val;
             }
-          } catch (e) {
-            toast('Save error: ' + e.message);
-          mode = 'EDITING';
-          updateActionButton(mode);
+            inputs[field].replaceWith(display);
+          }
+          
+          detachBeforeUnload();
+          detachInternalNavGuard();
+          if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
+          toast('Saved');
+          
+          // Remove edit mode attribute
+          meta.removeAttribute('data-edit-mode');
+          // Restore all fields to display mode
+          for (var field in inputs) {
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            var currentVal = inputs[field].value.trim();
+            if (inputs[field].type === 'select-one') {
+              currentVal = currentVal === 'true' ? 'Da' : currentVal === 'false' ? 'Nu' : '';
+            }
+            display.textContent = currentVal === '' ? '—' : currentVal;
+            inputs[field].replaceWith(display);
+          }
+          // Restore Edit button
+          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+          btn.setAttribute('aria-label', 'Editează');
+          // Refresh snapshot and state
+          snapshotInitialValues();
+          dirty = false;
+          mode = 'VIEW';
+          updateGuards();
+          try { history.replaceState({}, '', location.href); } catch(_) {}
+        } catch (e) {
+          toast('Save error: ' + e.message);
+        } finally {
+          setLoading(false);
+          if (mode === 'SAVING') { mode = 'EDITING'; updateGuards(); }
         }
       }
 
-      // Guards attach/detach with single source of truth
+      // Guards attach/detach
       function attachBeforeUnload(){
-        if (beforeUnloadHandler || hasGuard) return;
-        beforeUnloadHandler = function(e){ 
-          if (dirty && mode === 'EDITING'){ 
-            e.preventDefault(); 
-            e.returnValue = ''; 
-          } 
-        };
+        if (beforeUnloadHandler) return;
+        beforeUnloadHandler = function(e){ if (dirty && mode === 'EDITING'){ e.preventDefault(); e.returnValue = ''; } };
         window.addEventListener('beforeunload', beforeUnloadHandler);
-        hasGuard = true;
       }
-      
       function detachBeforeUnload(){
-        if (!beforeUnloadHandler || !hasGuard) return;
+        if (!beforeUnloadHandler) return;
         window.removeEventListener('beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = null;
-        hasGuard = false;
       }
-      
       function attachInternalNavGuard(){
-        if (internalNavHandler || hasGuard) return;
+        if (internalNavHandler) return;
         internalNavHandler = function(e){
           var a = e.target.closest('a');
           if (!a) return;
@@ -558,67 +562,24 @@
           var m = buildGuardModal();
           document.body.appendChild(m);
           m.querySelector('#guard-stay').focus();
-          
-          // Disable all modal buttons during save
-          var modalButtons = m.querySelectorAll('button');
-          var originalDisabled = [];
-          modalButtons.forEach(function(btn, i) {
-            originalDisabled[i] = btn.disabled;
-            btn.disabled = true;
-          });
-          
-          m.querySelector('#guard-stay').onclick = function(){ 
-            // Re-enable buttons
-            modalButtons.forEach(function(btn, i) {
-              btn.disabled = originalDisabled[i];
-            });
-            m.remove(); 
-          };
-          
+          m.querySelector('#guard-stay').onclick = function(){ m.remove(); };
           m.querySelector('#guard-discard').onclick = function(){
-            // Clear guards before navigation
             detachBeforeUnload();
-            detachInternalNavGuard();
+            document.removeEventListener('click', internalNavHandler, true); internalNavHandler = null;
             window.location.href = a.href;
           };
-          
-          m.querySelector('#guard-save').onclick = async function(){ 
-            // Set saving state and update button
-            mode = 'SAVING';
-            updateActionButton(mode);
-            
-            try {
-              await doSave(true, a.href);
-              // Modal will be closed by doSave success
-            } catch (e) {
-              // Re-enable modal buttons on error
-              modalButtons.forEach(function(btn, i) {
-                btn.disabled = originalDisabled[i];
-              });
-              mode = 'EDITING';
-              updateActionButton(mode);
-            }
-          };
+          m.querySelector('#guard-save').onclick = async function(){ await doSave(true, a.href); };
         };
         document.addEventListener('click', internalNavHandler, true);
-        hasGuard = true;
       }
-      
       function detachInternalNavGuard(){
-        if (!internalNavHandler || !hasGuard) return;
+        if (!internalNavHandler) return;
         document.removeEventListener('click', internalNavHandler, true);
         internalNavHandler = null;
-        hasGuard = false;
       }
-      
       function updateGuards(){
-        if (dirty && mode === 'EDITING') { 
-          attachBeforeUnload(); 
-          attachInternalNavGuard(); 
-        } else { 
-          detachBeforeUnload(); 
-          detachInternalNavGuard(); 
-        }
+        if (dirty && mode === 'EDITING') { attachBeforeUnload(); attachInternalNavGuard(); }
+        else { detachBeforeUnload(); detachInternalNavGuard(); }
       }
     })();
   </script>

@@ -288,6 +288,63 @@ def update_species_description(request, pk: int):
     return JsonResponse({"ok": True, "description": safe})
 
 @login_required
+def update_species_meta(request, pk: int):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    
+    species = get_object_or_404(Species, pk=pk)
+    
+    # Fields that can be updated
+    updatable_fields = [
+        'denumire_populara', 'clasa', 'familia', 'habitat', 'localitatea',
+        'silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice',
+        'conventia_berna', 'directiva_habitate', 'cartea_rosie', 'cartea_rosie_cat',
+        'frecventa', 'notes'
+    ]
+    
+    changed = {}
+    update_fields = ['updated_at']
+    
+    for field in updatable_fields:
+        if field in request.POST:
+            value = request.POST.get(field, '').strip()
+            
+            # Handle boolean fields
+            if field in ['silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice', 'conventia_berna', 'directiva_habitate']:
+                new_value = value.lower() in ['true', '1', 'yes', 'on']
+                if getattr(species, field) != new_value:
+                    setattr(species, field, new_value)
+                    changed[field] = new_value
+                    update_fields.append(field)
+            
+            # Handle integer fields
+            elif field == 'cartea_rosie':
+                try:
+                    new_value = int(value) if value else None
+                    if getattr(species, field) != new_value:
+                        setattr(species, field, new_value)
+                        changed[field] = new_value
+                        update_fields.append(field)
+                except ValueError:
+                    pass  # Skip invalid integer values
+            
+            # Handle text fields
+            else:
+                new_value = value if value else None
+                if getattr(species, field) != new_value:
+                    setattr(species, field, new_value)
+                    changed[field] = new_value
+                    update_fields.append(field)
+    
+    if changed:
+        species.save(update_fields=update_fields)
+    
+    return JsonResponse({"ok": True, "changed": changed})
+
+@login_required
 def update_reserve_description(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)

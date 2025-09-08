@@ -40,6 +40,7 @@ urlpatterns = [
     path("vizualizari/specii/", views.viz_specii, name="viz_specii"),
     path("vizualizari/specii/<int:pk>/", views.viz_specii_detail, name="viz_specii_detail"),
     path("vizualizari/specii/<int:pk>/update-description/", views.update_species_description, name="update_species_description"),
+    path("vizualizari/specii/<int:pk>/update-meta/", views.update_species_meta, name="update_species_meta"),
     path("vizualizari/rezervatii/", views.viz_rezervatii, name="viz_rez"),
     path("vizualizari/rezervatii/<int:pk>/", views.viz_rezervatii_detail, name="viz_rez_detail"),
     path("vizualizari/rezervatii/<int:pk>/update-description/", views.update_reserve_description, name="update_reserve_description"),

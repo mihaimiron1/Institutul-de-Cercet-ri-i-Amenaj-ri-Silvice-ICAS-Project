@@ -12,7 +12,7 @@
       <strong>Descriere</strong>
       <div class="muted">{{ r.description|default:"" }}</div>
     </div>
-    <div class="grid" id="reserve-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+    <div class="grid" id="reserve-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px;">
       <div data-span="2" style="grid-column: span 2;">
         <strong>Nume</strong>
         <div class="muted" data-f="name">{{ r.name }}</div>
@@ -64,7 +64,7 @@
     <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
       <a href="{% url 'viz_rez' %}" class="btn btn-outline">Înapoi la rezervații</a>
       {% if is_admin %}
-      <button id="btn-edit-reserve" class="btn" aria-label="Editează metadate"><span aria-hidden="true">✎</span> Edit</button>
+      <button id="actionBtn" class="btn" aria-label="Editează metadate"><span aria-hidden="true">✎</span> Edit</button>
       {% endif %}
     </div>
   </div>
@@ -81,6 +81,8 @@
   <div id="reserve-map" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
   {% endif %}
 </section>
+{% endblock %}
+
 {% block extra_css %}
 <style>
   /* Card expansion and responsive grid */
@@ -186,31 +188,40 @@
     (function(){
       var card = document.getElementById('reserve-card');
       var meta = document.getElementById('reserve-meta');
+      var btn = document.getElementById('actionBtn');
 
       function toast(msg){ var t=document.createElement('div'); t.setAttribute('role','status'); t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0d2214'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.boxShadow='var(--shadow)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
       function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
       function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class=\"muted\" style=\"margin:0 0 12px;\">Save before leaving?</p>\n    <div style=\"display:flex; gap:8px; justify-content:flex-end;\">\n      <button type=\"button\" id=\"guard-stay\" class=\"btn btn-outline\">Stay</button>\n      <button type=\"button\" id=\"guard-discard\" class=\"btn btn-outline\">Discard</button>\n      <button type=\"button\" id=\"guard-save\" class=\"btn\">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
+
+      // Global state
+      var mode = 'VIEW'; // VIEW | EDITING | SAVING
+      var originalValues = {}; // raw originals for UI restore
+      var initialValues = {};  // immutable snapshot for dirty checks
+      var inputs = {};
+      var dirty = false;
+      var beforeUnloadHandler = null;
+      var internalNavHandler = null;
+      var keydownHandler = null;
 
       // Normalize history to a clean VIEW state on load
       try { history.replaceState({}, '', location.href); } catch(_) {}
       window.addEventListener('popstate', function(){
         // Always force view mode if any edit state lingered
         meta.removeAttribute('data-edit-mode');
+        mode = 'VIEW';
       });
 
-      document.addEventListener('click', function(ev){
-        var btn = ev.target.closest('#btn-edit-reserve');
-        if (!btn) return;
-
-        // State & values
-        var state = 'EDITING'; // VIEW → EDITING → SAVING → VIEW
-        var originalValues = {}; // raw originals for UI restore
-        var initialValues = {};  // immutable snapshot for dirty checks
-        var inputs = {};
-        var dirty = false;
-        var beforeUnloadHandler = null;
-        var internalNavHandler = null;
-        var keydownHandler = null;
+      // Single click handler that branches by mode
+      btn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        if (mode === 'VIEW') {
+          enterEdit();
+        } else if (mode === 'EDITING') {
+          doSave();
+        }
+        // SAVING mode: button is disabled, no action
+      });
 
         // Convert metadata fields to inputs
         function createInput(field, type, placeholder) {
@@ -307,32 +318,9 @@
           lon.addEventListener('input', function(){ computeDirty(); updateSaveButton(); });
         }
 
-        // Set edit mode attribute for CSS
-        meta.setAttribute('data-edit-mode', 'true');
-        
-        // Create all inputs
-        createInput('name', 'text', 'Nume');
-        createInput('raion', 'text', 'Raion');
-        createInput('amplasare', 'text', 'Amplasare');
-        createInput('proprietar', 'text', 'Proprietar');
-        createInput('suprafata_ha', 'number', 'Suprafață (ha)');
-        createInput('category', 'text', 'Categoria');
-        createInput('subcategory', 'text', 'Subcategoria');
-        createCoordInputs();
-
-        // Replace Edit button with Save/Cancel
-        var controlsWrap = document.createElement('div');
-        controlsWrap.style.cssText = 'display:flex; gap:8px; justify-content:flex-end;';
-        controlsWrap.innerHTML = '<button type="button" id="cancel-edit-r" class="btn btn-outline">Cancel</button><button type="button" id="save-edit-r" class="btn" disabled>Save</button>';
-        btn.replaceWith(controlsWrap);
-
-        var btnSave = controlsWrap.querySelector('#save-edit-r');
-        var btnCancel = controlsWrap.querySelector('#cancel-edit-r');
-
         function setLoading(on) {
-          btnSave.disabled = !!on; // Keep enabled generally; only disable during actual save
-          btnSave.textContent = on ? 'Saving…' : 'Save';
-          if (btnCancel) btnCancel.disabled = !!on;
+        btn.disabled = !!on;
+        btn.innerHTML = on ? 'Saving…' : 'Save';
           Object.values(inputs).forEach(function(input) { input.disabled = !!on; });
         }
 
@@ -364,8 +352,29 @@
 
         function updateSaveButton(){
           // Keep Save enabled in EDITING regardless of dirty; only disable if not in EDITING
-          btnSave.disabled = state !== 'EDITING';
-        }
+        btn.disabled = mode !== 'EDITING';
+      }
+
+      // Enter edit mode
+      function enterEdit() {
+        mode = 'EDITING';
+        
+        // Set edit mode attribute for CSS
+        meta.setAttribute('data-edit-mode', 'true');
+        
+        // Create all inputs
+        createInput('name', 'text', 'Nume');
+        createInput('raion', 'text', 'Raion');
+        createInput('amplasare', 'text', 'Amplasare');
+        createInput('proprietar', 'text', 'Proprietar');
+        createInput('suprafata_ha', 'number', 'Suprafață (ha)');
+        createInput('category', 'text', 'Categoria');
+        createInput('subcategory', 'text', 'Subcategoria');
+        createCoordInputs();
+
+        // Toggle the same button to Save mode
+        btn.innerHTML = 'Save';
+        btn.setAttribute('aria-label', 'Salvează modificările');
 
         // Focus first input
         inputs.name.focus();
@@ -387,58 +396,18 @@
 
         // Keyboard shortcuts
         keydownHandler = function(e) {
-          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btnSave.disabled) {
-            btnSave.click();
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !btn.disabled) {
+            btn.click();
           }
           if (e.key === 'Escape') {
-            btnCancel.click();
+            cancelEdit();
           }
         };
         document.addEventListener('keydown', keydownHandler);
+      }
 
-        // Guards attach/detach
-        function attachBeforeUnload(){
-          if (beforeUnloadHandler) return;
-          beforeUnloadHandler = function(e){ if (dirty && state === 'EDITING'){ e.preventDefault(); e.returnValue = ''; } };
-          window.addEventListener('beforeunload', beforeUnloadHandler);
-        }
-        function detachBeforeUnload(){
-          if (!beforeUnloadHandler) return;
-          window.removeEventListener('beforeunload', beforeUnloadHandler);
-          beforeUnloadHandler = null;
-        }
-        function attachInternalNavGuard(){
-          if (internalNavHandler) return;
-          internalNavHandler = function(e){
-            var a = e.target.closest('a');
-            if (!a) return;
-            if (!dirty || state !== 'EDITING') return;
-            e.preventDefault();
-            var m = buildGuardModal();
-            document.body.appendChild(m);
-            m.querySelector('#guard-stay').focus();
-            m.querySelector('#guard-stay').onclick = function(){ m.remove(); };
-            m.querySelector('#guard-discard').onclick = function(){
-              detachBeforeUnload();
-              document.removeEventListener('click', internalNavHandler, true); internalNavHandler = null;
-              window.location.href = a.href;
-            };
-            m.querySelector('#guard-save').onclick = async function(){ await doSave(true, a.href); };
-          };
-          document.addEventListener('click', internalNavHandler, true);
-        }
-        function detachInternalNavGuard(){
-          if (!internalNavHandler) return;
-          document.removeEventListener('click', internalNavHandler, true);
-          internalNavHandler = null;
-        }
-        function updateGuards(){
-          if (dirty && state === 'EDITING') { attachBeforeUnload(); attachInternalNavGuard(); }
-          else { detachBeforeUnload(); detachInternalNavGuard(); }
-        }
-
-        // Cancel button
-        btnCancel.addEventListener('click', function() {
+      // Cancel edit mode
+      function cancelEdit() {
           detachBeforeUnload();
           detachInternalNavGuard();
           if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
@@ -464,126 +433,203 @@
           }
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
           // Restore Edit button
-          controlsWrap.replaceWith(btn);
+        btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+        btn.setAttribute('aria-label', 'Editează metadate');
           // Clean state
-          state = 'VIEW';
+        mode = 'VIEW';
+        dirty = false;
+        try { history.replaceState({}, '', location.href); } catch(_) {}
+      }
+
+      // Save function
+      async function doSave() {
+        // Recompute dirty at click time
+        computeDirty();
+
+        // No-op save if nothing changed
+        if (!dirty) {
+          // Restore original display for regular fields
+          for (var field in inputs) {
+            if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            var currentVal = inputs[field].value.trim();
+            display.textContent = currentVal === '' ? '—' : currentVal;
+            inputs[field].replaceWith(display);
+          }
+          // Restore coordinates display
+          var coordsDisplay = document.createElement('div');
+          coordsDisplay.className = 'muted';
+          coordsDisplay.setAttribute('data-f', 'coords');
+          if (inputs.latitude && inputs.longitude) {
+            var latVal = inputs.latitude.value.trim();
+            var lonVal = inputs.longitude.value.trim();
+            if (latVal && lonVal) {
+              coordsDisplay.textContent = latVal + ', ' + lonVal;
+            } else {
+              coordsDisplay.textContent = '—';
+            }
+          } else {
+            coordsDisplay.textContent = '—';
+          }
+          if (inputs.latitude && inputs.latitude.parentNode) {
+            inputs.latitude.parentNode.replaceWith(coordsDisplay);
+          }
+          
+          // Restore Edit button
+          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+          btn.setAttribute('aria-label', 'Editează metadate');
+          mode = 'VIEW';
           dirty = false;
           try { history.replaceState({}, '', location.href); } catch(_) {}
-        });
-
-        // Save function
-        async function doSave(navigateAfter, href) {
-          // Recompute dirty at click time
-          computeDirty();
-          if (!dirty) {
-            // No-op save: treat as success and exit edit mode cleanly
-            detachBeforeUnload();
-            detachInternalNavGuard();
-            if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
-            toast('Saved');
-            meta.removeAttribute('data-edit-mode');
-            controlsWrap.replaceWith(btn);
-            state = 'VIEW';
-            dirty = false;
-            try { history.replaceState({}, '', location.href); } catch(_) {}
-            return;
-          }
-
-          state = 'SAVING';
-          setLoading(true);
-          try {
-            var fd = new FormData();
-            // Send only changed fields
-            for (var field in inputs) {
-              var val = (inputs[field].value || '').trim();
-              fd.append(field, val);
-            }
-            
-            const resp = await fetch('{% url "update_reserve_meta" r.id %}', {
-              method: 'POST',
-              headers: {
-                'X-Requested-With': 'fetch',
-                'X-CSRFToken': getCookie('csrftoken')
-              },
-              body: fd
-            });
-            
-            if (!resp.ok) {
-              var errorData = await resp.json();
-              throw new Error(errorData.error || 'Save failed');
-            }
-            
-            const data = await resp.json();
-            
-            // Update UI with new values
-            for (var field in data.changed || {}) {
-              if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
-              var display = document.createElement('div');
-              display.className = 'muted';
-              display.setAttribute('data-f', field);
-              display.textContent = (data.changed[field] == null || data.changed[field] === '') ? '—' : data.changed[field];
-              inputs[field].replaceWith(display);
-            }
-            
-            // Handle coordinates separately
-            if ('latitude' in (data.changed || {}) || 'longitude' in (data.changed || {})) {
-              var coordsDisplay = document.createElement('div');
-              coordsDisplay.className = 'muted';
-              coordsDisplay.setAttribute('data-f', 'coords');
-              var latv = data.changed.latitude !== undefined ? data.changed.latitude : originalValues.latitude;
-              var lonv = data.changed.longitude !== undefined ? data.changed.longitude : originalValues.longitude;
-              if (latv && lonv) {
-                coordsDisplay.textContent = latv + ', ' + lonv;
-              } else {
-                coordsDisplay.textContent = '—';
-              }
-              inputs.latitude.parentNode.replaceWith(coordsDisplay);
-            }
-            
-            detachBeforeUnload();
-            detachInternalNavGuard();
-            if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
-            toast('Saved');
-            
-            if (navigateAfter && href) {
-              window.location.href = href;
-            } else {
-              // Remove edit mode attribute
-              meta.removeAttribute('data-edit-mode');
-              // Restore all non-coordinate fields to display mode
-              for (var field in inputs) {
-                if (field === 'latitude' || field === 'longitude') continue; // Already handled above
-                var display = document.createElement('div');
-                display.className = 'muted';
-                display.setAttribute('data-f', field);
-                var currentVal = inputs[field].value.trim();
-                display.textContent = currentVal === '' ? '—' : currentVal;
-                inputs[field].replaceWith(display);
-              }
-              // Restore Edit button
-              controlsWrap.replaceWith(btn);
-              // Refresh snapshot and state
-              snapshotInitialValues();
-              dirty = false;
-              state = 'VIEW';
-              updateGuards();
-              try { history.replaceState({}, '', location.href); } catch(_) {}
-            }
-          } catch (e) {
-            toast('Save error: ' + e.message);
-          } finally {
-            setLoading(false);
-            if (state === 'SAVING') { state = 'EDITING'; updateGuards(); }
-          }
+          return;
         }
 
-        // Save button
-        btnSave.addEventListener('click', function() {
-          if (!btnSave.disabled) doSave(false);
-        });
-      }, true);
+        mode = 'SAVING';
+        setLoading(true);
+        try {
+          var formData = new FormData();
+          formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+          
+          // Only send changed fields
+          for (var field in inputs) {
+            var currentVal = inputs[field].value.trim();
+            var originalVal = originalValues[field] || '';
+            if (currentVal !== originalVal) {
+              formData.append(field, currentVal);
+            }
+          }
+
+          var response = await fetch('{% url "update_reserve_meta" r.pk %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': getCookie('csrftoken')
+            }
+          });
+
+          if (!response.ok) {
+            var errorData = await response.json().catch(function() { return { error: 'Network error' }; });
+            throw new Error(errorData.error || 'Save failed');
+          }
+
+          var data = await response.json();
+          if (!data.ok) {
+            throw new Error(data.error || 'Save failed');
+          }
+
+          // Update originalValues with current values
+          for (var field in inputs) {
+            originalValues[field] = inputs[field].value.trim();
+          }
+
+          // Restore original display for regular fields
+          for (var field in inputs) {
+            if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
+            var display = document.createElement('div');
+            display.className = 'muted';
+            display.setAttribute('data-f', field);
+            var currentVal = inputs[field].value.trim();
+            display.textContent = currentVal === '' ? '—' : currentVal;
+            inputs[field].replaceWith(display);
+          }
+          // Restore coordinates display
+          var coordsDisplay = document.createElement('div');
+          coordsDisplay.className = 'muted';
+          coordsDisplay.setAttribute('data-f', 'coords');
+          if (inputs.latitude && inputs.longitude) {
+            var latVal = inputs.latitude.value.trim();
+            var lonVal = inputs.longitude.value.trim();
+            if (latVal && lonVal) {
+              coordsDisplay.textContent = latVal + ', ' + lonVal;
+            } else {
+              coordsDisplay.textContent = '—';
+            }
+          } else {
+            coordsDisplay.textContent = '—';
+          }
+          if (inputs.latitude && inputs.latitude.parentNode) {
+            inputs.latitude.parentNode.replaceWith(coordsDisplay);
+          }
+          
+          // Restore Edit button
+          btn.innerHTML = '<span aria-hidden="true">✎</span> Edit';
+          btn.setAttribute('aria-label', 'Editează metadate');
+          // Refresh snapshot and state
+          snapshotInitialValues();
+          dirty = false;
+          mode = 'VIEW';
+          updateGuards();
+          try { history.replaceState({}, '', location.href); } catch(_) {}
+        } catch (e) {
+          toast('Save error: ' + e.message);
+        } finally {
+          setLoading(false);
+          if (mode === 'SAVING') { mode = 'EDITING'; updateGuards(); }
+        }
+      }
+
+      // Guards attach/detach
+      function attachBeforeUnload(){
+        if (beforeUnloadHandler) return;
+        beforeUnloadHandler = function(e){
+          if (dirty && mode === 'EDITING'){
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+          }
+        };
+        window.addEventListener('beforeunload', beforeUnloadHandler);
+      }
+
+      function detachBeforeUnload(){
+        if (beforeUnloadHandler) {
+          window.removeEventListener('beforeunload', beforeUnloadHandler);
+          beforeUnloadHandler = null;
+        }
+      }
+
+      function attachInternalNavGuard(){
+        if (internalNavHandler) return;
+        internalNavHandler = function(ev){
+          var link = ev.target.closest('a[href]');
+          if (!link) return;
+          if (dirty && mode === 'EDITING'){
+            ev.preventDefault();
+            var modal = buildGuardModal();
+            document.body.appendChild(modal);
+            var guardStay = modal.querySelector('#guard-stay');
+            var guardDiscard = modal.querySelector('#guard-discard');
+            var guardSave = modal.querySelector('#guard-save');
+            guardStay.addEventListener('click', function(){
+              modal.remove();
+            });
+            guardDiscard.addEventListener('click', function(){
+              modal.remove();
+              window.location.href = link.href;
+            });
+            guardSave.addEventListener('click', function(){
+              modal.remove();
+              doSave(true, link.href);
+            });
+          }
+        };
+        document.addEventListener('click', internalNavHandler, true);
+      }
+
+      function detachInternalNavGuard(){
+        if (internalNavHandler) {
+          document.removeEventListener('click', internalNavHandler, true);
+          internalNavHandler = null;
+        }
+      }
+
+      function updateGuards(){
+        if (dirty && mode === 'EDITING') { attachBeforeUnload(); attachInternalNavGuard(); }
+        else { detachBeforeUnload(); detachInternalNavGuard(); }
+      }
     })();
   </script>
-{% endblock %}
 {% endblock %}
 
