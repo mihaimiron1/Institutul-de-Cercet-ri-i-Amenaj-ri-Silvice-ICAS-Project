@@ -6,7 +6,15 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.db.models import Max
+from django.db.models import F, Q, Value, FloatField, IntegerField, Case, When, CharField, Func
+from django.db.models.functions import Lower, Greatest
+try:
+    from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity  # type: ignore
+except Exception:  # pragma: no cover
+    from django.contrib.postgres.search import TrigramSimilarity  # type: ignore
+    TrigramWordSimilarity = None  # type: ignore
 from django.utils.timezone import localtime
+# NOTE: we rely on PostgreSQL unaccent(), not on unidecode
 from django.shortcuts import render
 
 
@@ -265,49 +273,41 @@ def viz_rezervatii(request):
 
 @login_required
 def viz_asociatii(request):
-    """Listă de asociații în carduri, cu căutare tolerantă și paginare."""
+    """Listă de asociații cu căutare tolerantă (diacritice/typo) și paginare, ca la Rezervații.
+
+    Implementare fuzzy în Postgres: unaccent + trigram similarity/word-similarity.
+    """
     q = (request.GET.get("q") or "").strip()
     qs = Association.objects.all()
-
-    def _normalize_text(value: str) -> str:
-        if not value:
-            return ""
-        decomposed = unicodedata.normalize("NFKD", str(value))
-        no_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
-        return no_accents.lower().strip()
-
-    def _fuzzy_ratio(a: str, b: str) -> float:
-        if not a or not b:
-            return 0.0
-        return difflib.SequenceMatcher(None, a, b).ratio()
 
     if not q:
         qs = qs.order_by("name")
         paginator, page_obj = _paginate(request, qs, default=24)
     else:
-        norm_q = _normalize_text(q)
-        candidates = list(qs.only("id", "name", "notes"))
-        scored = []
-        for a in candidates:
-            fields = [
-                _normalize_text(a.name),
-                _normalize_text(a.notes),
-            ]
-            best = 0.0
-            substr_bonus = 0.0
-            for f in fields:
-                if not f:
-                    continue
-                if norm_q in f:
-                    substr_bonus = max(substr_bonus, 0.15)
-                best = max(best, _fuzzy_ratio(norm_q, f))
-            total_score = best + substr_bonus
-            if total_score >= 0.55:
-                scored.append((total_score, a))
+        # Normalize query (lowercase). Unaccent is applied on both sides at SQL level
+        q_norm = (q or "").lower().strip()
 
-        scored.sort(key=lambda t: (-t[0], _normalize_text(t[1].name)))
-        ordered = [a for _, a in scored]
-        paginator, page_obj = _paginate(request, ordered, default=24)
+        # Use PostgreSQL unaccent
+        class Unaccent(Func):
+            function = "unaccent"
+            output_field = CharField()
+
+        name_u = Unaccent(Lower(F("name")))
+        q_u = Unaccent(Lower(Value(q_norm, output_field=CharField())))
+
+        qs = qs.annotate(
+            name_u=name_u,
+            sim=TrigramSimilarity(name_u, q_u),
+            starts=Case(
+                When(name_u__startswith=q_norm, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField(),
+            ),
+        ).filter(
+            Q(name_u__icontains=q_norm) | Q(sim__gt=0.16)
+        ).order_by("-starts", "-sim", "name")
+
+        paginator, page_obj = _paginate(request, qs, default=24)
 
     return render(request, "core/viz_asociatii.html", {
         "page_obj": page_obj,
@@ -353,7 +353,7 @@ def update_species_meta(request, pk: int):
     
     # Fields that can be updated
     updatable_fields = [
-        'denumire_populara', 'clasa', 'familia', 'habitat', 'localitatea',
+        'denumire_stiintifica', 'denumire_populara', 'clasa', 'familia', 'habitat', 'localitatea',
         'silvice', 'pajisti_sau_stepice', 'stancarii', 'palustre_si_acvatice',
         'conventia_berna', 'directiva_habitate', 'cartea_rosie', 'cartea_rosie_cat',
         'frecventa', 'notes'
@@ -385,7 +385,29 @@ def update_species_meta(request, pk: int):
                 except ValueError:
                     pass  # Skip invalid integer values
             
-            # Handle text fields
+            # Handle scientific name with validation
+            elif field == 'denumire_stiintifica':
+                new_raw = value
+                # Trim and collapse spaces
+                new_norm = ' '.join(new_raw.split()) if new_raw else None
+                if new_norm:
+                    # Capitalize genus (first token)
+                    parts = new_norm.split(' ')
+                    if parts:
+                        parts[0] = parts[0][:1].upper() + parts[0][1:].lower()
+                    new_norm = ' '.join(parts)
+                    # Length validation 3–200
+                    if not (3 <= len(new_norm) <= 200):
+                        return JsonResponse({"ok": False, "error": "Scientific name length must be 3–200"}, status=400)
+                # Uniqueness check (case-insensitive)
+                if new_norm and Species.objects.filter(denumire_stiintifica__iexact=new_norm).exclude(pk=species.pk).exists():
+                    return JsonResponse({"ok": False, "error": "Scientific name already exists"}, status=400)
+                if getattr(species, field) != new_norm:
+                    setattr(species, field, new_norm)
+                    changed[field] = new_norm
+                    update_fields.append(field)
+
+            # Handle other text fields
             else:
                 new_value = value if value else None
                 if getattr(species, field) != new_value:
@@ -510,7 +532,43 @@ def update_reserve_meta(request, pk: int):
 
 @login_required
 def viz_situri(request):
-    return render(request, "core/viz_situri.html")
+    """Listă de site-uri, cu căutare tolerantă ca la Rezervații."""
+    q = (request.GET.get("q") or "").strip()
+    qs = Site.objects.all()
+
+    if not q:
+        qs = qs.order_by("name")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        q_norm = (q or "").lower().strip()
+
+        class Unaccent(Func):
+            function = "unaccent"
+            output_field = CharField()
+
+        def unaccent_lower(expr):
+            return Lower(Unaccent(expr))
+
+        name_u = unaccent_lower(F("name"))
+        # Adapt fields as needed when available
+        qs = qs.annotate(
+            name_u=name_u,
+            sim=TrigramSimilarity(name_u, Unaccent(Lower(Value(q_norm, output_field=CharField())))),
+            starts=Case(
+                When(name_u__startswith=q_norm, then=Value(1)),
+                default=Value(0), output_field=IntegerField(),
+            ),
+        ).filter(
+            Q(name_u__icontains=q_norm) | Q(sim__gt=0.16)
+        ).order_by("-starts", "-sim", "name")
+
+        paginator, page_obj = _paginate(request, qs, default=24)
+
+    return render(request, "core/viz_situri_list.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+    })
 
 @login_required
 def viz_habitate(request):
@@ -847,6 +905,80 @@ def sitehab_filters_page(request):
 @login_required
 def comparatii_home(request):
     return render(request, "core/comparatii_home.html")
+
+
+@login_required
+def viz_situri_detail(request, pk: int):
+    s = get_object_or_404(Site, pk=pk)
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    return render(request, "core/viz_situri_detail.html", {"s": s, "is_admin": is_admin})
+
+
+@login_required
+@require_POST
+def update_site_meta(request, pk: int):
+    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
+    if not is_admin:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    site = get_object_or_404(Site, pk=pk)
+
+    def norm_text(v):
+        return strip_tags((v or "").strip()) or None
+
+    changed = {}
+    # Editable fields similar to reserves (adapted to Site model)
+    for field in ("name", "code"):
+        if field in request.POST:
+            val = norm_text(request.POST.get(field))
+            if getattr(site, field) != val:
+                setattr(site, field, val)
+                changed[field] = val
+
+    # Numeric surface
+    if "surface_ha" in request.POST:
+        raw = (request.POST.get("surface_ha") or "").strip()
+        if raw != "":
+            try:
+                num = float(raw)
+                if num < 0:
+                    return JsonResponse({"ok": False, "error": "Area must be positive"}, status=400)
+            except ValueError:
+                return JsonResponse({"ok": False, "error": "Invalid area"}, status=400)
+        else:
+            num = None
+        if site.surface_ha != num:
+            site.surface_ha = num
+            changed["surface_ha"] = num
+
+    # Coordinates
+    lat = request.POST.get("latitude")
+    lon = request.POST.get("longitude")
+    if lat is not None or lon is not None:
+        def parse_or_none(x):
+            x = (x or "").strip()
+            return None if x == "" else float(x)
+        try:
+            lat_v = parse_or_none(lat)
+            lon_v = parse_or_none(lon)
+            if lat_v is not None and not (-90.0 <= lat_v <= 90.0):
+                return JsonResponse({"ok": False, "error": "Latitude out of range"}, status=400)
+            if lon_v is not None and not (-180.0 <= lon_v <= 180.0):
+                return JsonResponse({"ok": False, "error": "Longitude out of range"}, status=400)
+        except ValueError:
+            return JsonResponse({"ok": False, "error": "Invalid coordinates"}, status=400)
+        if site.latitude != lat_v:
+            site.latitude = lat_v
+            changed["latitude"] = lat_v
+        if site.longitude != lon_v:
+            site.longitude = lon_v
+            changed["longitude"] = lon_v
+
+    if not changed:
+        return JsonResponse({"ok": True, "changed": {}}, status=200)
+
+    site.save()
+    return JsonResponse({"ok": True, "changed": changed})
 
 
 @login_required

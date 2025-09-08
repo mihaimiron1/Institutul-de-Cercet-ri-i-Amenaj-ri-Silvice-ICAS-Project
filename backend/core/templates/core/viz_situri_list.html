@@ -1,25 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Asociații · ResNat{% endblock %}
+{% block title %}Situri · ResNat{% endblock %}
 {% block content %}
 <section class="container">
   <header class="hero">
-    <h1>Asociații</h1>
-    <p class="muted">Explorează asociațiile vegetale din baza de date ResNat</p>
+    <h1>Situri</h1>
+    <p class="muted">Explorează siturile din baza de date ResNat</p>
   </header>
 
-  <form method="get" class="card mb-2" id="asoc-search-form">
+  <form method="get" class="card mb-2" id="sites-search-form">
     <div class="quick-search">
-      <input id="asoc-q" type="search" name="q" value="{{ q }}" placeholder="Caută asociații…" />
+      <input id="sites-q" type="search" name="q" value="{{ q }}" placeholder="Caută situri…" />
       <button class="btn" type="submit">Caută</button>
       {% if q %}<a class="btn btn-outline" href="?">Reset</a>{% endif %}
     </div>
   </form>
 
   <div class="grid tiles" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
-    {% for a in page_obj.object_list %}
-    <a class="tile" href="{% url 'viz_asoc_detail' a.id %}">
-      <h3>{{ a.name }}</h3>
-      {% if a.notes %}<p class="muted">{{ a.notes|truncatechars:120 }}</p>{% endif %}
+    {% for s in page_obj.object_list %}
+    <a class="tile" href="{% url 'viz_sit_detail' s.id %}">
+      <h3>{{ s.name }}</h3>
+      <p class="muted">Cod: {{ s.code }}</p>
+      <p class="muted">Suprafață: {{ s.surface_ha }} ha</p>
     </a>
     {% empty %}
     <div class="muted">Nu s-au găsit rezultate.</div>
@@ -27,7 +28,7 @@
   </div>
 
   {% if paginator.num_pages > 1 %}
-  <nav class="mt-3" aria-label="Paginare asociații">
+  <nav class="mt-3" aria-label="Paginare situri">
     <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end">
       {% if page_obj.has_previous %}
         <a class="btn btn-outline" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">Înapoi</a>
@@ -46,4 +47,26 @@
 </section>
 {% endblock %}
 
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script>
+(function(){
+  var form=document.getElementById('sites-search-form');
+  var input=document.getElementById('sites-q');
+  if(!form||!input) return;
+  var t=null;
+  input.addEventListener('input', function(){
+    if(t) clearTimeout(t);
+    var v=input.value||'';
+    t=setTimeout(function(){
+      var sp=new URLSearchParams(window.location.search);
+      if(v.trim()===''){ sp.delete('q'); } else { sp.set('q', v.trim()); }
+      sp.delete('page');
+      var href=window.location.pathname + '?' + sp.toString();
+      window.location.replace(href);
+    }, 250);
+  });
+})();
+</script>
+{% endblock %}
+
+

@@ -49,6 +49,8 @@ urlpatterns = [
     path("vizualizari/asociatii/<int:pk>/", views.viz_asociatii_detail, name="viz_asoc_detail"),
     path("vizualizari/asociatii/<int:pk>/update-meta/", views.update_association_meta, name="update_association_meta"),
     path("vizualizari/situri/", views.viz_situri, name="viz_situri"),
+    path("vizualizari/situri/<int:pk>/", views.viz_situri_detail, name="viz_sit_detail"),
+    path("vizualizari/situri/<int:pk>/update-meta/", views.update_site_meta, name="update_site_meta"),
     path("vizualizari/habitate/", views.viz_habitate, name="viz_habitate"),
 
 

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}{{ s.name }} · ResNat{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>{{ s.name }}</h1>
+    <p class="muted">{{ s.category|default:"—" }}{% if s.subcategory %} · {{ s.subcategory }}{% endif %}</p>
+  </header>
+
+  <div class="card" id="site-card">
+    <div class="grid" id="site-meta" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px;">
+      <div data-span="2" style="grid-column: span 2;">
+        <strong>Nume</strong>
+        <div class="muted" data-f="name">{{ s.name }}</div>
+      </div>
+      <div>
+        <strong>Cod</strong>
+        <div class="muted" data-f="code">{{ s.code|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Suprafață (ha)</strong>
+        <div class="muted" data-f="surface_ha">{{ s.surface_ha|default:"—" }}</div>
+      </div>
+      <div>
+        <strong>Coordonate</strong>
+        <div class="muted" data-f="coords">{% if s.latitude and s.longitude %}{{ s.latitude }}, {{ s.longitude }}{% else %}—{% endif %}</div>
+      </div>
+    </div>
+
+    <div class="mt-3" style="display:flex; gap:8px; justify-content:space-between; align-items:center;">
+      <a href="{% url 'viz_situri' %}" class="btn btn-outline">Înapoi la situri</a>
+      {% if is_admin %}
+      <button id="actionBtn" class="btn" aria-label="Editează" data-mode="view">Edit</button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if s.latitude and s.longitude %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <div id="site-map" data-lat="{{ s.latitude|floatformat:'6' }}" data-lon="{{ s.longitude|floatformat:'6' }}" style="width:100%; height:520px; margin-top:16px; border-radius:12px; overflow:hidden; box-shadow: var(--shadow);"></div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  @media (min-width: 768px) {
+    #site-meta[data-edit-mode="true"] { grid-template-columns: repeat(4, 1fr); }
+    #site-meta[data-edit-mode="true"] [data-span="2"] { grid-column: span 2; }
+  }
+  #site-meta input, #site-meta textarea { width:100% !important; box-sizing:border-box; min-width:0; }
+  #site-meta > div { min-width:0; overflow:hidden; max-width:100%; word-wrap:break-word; }
+  #site-meta textarea { transition:height 120ms ease; white-space:pre-wrap; overflow-wrap:anywhere; hyphens:auto; word-break:break-word; resize:none; overflow:hidden; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+  {% if s.latitude and s.longitude %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function(){
+      if (!document.getElementById('site-map')) return;
+      if (window.__siteMapInit) return; window.__siteMapInit = true;
+      var mapEl = document.getElementById('site-map');
+      var lat = parseFloat(mapEl.getAttribute('data-lat'));
+      var lon = parseFloat(mapEl.getAttribute('data-lon'));
+      var mdCenter = [47.0, 28.5];
+      var map = L.map('site-map', { center: [lat, lon] || mdCenter, zoom: 8, scrollWheelZoom: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+      var marker = L.marker([lat, lon]).addTo(map); marker.bindPopup(`{{ s.name|escapejs }}`); map.setView([lat, lon], 10);
+    })();
+  </script>
+  {% endif %}
+  {% if is_admin %}
+  <script>
+    (function(){
+      var meta = document.getElementById('site-meta');
+      var btn = document.getElementById('actionBtn');
+      if (!btn) return;
+      function getCookie(name){ var m=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
+      function syncButton(){ var m=(btn.getAttribute('data-mode')||'view'); btn.innerHTML = (m==='edit')?'Save':'Edit'; btn.setAttribute('aria-label', m==='edit'?'Salvează modificările':'Editează'); }
+      function buildGuardModal(){ var wrap=document.createElement('div'); wrap.id='unsaved-guard'; wrap.innerHTML='\n<div style="position:fixed; inset:0; background:rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center; z-index:9999;">\n  <div role="dialog" aria-modal="true" style="background:#fff; color:var(--text); max-width:520px; width:92%; border-radius:12px; box-shadow:var(--shadow); padding:16px;">\n    <h3 style="margin:0 0 8px; font-size:1.1rem;">You have unsaved changes</h3>\n    <p class="muted" style="margin:0 0 12px;">Save before leaving?</p>\n    <div style="display:flex; gap:8px; justify-content:flex-end;">\n      <button type="button" id="guard-stay" class="btn btn-outline">Stay</button>\n      <button type="button" id="guard-discard" class="btn btn-outline">Discard</button>\n      <button type="button" id="guard-save" class="btn">Save and leave</button>\n    </div>\n  </div>\n</div>'; return wrap; }
+
+      syncButton();
+      btn.addEventListener('click', function(e){ e.preventDefault(); var m=(btn.getAttribute('data-mode')||'view'); if(m==='view'){ enterEdit(); } else { if(formEl) formEl.requestSubmit(); } });
+      var formEl=null; var inputs={}; var originalValues={}; var initialValues={}; var dirty=false; var mode='VIEW';
+      var beforeUnloadHandler=null; var internalNavHandler=null; var keydownHandler=null; var pendingNavUrl=null;
+
+      function autosize(t){ t.style.height='auto'; t.style.height=(t.scrollHeight||t.clientHeight)+'px'; }
+      function normalizeText(value){ if(value==null) return ''; var s=String(value); s=s.replace(/\r\n?|\u2028|\u2029/g,'\n'); s=s.split('\n').map(function(line){ return line.replace(/\s+/g,' ').trim(); }).join('\n'); return s.trim(); }
+      function snapshotInitialValues(){ initialValues={}; Object.keys(inputs).forEach(function(k){ initialValues[k]=normalizeText(inputs[k].value||''); }); }
+      function computeDirty(){ var was=dirty; dirty=false; Object.keys(inputs).some(function(k){ var curr=normalizeText(inputs[k].value||''); if(curr !== (initialValues[k]||'')){ dirty=true; return true; } return false; }); if (dirty!==was) updateGuards(); }
+
+      function attachBeforeUnload(){ if(beforeUnloadHandler) return; beforeUnloadHandler=function(e){ if(dirty && mode==='EDITING'){ e.preventDefault(); e.returnValue=''; return ''; } }; window.addEventListener('beforeunload', beforeUnloadHandler); }
+      function detachBeforeUnload(){ if(beforeUnloadHandler){ window.removeEventListener('beforeunload', beforeUnloadHandler); beforeUnloadHandler=null; } }
+      function attachInternalNavGuard(){ if(internalNavHandler) return; internalNavHandler=function(ev){ var link=ev.target.closest('a[href]'); if(!link) return; if(dirty && mode==='EDITING'){ ev.preventDefault(); var modal=buildGuardModal(); document.body.appendChild(modal); var guardStay=modal.querySelector('#guard-stay'); var guardDiscard=modal.querySelector('#guard-discard'); var guardSave=modal.querySelector('#guard-save'); guardStay.addEventListener('click', function(){ modal.remove(); }); guardDiscard.addEventListener('click', function(){ modal.remove(); finalizeToVIEW(); window.location.href = link.href; }); guardSave.addEventListener('click', async function(){ guardStay.disabled=guardDiscard.disabled=guardSave.disabled=true; pendingNavUrl=link.href; await doSave(true); }); } }; document.addEventListener('click', internalNavHandler, true); }
+      function detachInternalNavGuard(){ if(internalNavHandler){ document.removeEventListener('click', internalNavHandler, true); internalNavHandler=null; } }
+      function updateGuards(){ if(dirty && mode==='EDITING'){ attachBeforeUnload(); attachInternalNavGuard(); } else { detachBeforeUnload(); detachInternalNavGuard(); } }
+      function replaceUrlQuery(changes){ try{ var u=new URL(location.href); var sp=u.searchParams; Object.keys(changes||{}).forEach(function(k){ var v=changes[k]; if(v==null||v==='') sp.delete(k); else sp.set(k,v); }); u.search=sp.toString(); history.replaceState({mode:'VIEW'}, document.title, u.toString()); } catch(_){} }
+
+      function restoreDisplaysFrom(values){ Object.keys(inputs).forEach(function(field){ var display=document.createElement('div'); display.className='muted'; display.setAttribute('data-f', field); var v=(values && values[field] != null)? values[field] : inputs[field].value; v = (v||'').trim(); display.textContent = v===''?'—':v; inputs[field].replaceWith(display); }); }
+      function finalizeToVIEW(){ detachBeforeUnload(); detachInternalNavGuard(); if(keydownHandler){ document.removeEventListener('keydown', keydownHandler); keydownHandler=null; } meta.removeAttribute('data-edit-mode'); var restoreVals={}; Object.keys(inputs).forEach(function(f){ restoreVals[f]= (initialValues && (f in initialValues)) ? initialValues[f] : (originalValues[f]||''); }); restoreDisplaysFrom(restoreVals); inputs={}; originalValues={}; if(formEl && meta.parentNode===formEl){ formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl=null; } btn.setAttribute('data-mode','view'); syncButton(); mode='VIEW'; dirty=false; replaceUrlQuery({edit:null}); try{ history.replaceState({mode:'VIEW'}, document.title, location.pathname + location.search); } catch(_){} }
+
+      function createInput(field, isTextarea){ var el=meta.querySelector('[data-f="'+field+'"]'); if(!el) return; var val=(el.textContent.trim()==='—')?'':el.textContent.trim(); originalValues[field]=val; var input=isTextarea?document.createElement('textarea'):document.createElement('input'); if(isTextarea){ input.rows=1; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit; resize:none; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;'; requestAnimationFrame(function(){ autosize(input); }); } else { input.type='text'; input.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;'; } input.name=field; input.value=val; el.replaceWith(input); inputs[field]=input; input.addEventListener('input', function(){ computeDirty(); if(isTextarea) autosize(input); }); }
+
+      function createCoordInputs(){ var coordsEl = meta.querySelector('[data-f="coords"]'); if(!coordsEl) return; var wrap=document.createElement('div'); wrap.style.cssText='display:grid; grid-template-columns:1fr 1fr; gap:6px;'; var lat=document.createElement('input'); var lon=document.createElement('input'); lat.type='number'; lat.name='latitude'; lat.placeholder='Lat (-90..90)'; lat.step='0.000001'; lat.min='-90'; lat.max='90'; lon.type='number'; lon.name='longitude'; lon.placeholder='Lon (-180..180)'; lon.step='0.000001'; lon.min='-180'; lon.max='180'; lat.style.cssText=lon.style.cssText='width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:inherit;'; var parts=coordsEl.textContent.split(','); var latVal=(parts[0]||'').trim()==='—'?'':(parts[0]||'').trim(); var lonVal=(parts[1]||'').trim()==='—'?'':(parts[1]||'').trim(); originalValues.latitude=latVal; originalValues.longitude=lonVal; lat.value=latVal; lon.value=lonVal; wrap.appendChild(lat); wrap.appendChild(lon); coordsEl.replaceWith(wrap); inputs.latitude=lat; inputs.longitude=lon; lat.addEventListener('input', function(){ computeDirty(); }); lon.addEventListener('input', function(){ computeDirty(); }); }
+
+      function enterEdit(){ mode='EDITING'; btn.setAttribute('data-mode','edit'); syncButton(); replaceUrlQuery({edit:'1'}); meta.setAttribute('data-edit-mode','true'); if(!formEl){ formEl=document.createElement('form'); formEl.method='post'; formEl.addEventListener('submit', function(ev){ ev.preventDefault(); doSave(false); }); meta.parentNode.insertBefore(formEl, meta); formEl.appendChild(meta);} createInput('name', true); createInput('code', false); createInput('surface_ha', false); createCoordInputs(); var first=inputs.name||inputs.code; if(first) first.focus(); snapshotInitialValues(); computeDirty(); updateGuards(); keydownHandler=function(e){ if((e.ctrlKey||e.metaKey) && e.key==='Enter' && !btn.disabled){ btn.click(); } if(e.key==='Escape'){ finalizeToVIEW(); } }; document.addEventListener('keydown', keydownHandler); }
+
+      async function doSave(fromGuard){ computeDirty(); if(!dirty){ finalizeToVIEW(); if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; } return; } mode='SAVING'; btn.disabled=true; btn.textContent='Saving…'; try{ var fd=new FormData(); fd.append('csrfmiddlewaretoken', getCookie('csrftoken')); Object.keys(inputs).forEach(function(k){ var curr=inputs[k].value.trim(); var orig=originalValues[k]||''; if(curr!==orig){ fd.append(k, curr); } }); var resp=await fetch('{% url "update_site_meta" s.pk %}', { method:'POST', body: fd, headers:{'X-CSRFToken': getCookie('csrftoken') } }); if(!resp.ok){ throw new Error('Network error'); } var data=await resp.json(); if(!data.ok){ throw new Error(data.error||'Save failed'); } finalizeToVIEW(); if(fromGuard && pendingNavUrl){ var url=pendingNavUrl; pendingNavUrl=null; window.location.href=url; } } catch(e){ alert('Save error: '+e.message); mode='EDITING'; } finally { btn.disabled=false; syncButton(); } }
+
+      window.addEventListener('popstate', function(){ finalizeToVIEW(); });
+      window.addEventListener('pageshow', function(){ finalizeToVIEW(); });
+    })();
+  </script>
+  {% endif %}
+{% endblock %}
+
+
