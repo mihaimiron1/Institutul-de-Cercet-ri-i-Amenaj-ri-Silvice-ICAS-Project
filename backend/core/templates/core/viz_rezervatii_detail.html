@@ -431,45 +431,48 @@
         document.addEventListener('keydown', keydownHandler);
       }
 
-      // Cancel edit mode
-      function cancelEdit() {
-          detachBeforeUnload();
-          detachInternalNavGuard();
-          if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
-          // Remove edit mode attribute
-          meta.removeAttribute('data-edit-mode');
-          // Restore original display for regular fields
-          for (var field in inputs) {
-            if (field === 'latitude' || field === 'longitude') continue; // Handle coords separately
-            var display = document.createElement('div');
-            display.className = 'muted';
-            display.setAttribute('data-f', field);
-            display.textContent = (originalValues[field] || '') === '' ? '—' : originalValues[field];
-            inputs[field].replaceWith(display);
-          }
-          // Restore coordinates display
+      function restoreDisplaysFrom(values){
+        for (var field in inputs) {
+          if (field === 'latitude' || field === 'longitude') continue;
+          var display = document.createElement('div');
+          display.className = 'muted';
+          display.setAttribute('data-f', field);
+          var v = values && (field in values) ? (values[field] || '') : (inputs[field].value || '');
+          v = v.trim();
+          display.textContent = v === '' ? '—' : v;
+          inputs[field].replaceWith(display);
+        }
+        if (inputs.latitude && inputs.longitude) {
           var coordsDisplay = document.createElement('div');
           coordsDisplay.className = 'muted';
           coordsDisplay.setAttribute('data-f', 'coords');
-          if (originalValues.latitude && originalValues.longitude) {
-            coordsDisplay.textContent = originalValues.latitude + ', ' + originalValues.longitude;
-          } else {
-            coordsDisplay.textContent = '—';
-          }
+          var latVal = values && ('latitude' in values) ? (values.latitude || '') : (inputs.latitude.value || '');
+          var lonVal = values && ('longitude' in values) ? (values.longitude || '') : (inputs.longitude.value || '');
+          latVal = ('' + latVal).trim(); lonVal = ('' + lonVal).trim();
+          coordsDisplay.textContent = (latVal && lonVal) ? (latVal + ', ' + lonVal) : '—';
           inputs.latitude.parentNode.replaceWith(coordsDisplay);
-          // Restore Edit button
+        }
+      }
+
+      function finalizeToVIEW(){
+        detachBeforeUnload();
+        detachInternalNavGuard();
+        if (keydownHandler) { document.removeEventListener('keydown', keydownHandler); keydownHandler = null; }
+        meta.removeAttribute('data-edit-mode');
+        // Prefer restoring from initial snapshot if available
+        var snapshot = {};
+        for (var k in inputs) { if (initialValues && (k in initialValues)) { snapshot[k] = initialValues[k]; } }
+        if (Object.keys(snapshot).length > 0) { restoreDisplaysFrom(snapshot); }
+        else { restoreDisplaysFrom(null); }
         if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
-          // Clean state
         mode = 'VIEW';
         dirty = false;
         replaceUrlQuery({ edit: null });
-        // unwrap form
-        if (formEl && meta.parentNode === formEl) {
-          formEl.parentNode.insertBefore(meta, formEl);
-          formEl.remove();
-          formEl = null;
-        }
+        try { history.replaceState({mode:'VIEW'}, document.title, location.pathname + location.search); } catch(_) {}
+        if (formEl && meta.parentNode === formEl) { formEl.parentNode.insertBefore(meta, formEl); formEl.remove(); formEl = null; }
       }
+
+      function cancelEdit() { finalizeToVIEW(); }
 
       // Save function
       async function doSave() {
@@ -507,16 +510,7 @@
             inputs.latitude.parentNode.replaceWith(coordsDisplay);
           }
           
-          // Restore Edit button
-          if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
-          mode = 'VIEW';
-          dirty = false;
-          replaceUrlQuery({ edit: null });
-          if (formEl && meta.parentNode === formEl) {
-            formEl.parentNode.insertBefore(meta, formEl);
-            formEl.remove();
-            formEl = null;
-          }
+          finalizeToVIEW();
           return;
         }
 
@@ -587,19 +581,7 @@
             inputs.latitude.parentNode.replaceWith(coordsDisplay);
           }
           
-          // Restore Edit button
-          if (btn) { btn.setAttribute('data-mode', 'view'); syncButtonLabel(); }
-          // Refresh snapshot and state
-          snapshotInitialValues();
-          dirty = false;
-          mode = 'VIEW';
-          updateGuards();
-          replaceUrlQuery({ edit: null });
-          if (formEl && meta.parentNode === formEl) {
-            formEl.parentNode.insertBefore(meta, formEl);
-            formEl.remove();
-            formEl = null;
-          }
+          finalizeToVIEW();
         } catch (e) {
           toast('Save error: ' + e.message);
         } finally {
@@ -643,10 +625,7 @@
             guardStay.addEventListener('click', function(){
               modal.remove();
             });
-            guardDiscard.addEventListener('click', function(){
-              modal.remove();
-              window.location.href = link.href;
-            });
+            guardDiscard.addEventListener('click', function(){ modal.remove(); finalizeToVIEW(); window.location.href = link.href; });
             guardSave.addEventListener('click', function(){
               modal.remove();
               doSave(true, link.href);
@@ -674,7 +653,7 @@
           var sp = u.searchParams;
           Object.keys(changes || {}).forEach(function(k){ var v = changes[k]; if (v == null || v === '') sp.delete(k); else sp.set(k, v); });
           u.search = sp.toString();
-          history.replaceState({}, '', u.toString());
+          history.replaceState({mode:'VIEW'}, document.title, u.toString());
         } catch(_) {}
       }
 
@@ -682,6 +661,10 @@
       if (btn && (btn.getAttribute('data-mode') || 'view').toLowerCase() === 'edit') {
         enterEdit();
       }
+
+      // Keep VIEW on history navigation
+      window.addEventListener('popstate', function(){ finalizeToVIEW(); });
+      window.addEventListener('pageshow', function(){ finalizeToVIEW(); });
     })();
   </script>
 {% endblock %}
