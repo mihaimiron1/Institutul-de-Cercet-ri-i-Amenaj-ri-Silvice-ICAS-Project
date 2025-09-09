@@ -28,11 +28,16 @@ urlpatterns = [
 
     # home + pagini
     path("", core_views.home, name="home"),
+    path("filtrari/", core_views.filtrari, name="filtrari"),
     
 
     path("filtrari/asociatii/", core_views.associations_filters_page, name="associations_filters"),
     path("filtrari/ocurente/", core_views.occurrences_filters_page, name="occurrences_filters"),
     path("filtrari/site-habitate/", core_views.sitehab_filters_page, name="sitehab_filters"),
+
+    # New Filtrari specific wrappers
+    path("filtrari/plante-rezervatii/", core_views.filters_plante_rezervatii, name="filters_plante_rezervatii"),
+    path("filtrari/situri-habitat/", core_views.filters_situri_habitat, name="filters_situri_habitat"),
     path("comparatii/", views.comparatii_home, name="comparatii_home"),
 
 

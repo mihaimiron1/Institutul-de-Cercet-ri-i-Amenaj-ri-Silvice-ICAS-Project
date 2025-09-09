@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Filtrări · ResNat{% endblock %}
+
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Filtrări</h1>
+    <p class="muted">Alege ce vrei să filtrezi. Fiecare buton deschide o zonă dedicată.</p>
+  </header>
+
+  <div class="grid" style="grid-template-columns: 1fr; gap: 16px;">
+    <a href="/filtrari/plante-rezervatii/" role="button" aria-label="Filtrări Plante – Rezervații" class="viz-tile viz-green" style="max-width:560px; margin-inline:auto; padding:14px 18px; width:100%; display:block;">
+      <div class="viz-title">Plante – Rezervații</div>
+      <div class="viz-sub muted">Filtre avansate</div>
+    </a>
+
+    <a href="/filtrari/asociatii/" role="button" aria-label="Filtrări Asociații" class="viz-tile viz-orange" style="max-width:560px; margin-inline:auto; padding:14px 18px; width:100%; display:block;">
+      <div class="viz-title">Asociații</div>
+      <div class="viz-sub muted">Relații & filtrare</div>
+    </a>
+
+    <a href="/filtrari/situri-habitat/" role="button" aria-label="Filtrări Situri – Habitat" class="viz-tile viz-teal" style="max-width:560px; margin-inline:auto; padding:14px 18px; width:100%; display:block;">
+      <div class="viz-title">Situri – Habitat</div>
+      <div class="viz-sub muted">Situl ↔ Habitat</div>
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+

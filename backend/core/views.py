@@ -121,6 +121,131 @@ def vizualizari_home(request):
     # HUB-ul cu cele 5 casete
     return render(request, "core/vizualizari_home.html")
 
+def filtrari(request):
+    """Public page with three stacked filter links, reusing vizualizări styles."""
+    return render(request, "core/filtrari.html")
+
+def filters_plante_rezervatii(request):
+    """Wrapper that mirrors occurrences_filters_page behavior but renders a dedicated template under /filtrari/ namespace."""
+    # Reuse the same logic from occurrences_filters_page to build context
+    mode = (request.GET.get("mode") or "by_reserve_all").strip()
+    reserve_name = (request.GET.get("reserve_name") or "").strip()
+    raion = (request.GET.get("raion") or "").strip()
+
+    all_reserves = Reserve.objects.order_by("name").only("id", "name")
+    all_raions = (Reserve.objects
+                  .exclude(raion__isnull=True).exclude(raion="")
+                  .values_list("raion", flat=True).distinct().order_by("raion"))
+
+    qs = (Occurrence.objects
+          .select_related("species", "reserve")
+          .all())
+
+    error = None
+
+    if mode in ("by_reserve_all", "by_reserve_rare"):
+        if not reserve_name:
+            error = "Alege o rezervație."
+            qs = qs.none()
+        else:
+            qs = qs.filter(reserve__name__iexact=reserve_name)
+            if mode == "by_reserve_rare":
+                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
+
+    elif mode in ("by_raion_all", "by_raion_rare"):
+        if not raion:
+            error = "Alege un raion."
+            qs = qs.none()
+        else:
+            qs = qs.filter(reserve__raion__iexact=raion)
+            if mode == "by_raion_rare":
+                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
+
+    else:
+        error = "Mod invalid."
+        qs = qs.none()
+
+    qs = qs.order_by("reserve__name", "species__denumire_stiintifica", "-year")
+
+    paginator, page_obj = _paginate(request, qs, default=50)
+    rows = []
+    for o in page_obj.object_list:
+        rows.append({
+            "reserve": o.reserve.name,
+            "raion": o.reserve.raion or "",
+            "species_sci": o.species.denumire_stiintifica,
+            "species_pop": o.species.denumire_populara or "",
+            "year": o.year,
+            "rare": "Da" if (o.is_rare or o.species.is_rare) else "Nu",
+            "lat": o.latitude,
+            "lon": o.longitude,
+        })
+
+    return render(request, "core/filters_plante_rezervatii.html", {
+        "mode": mode,
+        "reserve_name": reserve_name,
+        "raion": raion,
+        "all_reserves": all_reserves,
+        "all_raions": all_raions,
+        "rows": rows,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "error": error,
+    })
+
+def filters_situri_habitat(request):
+    """Wrapper that mirrors sitehab_filters_page behavior but renders under /filtrari/ namespace."""
+    mode = request.GET.get("mode", "by_site")
+    site_name = (request.GET.get("site_name") or "").strip()
+    habitat_name = (request.GET.get("habitat_name") or "").strip()
+    year = (request.GET.get("year") or "").strip()
+    export = (request.GET.get("export") or "").strip().lower()
+
+    qs_full = SiteHabitat.objects.select_related("site", "habitat")
+
+    if mode == "by_site" and site_name:
+        qs_full = qs_full.filter(site__name__iexact=site_name).order_by(
+            "year", "habitat__name_romanian", "habitat__name_english"
+        )
+        title = f"Habitate în site-ul: {site_name}"
+    elif mode == "by_habitat" and habitat_name:
+        qs_full = qs_full.filter(
+            Q(habitat__name_romanian__iexact=habitat_name) |
+            Q(habitat__name_english__iexact=habitat_name) |
+            Q(habitat__code__iexact=habitat_name)
+        ).order_by("year", "site__name")
+        title = f"Site-uri pentru habitat: {habitat_name}"
+    elif mode == "by_year" and year.isdigit():
+        qs_full = qs_full.filter(year=int(year)).order_by(
+            "site__name", "habitat__name_romanian", "habitat__name_english"
+        )
+        title = f"Relații Site–Habitat în anul: {year}"
+    else:
+        qs_full = qs_full.none()
+        title = "Selectează un filtru"
+
+    if export in ("csv", "xlsx"):
+        return _export_sitehab(qs_full, export)
+
+    paginator, page_obj = _paginate(request, qs_full, default=50)
+    qs = page_obj.object_list
+
+    sites = Site.objects.order_by("name").values_list("name", flat=True)
+    habitats = Habitat.objects.order_by("name_romanian", "name_english").values_list("name_romanian", flat=True)
+
+    return render(request, "core/filters_situri_habitat.html", {
+        "mode": mode,
+        "site_name": site_name,
+        "habitat_name": habitat_name,
+        "year": year,
+        "qs": qs,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "title": title,
+        "sites": list(sites),
+        "habitats": list(habitats),
+    })
+
 @login_required
 def coming_soon(request):
     return render(request, "core/coming_soon.html")
