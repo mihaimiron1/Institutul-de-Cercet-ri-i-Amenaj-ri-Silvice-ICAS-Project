@@ -377,3 +377,86 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 .viz-orange { background: #ffe9d6; border-color:#ffd9b8; }  /* Asociații – portocaliu deschis */
 .viz-olive  { background: #e8efd9; border-color:#d8e5c2; }  /* Situri – olive/planty */
 .viz-red    { background: #ffe3e1; border-color:#ffd0cc; }  /* Habitate – roșu cald (soft) */
+/* ==== Plante – Rezervatii wide layout (UI only) ==== */
+#plante-rezervatii .prw-90 { width: 100%; margin-inline: auto; }
+
+#plante-rezervatii .fullw,
+#plante-rezervatii .fullw .form-control,
+#plante-rezervatii .fullw .form-select,
+#plante-rezervatii input.form-control,
+#plante-rezervatii select.form-select {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  #plante-rezervatii .prw-90 {
+    padding-inline: 1.25rem;
+  }
+}
+
+#plante-rezervatii .filters-shell,
+#plante-rezervatii .filters-panel { max-width: 1180px; margin-inline: auto; }
+
+/* === Raion & Reserve combobox (scoped) === */
+#plante-rezervatii #raion-combobox,
+#plante-rezervatii #reserve-combobox { position: relative; }
+#plante-rezervatii .combo-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border, #dfe3e6);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.07);
+  padding: 4px 0;
+}
+#plante-rezervatii .combo-menu li {
+  list-style: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#plante-rezervatii .combo-menu li[aria-selected="true"],
+#plante-rezervatii .combo-menu li:hover { background: #f2f6f8; }
+#plante-rezervatii .combo-menu::-webkit-scrollbar { width: 6px; }
+#plante-rezervatii .combo-menu::-webkit-scrollbar-thumb { background: #c7d0d6; border-radius: 3px; }
+#plante-rezervatii .hidden { display: none; }
+
+/* Results card width aligned with filters-panel */
+#plante-rezervatii .prw-results{ width: 100%; max-width: 1180px; margin-inline: auto; }
+
+/* === Filters responsive row (Mode | Combo | Button) === */
+#plante-rezervatii .filters-panel { padding-top: 12px; padding-bottom: 12px; }
+#plante-rezervatii .filters-row{
+  display: grid;
+  gap: 12px;
+  align-items: end;
+  grid-template-columns: 1fr; /* mobile default */
+}
+
+#plante-rezervatii .filters-row .fullw select,
+#plante-rezervatii .filters-row .fullw input{ width: 100%; }
+
+/* Inputs max widths so they don't over-stretch */
+#plante-rezervatii #raion-combobox,
+#plante-rezervatii #reserve-combobox{ max-width: 26rem; }
+#plante-rezervatii .filters-row > label{ max-width: 26rem; }
+
+#plante-rezervatii .filters-actions{ display:flex; justify-content:flex-start; }
+#plante-rezervatii .filters-actions .btn{ white-space: nowrap; padding-inline: 16px; height: 38px; display:inline-flex; align-items:center; }
+
+/* Tablet */
+@media (min-width: 768px){
+  #plante-rezervatii .filters-row{ grid-template-columns: 1fr 1fr; }
+  #plante-rezervatii .filters-actions{ grid-column: 1 / -1; }
+}
+
+/* Desktop ≥1280px: three columns (Mode | Combo | Button) */
+@media (min-width: 1280px){
+  #plante-rezervatii .filters-row{ grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr) auto; }
+  #plante-rezervatii .filters-actions{ grid-column: auto; justify-content:flex-end; }
+}

@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Filtre · Plante – Rezervații{% endblock %}
 {% block content %}
-<section class="container">
+<section id="plante-rezervatii" class="container">
   <header class="hero">
     <h1>Plante – Rezervații</h1>
     <p class="muted">Aceleași filtre și rezultate ca în pagina Plante.</p>
   </header>
 
-  <div class="card">
-    <form method="get" action="" class="grid" style="grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 12px; align-items: end;">
-      <label style="display:flex; flex-direction:column; gap:6px;">
+  <div class="card filters-panel">
+    <form method="get" action="" class="filters-row">
+      <label class="fullw" style="display:flex; flex-direction:column; gap:6px;">
         <span>Mod filtrare</span>
-        <select name="mode" id="mode">
+        <select name="mode" id="mode" class="form-select fullw">
           <option value="by_reserve_all"  {% if mode == 'by_reserve_all' %}selected{% endif %}>Plante (toate) în rezervația X</option>
           <option value="by_reserve_rare" {% if mode == 'by_reserve_rare' %}selected{% endif %}>Plante rare în rezervația X</option>
           <option value="by_raion_all"    {% if mode == 'by_raion_all' %}selected{% endif %}>Plante (toate) pe raion</option>
@@ -19,35 +19,61 @@
         </select>
       </label>
 
-      <label id="reserveLbl" style="display:flex; flex-direction:column; gap:6px;">
-        <span>Rezervație (după nume)</span>
-        <input type="text" name="reserve_name" id="reserveInput" value="{{ reserve_name|default_if_none:'' }}" autocomplete="off" placeholder="ex: Codrii Țigheciului">
-        <select id="reserveSelect">
-          <option value="">— alege din listă —</option>
-          {% for r in all_reserves %}
-            <option value="{{ r.name }}">{{ r.name }}</option>
-          {% endfor %}
-        </select>
-        <small class="muted">Poți scrie parțial și apoi selecta din listă.</small>
-      </label>
+      <!-- Reserve combobox (hidden unless mode is by_reserve_*) -->
+      <div class="fullw" id="reserve-combobox" style="position:relative; display:none;">
+        <label class="label" for="reserveSearch">Rezervație</label>
+        <input
+          id="reserveSearch"
+          class="form-control fullw"
+          type="text"
+          inputmode="search"
+          placeholder="Caută rezervație…"
+          autocomplete="off"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="reserveMenu"
+          aria-autocomplete="list"
+          value="{{ reserve_name|default_if_none:'' }}"
+        />
+        <input type="hidden" name="reserve_name" id="reserveValue" value="{{ reserve_name|default_if_none:'' }}" />
+        <ul id="reserveMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii rezervație"></ul>
+        <script id="reserves-data" type="application/json">{% autoescape off %}[{% for r in all_reserves %}"{{ r.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
+      </div>
 
-      <label id="raionLbl" style="display:flex; flex-direction:column; gap:6px;">
-        <span>Raion</span>
-        <select name="raion" id="raion">
-          <option value="">— alege raion —</option>
-          {% for rn in all_raions %}
-            <option value="{{ rn }}" {% if rn == raion %}selected{% endif %}>{{ rn }}</option>
-          {% endfor %}
-        </select>
-      </label>
+      <!-- Raion combobox (hidden unless mode is by_raion_*) -->
+      <div class="fullw" id="raion-combobox" style="position:relative; display:none;">
+        <label class="label" for="raionSearch">Raion</label>
+        <input
+          id="raionSearch"
+          class="form-control fullw"
+          type="text"
+          inputmode="search"
+          placeholder="Caută raion…"
+          autocomplete="off"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="raionMenu"
+          aria-autocomplete="list"
+          value="{{ raion|default_if_none:'' }}"
+        />
+        <input type="hidden" name="raion" id="raionValue" value="{{ raion|default_if_none:'' }}" />
+        <ul id="raionMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii raion"></ul>
+        <script id="raions-data" type="application/json">{% autoescape off %}[{% for rn in all_raions %}"{{ rn|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
+      </div>
 
-      <div>
+      <div class="filters-actions">
         <button type="submit" class="btn">Caută</button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4">
+  <div class="muted prw-90 mt-4">
+    {% if mode %}<span>Mod: <strong>{{ mode }}</strong></span>{% endif %}
+    {% if reserve_name %} • <span>Rezervație: <strong>{{ reserve_name }}</strong></span>{% endif %}
+    {% if raion %} • <span>Raion: <strong>{{ raion }}</strong></span>{% endif %}
+  </div>
+
+  <div class="card mt-4 prw-results">
     {% if error %}
       <p style="color:#b00">{{ error }}</p>
     {% endif %}
@@ -95,43 +121,74 @@
 
 {% block extra_js %}
 <script>
-  (function(){
-    var input = document.getElementById('reserveInput');
-    var select = document.getElementById('reserveSelect');
-    function filterOptions(){
-      var q = (input.value||"").toLowerCase();
-      for (var i = 0; i < select.options.length; i++){
-        var opt = select.options[i];
-        if (!opt.value){ opt.hidden = false; continue; }
-        opt.hidden = opt.value.toLowerCase().indexOf(q) === -1;
-      }
-    }
-    function pickFromSelect(){ if (select.value) input.value = select.value; }
-    input.addEventListener('input', filterOptions);
-    select.addEventListener('change', pickFromSelect);
-    (function syncInitial(){
-      var val = input.value;
-      for (var i=0;i<select.options.length;i++){
-        if (select.options[i].value === val){ select.selectedIndex = i; break; }
-      }
-    })();
-  })();
+  // Generic combobox initializer
+  function initCombo(opts){
+    var box    = document.getElementById(opts.boxId);
+    if (!box) return;
+    var input  = document.getElementById(opts.inputId);
+    var menu   = document.getElementById(opts.menuId);
+    var hidden = document.getElementById(opts.hiddenId);
+    var dataEl = document.getElementById(opts.dataId);
+    var raw = (dataEl && dataEl.textContent || '[]').trim();
+    var ITEMS = [];
+    try { ITEMS = JSON.parse(raw).filter(Boolean); } catch(e) { ITEMS = []; }
 
+    function norm(s){ return (s||'').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim(); }
+    function candidates(q){ if (!q) return ITEMS.slice(0,20); var n=norm(q); return ITEMS.filter(function(name){ return norm(name).indexOf(n)!==-1; }).slice(0,20); }
+
+    var activeIndex = -1;
+    function render(list){
+      while (menu.firstChild) menu.removeChild(menu.firstChild);
+      if (!input.value && list.length === 0) {
+        var li0 = document.createElement('li'); li0.textContent = '— alege —'; li0.setAttribute('aria-disabled','true'); menu.appendChild(li0);
+      }
+      list.forEach(function(name, i){
+        var li = document.createElement('li'); li.setAttribute('role','option'); li.id = opts.menuId + '-opt-' + i; li.textContent = name; li.addEventListener('mousedown', function(e){ e.preventDefault(); select(name); }); menu.appendChild(li);
+      });
+      input.setAttribute('aria-expanded', String(list.length > 0));
+      menu.classList.toggle('hidden', list.length === 0 && !!input.value);
+      activeIndex = -1;
+    }
+    function select(name){ input.value = name; hidden.value = name; close(); }
+    function close(){ menu.classList.add('hidden'); input.setAttribute('aria-expanded','false'); activeIndex=-1; }
+    function openWith(q){ render(candidates(q)); menu.classList.remove('hidden'); }
+
+    input.addEventListener('focus', function(){ openWith(input.value); });
+    input.addEventListener('input', function(){ hidden.value=''; openWith(input.value); });
+    input.addEventListener('keydown', function(e){
+      var items = Array.from(menu.querySelectorAll('li[role="option"]'));
+      if (menu.classList.contains('hidden') && (e.key==='ArrowDown' || e.key==='Enter')) { openWith(input.value); return; }
+      if (!items.length) return;
+      if (e.key==='ArrowDown'){ e.preventDefault(); activeIndex = Math.min(items.length-1, activeIndex+1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); activeIndex = Math.max(0, activeIndex-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); if (activeIndex>=0) select(items[activeIndex].textContent); else if (items.length) select(items[0].textContent); }
+      else if (e.key==='Escape'){ close(); }
+      items.forEach(function(li, i){ li.setAttribute('aria-selected', String(i===activeIndex)); });
+      if (activeIndex>=0) items[activeIndex].scrollIntoView({ block: 'nearest' });
+    });
+    document.addEventListener('click', function(e){ if (!box.contains(e.target)) close(); });
+    var form = input.closest('form');
+    if (form) form.addEventListener('submit', function(){ if (!hidden.value && input.value){ var list = candidates(input.value); if (list.length){ hidden.value = list[0]; input.value = list[0]; } } close(); });
+  }
+
+  // Initialize both comboboxes
+  initCombo({ boxId:'raion-combobox', inputId:'raionSearch', menuId:'raionMenu', hiddenId:'raionValue', dataId:'raions-data' });
+  initCombo({ boxId:'reserve-combobox', inputId:'reserveSearch', menuId:'reserveMenu', hiddenId:'reserveValue', dataId:'reserves-data' });
+
+  // Mode-driven visibility
   (function(){
     var modeSel = document.getElementById('mode');
-    var reserveLbl = document.getElementById('reserveLbl');
-    var raionLbl = document.getElementById('raionLbl');
+    var raionBox = document.getElementById('raion-combobox');
+    var reserveBox = document.getElementById('reserve-combobox');
     function toggle(){
       var m = modeSel.value;
-      if (m === 'by_reserve_all' || m === 'by_reserve_rare'){
-        reserveLbl.style.display = 'block';
-        raionLbl.style.display = 'none';
-        document.getElementById('raion').value = '';
+      var byReserve = (m === 'by_reserve_all' || m === 'by_reserve_rare');
+      reserveBox.style.display = byReserve ? 'block' : 'none';
+      raionBox.style.display = byReserve ? 'none' : 'block';
+      if (byReserve){
+        var rv = document.getElementById('raionValue'); var rs = document.getElementById('raionSearch'); if (rv) rv.value=''; if (rs) rs.value='';
       } else {
-        reserveLbl.style.display = 'none';
-        raionLbl.style.display = 'block';
-        document.getElementById('reserveInput').value = '';
-        document.getElementById('reserveSelect').selectedIndex = 0;
+        var hv = document.getElementById('reserveValue'); var hs = document.getElementById('reserveSearch'); if (hv) hv.value=''; if (hs) hs.value='';
       }
     }
     modeSel.addEventListener('change', toggle);
