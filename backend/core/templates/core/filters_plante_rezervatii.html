@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Filtre · Plante – Rezervații{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Plante – Rezervații</h1>
+    <p class="muted">Aceleași filtre și rezultate ca în pagina Plante.</p>
+  </header>
+
+  <div class="card">
+    <form method="get" action="" class="grid" style="grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 12px; align-items: end;">
+      <label style="display:flex; flex-direction:column; gap:6px;">
+        <span>Mod filtrare</span>
+        <select name="mode" id="mode">
+          <option value="by_reserve_all"  {% if mode == 'by_reserve_all' %}selected{% endif %}>Plante (toate) în rezervația X</option>
+          <option value="by_reserve_rare" {% if mode == 'by_reserve_rare' %}selected{% endif %}>Plante rare în rezervația X</option>
+          <option value="by_raion_all"    {% if mode == 'by_raion_all' %}selected{% endif %}>Plante (toate) pe raion</option>
+          <option value="by_raion_rare"   {% if mode == 'by_raion_rare' %}selected{% endif %}>Plante rare pe raion</option>
+        </select>
+      </label>
+
+      <label id="reserveLbl" style="display:flex; flex-direction:column; gap:6px;">
+        <span>Rezervație (după nume)</span>
+        <input type="text" name="reserve_name" id="reserveInput" value="{{ reserve_name|default_if_none:'' }}" autocomplete="off" placeholder="ex: Codrii Țigheciului">
+        <select id="reserveSelect">
+          <option value="">— alege din listă —</option>
+          {% for r in all_reserves %}
+            <option value="{{ r.name }}">{{ r.name }}</option>
+          {% endfor %}
+        </select>
+        <small class="muted">Poți scrie parțial și apoi selecta din listă.</small>
+      </label>
+
+      <label id="raionLbl" style="display:flex; flex-direction:column; gap:6px;">
+        <span>Raion</span>
+        <select name="raion" id="raion">
+          <option value="">— alege raion —</option>
+          {% for rn in all_raions %}
+            <option value="{{ rn }}" {% if rn == raion %}selected{% endif %}>{{ rn }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <div>
+        <button type="submit" class="btn">Caută</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4">
+    {% if error %}
+      <p style="color:#b00">{{ error }}</p>
+    {% endif %}
+
+    <div style="overflow:auto;">
+      <table style="border-collapse:collapse; width:100%;">
+        <thead>
+          <tr>
+            <th>Rezervație</th>
+            <th>Raion</th>
+            <th>Specie (științific)</th>
+            <th>Specie (popular)</th>
+            <th>An</th>
+            <th>Rară?</th>
+            <th>Lat</th>
+            <th>Lon</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.reserve }}</td>
+            <td>{{ r.raion }}</td>
+            <td>{{ r.species_sci }}</td>
+            <td>{{ r.species_pop }}</td>
+            <td>{{ r.year }}</td>
+            <td>{{ r.rare }}</td>
+            <td>{{ r.lat }}</td>
+            <td>{{ r.lon }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="8">Niciun rezultat.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if paginator.num_pages > 1 %}
+    <div class="mt-4 muted">
+      Pagina {{ page_obj.number }} din {{ paginator.num_pages }}
+    </div>
+  {% endif %}
+</section>
+
+{% block extra_js %}
+<script>
+  (function(){
+    var input = document.getElementById('reserveInput');
+    var select = document.getElementById('reserveSelect');
+    function filterOptions(){
+      var q = (input.value||"").toLowerCase();
+      for (var i = 0; i < select.options.length; i++){
+        var opt = select.options[i];
+        if (!opt.value){ opt.hidden = false; continue; }
+        opt.hidden = opt.value.toLowerCase().indexOf(q) === -1;
+      }
+    }
+    function pickFromSelect(){ if (select.value) input.value = select.value; }
+    input.addEventListener('input', filterOptions);
+    select.addEventListener('change', pickFromSelect);
+    (function syncInitial(){
+      var val = input.value;
+      for (var i=0;i<select.options.length;i++){
+        if (select.options[i].value === val){ select.selectedIndex = i; break; }
+      }
+    })();
+  })();
+
+  (function(){
+    var modeSel = document.getElementById('mode');
+    var reserveLbl = document.getElementById('reserveLbl');
+    var raionLbl = document.getElementById('raionLbl');
+    function toggle(){
+      var m = modeSel.value;
+      if (m === 'by_reserve_all' || m === 'by_reserve_rare'){
+        reserveLbl.style.display = 'block';
+        raionLbl.style.display = 'none';
+        document.getElementById('raion').value = '';
+      } else {
+        reserveLbl.style.display = 'none';
+        raionLbl.style.display = 'block';
+        document.getElementById('reserveInput').value = '';
+        document.getElementById('reserveSelect').selectedIndex = 0;
+      }
+    }
+    modeSel.addEventListener('change', toggle);
+    toggle();
+  })();
+</script>
+{% endblock %}
+{% endblock %}
+
+
