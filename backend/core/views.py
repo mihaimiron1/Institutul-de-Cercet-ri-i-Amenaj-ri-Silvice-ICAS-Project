@@ -258,6 +258,108 @@ def export_plante_rezervatii(request):
         "Content-Disposition": 'attachment; filename="plante_rezervatii.csv"'
     })
 
+def filters_asociatii(request):
+    mode = (request.GET.get("mode") or "by_reserve_year").strip()
+    reserve_name = (request.GET.get("reserve_name") or "").strip()
+    year_q = (request.GET.get("year") or "").strip()
+
+    all_reserves = Reserve.objects.order_by("name").only("id", "name")
+
+    links = ReserveAssociationYear.objects.select_related("reserve", "association")
+    err = None
+
+    if mode == "by_reserve_year":
+        if not reserve_name or not year_q.isdigit():
+            err = "Alege o rezervație și un an."
+            qs = links.none()
+        else:
+            qs = links.filter(reserve__name__iexact=reserve_name, year=int(year_q)).order_by("association__name")
+    elif mode == "by_reserve_all_years":
+        if not reserve_name:
+            err = "Alege o rezervație."
+            qs = links.none()
+        else:
+            qs = links.filter(reserve__name__iexact=reserve_name).order_by("-year", "association__name")
+    elif mode == "by_year_all_reserves":
+        if not year_q.isdigit():
+            err = "Alege un an."
+            qs = links.none()
+        else:
+            qs = links.filter(year=int(year_q)).order_by("reserve__name", "association__name")
+    else:
+        err = "Mod invalid."
+        qs = links.none()
+
+    paginator, page_obj = _paginate(request, qs, default=50)
+    rows = []
+    for l in page_obj.object_list:
+        rows.append({
+            "reserve": l.reserve.name,
+            "association": l.association.name,
+            "year": l.year,
+            "notes": l.notes or "",
+        })
+
+    return render(request, "core/filters_asociatii.html", {
+        "mode": mode,
+        "reserve_name": reserve_name,
+        "year_q": year_q,
+        "all_reserves": all_reserves,
+        "rows": rows,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "error": err,
+    })
+
+def export_asociatii(request):
+    kind = (request.GET.get("format") or request.GET.get("export") or "csv").lower()
+    mode = (request.GET.get("mode") or "by_reserve_year").strip()
+    reserve_name = (request.GET.get("reserve_name") or "").strip()
+    year_q = (request.GET.get("year") or "").strip()
+
+    links = ReserveAssociationYear.objects.select_related("reserve", "association")
+
+    if mode == "by_reserve_year":
+        if not reserve_name or not year_q.isdigit():
+            return HttpResponse("Alege o rezervație și un an.", content_type="text/plain; charset=utf-8", status=400)
+        qs = links.filter(reserve__name__iexact=reserve_name, year=int(year_q)).order_by("association__name")
+    elif mode == "by_reserve_all_years":
+        if not reserve_name:
+            return HttpResponse("Alege o rezervație.", content_type="text/plain; charset=utf-8", status=400)
+        qs = links.filter(reserve__name__iexact=reserve_name).order_by("-year", "association__name")
+    elif mode == "by_year_all_reserves":
+        if not year_q.isdigit():
+            return HttpResponse("Alege un an.", content_type="text/plain; charset=utf-8", status=400)
+        qs = links.filter(year=int(year_q)).order_by("reserve__name", "association__name")
+    else:
+        return HttpResponse("Mod invalid.", content_type="text/plain; charset=utf-8", status=400)
+
+    headers = ["Rezervație", "Asociație", "An", "Note"]
+
+    if kind == "xlsx":
+        try:
+            from openpyxl import Workbook
+        except ModuleNotFoundError:
+            kind = "csv"
+        else:
+            wb = Workbook(); ws = wb.active; ws.title = "Asociatii"; ws.append(headers)
+            for l in qs.iterator():
+                ws.append([l.reserve.name, l.association.name, l.year, l.notes or ""])
+            bio = BytesIO(); wb.save(bio); bio.seek(0)
+            resp = HttpResponse(bio.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            resp["Content-Disposition"] = 'attachment; filename="asociatii.xlsx"'
+            return resp
+
+    def rows_iter():
+        import csv as _csv
+        pseudo = _Echo(); writer = _csv.writer(pseudo)
+        yield writer.writerow(headers)
+        for l in qs.iterator():
+            yield writer.writerow([l.reserve.name, l.association.name, l.year, l.notes or ""])
+    return StreamingHttpResponse(rows_iter(), content_type="text/csv; charset=utf-8", headers={
+        "Content-Disposition": 'attachment; filename="asociatii.csv"'
+    })
+
 def filters_situri_habitat(request):
     """Wrapper that mirrors sitehab_filters_page behavior but renders under /filtrari/ namespace."""
     mode = request.GET.get("mode", "by_site")
@@ -883,125 +985,6 @@ def comparatii_home(request):
 def species_list(request):
     return HttpResponse("Test species_list – aici vor veni filtrările pentru specii.")
 
-@login_required
-@permission_required("core.view_reserveassociationyear", raise_exception=True)
-def associations_filters_page(request):
-    """
-    Pagina cu cele 3 filtrări + export CSV/XLSX.
-    GET:
-      mode: one_of ["by_reserve_year", "by_reserve_all_years", "by_year_all_reserves"]
-      reserve_name: nume rezervație (când e nevoie)
-      year: YYYY (când e nevoie)
-      export: "csv" | "xlsx"
-    """
-
-    mode = (request.GET.get("mode") or "").strip() or "by_reserve_year"
-    reserve_name = (request.GET.get("reserve_name") or "").strip()
-    year_q = (request.GET.get("year") or "").strip()
-    export = (request.GET.get("export") or "").strip().lower()
-
-    # dropdown: toate rezervațiile alfabetic (doar pt UI)
-    all_reserves = Reserve.objects.order_by("name").only("id", "name")
-
-    # construim queryset-ul în funcție de mod
-    links = ReserveAssociationYear.objects.select_related("reserve", "association")
-
-    err = None
-    results = []  # listă de dict-uri {reserve, association, year, notes}
-
-    def push_rows(qs):
-        rows = []
-        for l in qs:
-            rows.append({
-                "reserve": l.reserve.name,
-                "association": l.association.name,
-                "year": l.year,
-                "notes": l.notes or "",
-            })
-        return rows
-
-    if mode == "by_reserve_year":
-        if not reserve_name or not year_q.isdigit():
-            err = "Alege o rezervație și un an."
-        else:
-            qs = links.filter(
-                reserve__name__iexact=reserve_name,
-                year=int(year_q)
-            ).order_by("association__name")
-            results = push_rows(qs)
-
-    elif mode == "by_reserve_all_years":
-        if not reserve_name:
-            err = "Alege o rezervație."
-        else:
-            qs = links.filter(
-                reserve__name__iexact=reserve_name
-            ).order_by("-year", "association__name")
-            results = push_rows(qs)
-
-    elif mode == "by_year_all_reserves":
-        if not year_q.isdigit():
-            err = "Alege un an."
-        else:
-            qs = links.filter(
-                year=int(year_q)
-            ).order_by("reserve__name", "association__name")
-            results = push_rows(qs)
-    else:
-        err = "Mod invalid."
-
-    # --- Export (toate rândurile din results) ---
-    if export and not err:
-        if export == "csv":
-            headers = ["Rezervație", "Asociație", "An", "Note"]
-
-            def rows_iter():
-                for r in results:
-                    yield [r["reserve"], r["association"], r["year"], r["notes"]]
-
-            fn = f"asociatii_{mode}.csv"
-            return _stream_csv(fn, headers, rows_iter())
-
-        if export == "xlsx":
-            try:
-                # import "lazy" – doar dacă chiar exportăm XLSX
-                from openpyxl import Workbook
-            except ModuleNotFoundError:
-                # mesaj clar dacă lipsește openpyxl
-                return HttpResponse(
-                    "Export XLSX necesită pachetul 'openpyxl'. Rulează: pip install openpyxl",
-                    content_type="text/plain; charset=utf-8",
-                    status=500
-                )
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Asociatii"
-            ws.append(["Rezervație", "Asociație", "An", "Note"])
-            for r in results:
-                ws.append([r["reserve"], r["association"], r["year"], r["notes"]])
-            bio = BytesIO()
-            wb.save(bio)
-            bio.seek(0)
-            resp = HttpResponse(
-                bio.read(),
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-            fn = f"asociatii_{mode}.xlsx"
-            resp["Content-Disposition"] = f'attachment; filename="{fn}"'
-            return resp
-
-    # --- HTML (paginăm results pentru afișare) ---
-    paginator, page_obj = _paginate(request, results, default=50)
-    return render(request, "core/associations_filters.html", {
-        "all_reserves": all_reserves,
-        "mode": mode,
-        "reserve_name": reserve_name,
-        "year_q": year_q,
-        "rows": page_obj.object_list,
-        "page_obj": page_obj,
-        "paginator": paginator,
-        "error": err,
-    })
 
 @login_required
 @permission_required("core.view_occurrence", raise_exception=True)

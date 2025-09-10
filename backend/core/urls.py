@@ -15,7 +15,6 @@ urlpatterns = [
     #path('occurrences/', views.occurrence_list, name='occurrence_list'),
     #path('occurrences/add/', views.occurrence_create, name='occurrence_create'),
 
-    path('associations/filters/', views.associations_filters_page, name='associations_filters_page'),
     path('occurrences/filters/', views.occurrences_filters_page, name='occurrences_filters_page'),
     path('accounts/', include('django.contrib.auth.urls')),  # login/logout/password_change
     path("sitehab/filters/", views.sitehab_filters_page, name="sitehab_filters"),
@@ -31,7 +30,6 @@ urlpatterns = [
     path("filtrari/", core_views.filtrari, name="filtrari"),
     
 
-    path("filtrari/asociatii/", core_views.associations_filters_page, name="associations_filters"),
     path("filtrari/ocurente/", core_views.occurrences_filters_page, name="occurrences_filters"),
     path("filtrari/site-habitate/", core_views.sitehab_filters_page, name="sitehab_filters"),
 
@@ -39,6 +37,10 @@ urlpatterns = [
     path("filtrari/plante-rezervatii/", core_views.filters_plante_rezervatii, name="filters_plante_rezervatii"),
     path("filtrari/plante-rezervatii/export/", core_views.export_plante_rezervatii, name="export_plante_rezervatii"),
     path("filtrari/situri-habitat/", core_views.filters_situri_habitat, name="filters_situri_habitat"),
+
+    # Associations filters (new)
+    path("filters/associations/", core_views.filters_asociatii, name="filters_asociatii"),
+    path("filters/associations/export/", core_views.export_asociatii, name="export_asociatii"),
     path("comparatii/", views.comparatii_home, name="comparatii_home"),
 
 

@@ -8,9 +8,9 @@
   </header>
 
   <div class="card filters-panel">
-    <form method="get" class="filters-row">
+    <form method="get" action="" class="filters-row">
       <label class="fullw" style="display:flex; flex-direction:column; gap:6px;">
-        <span>Mod</span>
+        <span>Mod filtrare</span>
         <select name="mode" id="mode" class="form-select fullw">
           <option value="by_site"    {% if mode == 'by_site' %}selected{% endif %}>Habitate în site</option>
           <option value="by_habitat" {% if mode == 'by_habitat' %}selected{% endif %}>Site-uri pentru habitat</option>
@@ -18,9 +18,9 @@
         </select>
       </label>
 
-      <!-- Site combobox (visible only in by_site mode) -->
-      <div id="site-combobox" class="fullw" style="position:relative; display:none;">
-        <label class="label" for="siteSearch">Site (după nume)</label>
+      <!-- Site combobox (hidden unless mode is by_site) -->
+      <div class="fullw" id="site-combobox" style="position:relative; display:none;">
+        <label class="label" for="siteSearch">Site</label>
         <input
           id="siteSearch"
           class="form-control fullw"
@@ -39,27 +39,43 @@
         <script id="sites-data" type="application/json">{% autoescape off %}[{% for s in sites %}"{{ s|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
       </div>
 
-      <label id="habLbl" class="fullw" style="display:flex; flex-direction:column; gap:6px;">
-        <span>Habitat (RO/EN/Cod)</span>
-        <input name="habitat_name" list="habitats" value="{{ habitat_name|default_if_none:'' }}" autocomplete="off" class="form-control fullw" placeholder="Caută habitat…">
-        <datalist id="habitats">
-          {% for h in habitats %}<option value="{{ h }}">{% endfor %}
-        </datalist>
-      </label>
-
-      <label id="yearLbl" class="fullw" style="display:flex; flex-direction:column; gap:6px;">
-        <span>An</span>
-        <input type="number" name="year" min="1900" max="2100" value="{{ year|default_if_none:'' }}" class="form-control fullw">
-      </label>
+      <!-- Habitat combobox (hidden unless mode is by_habitat) -->
+      <div class="fullw" id="habitat-combobox" style="position:relative; display:none;">
+        <label class="label" for="habitatSearch">Habitat</label>
+        <input
+          id="habitatSearch"
+          class="form-control fullw"
+          type="text"
+          inputmode="search"
+          placeholder="Caută habitat…"
+          autocomplete="off"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="habitatMenu"
+          aria-autocomplete="list"
+          value="{{ habitat_name|default_if_none:'' }}"
+        />
+        <input type="hidden" name="habitat_name" id="habitatValue" value="{{ habitat_name|default_if_none:'' }}" />
+        <ul id="habitatMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii habitat"></ul>
+        <script id="habitats-data" type="application/json">{% autoescape off %}[{% for h in habitats %}"{{ h|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
+      </div>
 
       <div class="filters-actions">
         <button type="submit" class="btn">Caută</button>
-        {% if qs %}
-          <a class="btn btn-outline" href="?{{ request.GET.urlencode }}&export=csv">Export CSV</a>
-          <a class="btn btn-outline" href="?{{ request.GET.urlencode }}&export=xlsx">Export XLSX</a>
-        {% endif %}
       </div>
     </form>
+  </div>
+
+  <div class="muted prw-90 mt-4">
+    {% if mode %}<span>Mod: <strong>{{ mode }}</strong></span>{% endif %}
+    {% if site_name %} • <span>Site: <strong>{{ site_name }}</strong></span>{% endif %}
+    {% if habitat_name %} • <span>Habitat: <strong>{{ habitat_name }}</strong></span>{% endif %}
+  </div>
+
+  <!-- Export action bar (centered) -->
+  <div class="prw-results" style="margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:10px;">
+    <a class="btn btn-outline" href="?{{ request.GET.urlencode }}&export=csv">Export CSV</a>
+    <a class="btn btn-outline" href="?{{ request.GET.urlencode }}&export=xlsx">Export XLSX</a>
   </div>
 
   <div class="card mt-4">
@@ -150,25 +166,29 @@
     if (form) form.addEventListener('submit', function(){ if (!hidden.value && input.value){ var list = candidates(input.value); if (list.length){ hidden.value = list[0]; input.value = list[0]; } } close(); });
   }
 
-  // Initialize Site combobox
+  // Initialize both comboboxes
   initCombo({ boxId:'site-combobox', inputId:'siteSearch', menuId:'siteMenu', hiddenId:'siteValue', dataId:'sites-data' });
+  initCombo({ boxId:'habitat-combobox', inputId:'habitatSearch', menuId:'habitatMenu', hiddenId:'habitatValue', dataId:'habitats-data' });
 
-  // Mode-driven visibility (show Site only for by_site)
+  // Mode-driven visibility (same as plants page)
   (function(){
     var modeSel = document.getElementById('mode');
     var siteBox = document.getElementById('site-combobox');
-    var habLbl  = document.getElementById('habLbl');
-    var yearLbl = document.getElementById('yearLbl');
-    function refresh(){
+    var habitatBox = document.getElementById('habitat-combobox');
+    function toggle(){
       var m = modeSel.value;
-      var showSite = (m === 'by_site');
-      siteBox.style.display = showSite ? 'block' : 'none';
-      habLbl.style.display  = (m === 'by_habitat') ? 'block' : 'none';
-      yearLbl.style.display = (m === 'by_year') ? 'block' : 'none';
-      if (!showSite){ var hv = document.getElementById('siteValue'); var hs = document.getElementById('siteSearch'); if (hv) hv.value=''; if (hs) hs.value=''; }
+      var bySite = (m === 'by_site');
+      var byHabitat = (m === 'by_habitat');
+      siteBox.style.display = bySite ? 'block' : 'none';
+      habitatBox.style.display = byHabitat ? 'block' : 'none';
+      if (bySite){
+        var hv = document.getElementById('habitatValue'); var hs = document.getElementById('habitatSearch'); if (hv) hv.value=''; if (hs) hs.value='';
+      } else if (byHabitat) {
+        var sv = document.getElementById('siteValue'); var ss = document.getElementById('siteSearch'); if (sv) sv.value=''; if (ss) ss.value='';
+      }
     }
-    modeSel.addEventListener('change', refresh);
-    refresh();
+    modeSel.addEventListener('change', toggle);
+    toggle();
   })();
 </script>
 {% endblock %}

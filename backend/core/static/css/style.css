@@ -435,9 +435,119 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 #situri-habitat .filters-row .fullw input{ width: 100%; }
 #situri-habitat .filters-actions{ display:flex; justify-content:flex-start; }
 #situri-habitat .filters-actions .btn{ white-space: nowrap; padding-inline: 16px; height: 38px; display:inline-flex; align-items:center; }
+
+/* Inputs max widths so they don't over-stretch (match plants) */
+#situri-habitat #site-combobox,
+#situri-habitat #habitat-combobox{ max-width: 26rem; }
+#situri-habitat .filters-row > label{ max-width: 26rem; }
+
+/* Combo-menu styling (exact match with plants page) */
+#situri-habitat .combo-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border, #dfe3e6);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.07);
+  padding: 4px 0;
+}
+#situri-habitat .combo-menu li {
+  list-style: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#situri-habitat .combo-menu li[aria-selected="true"],
+#situri-habitat .combo-menu li:hover { background: #f2f6f8; }
+#situri-habitat .combo-menu::-webkit-scrollbar { width: 6px; }
+#situri-habitat .combo-menu::-webkit-scrollbar-thumb { background: #c7d0d6; border-radius: 3px; }
+#situri-habitat .hidden { display: none; }
 @media (min-width: 768px){
   #situri-habitat .filters-row{ grid-template-columns: 1fr 1fr; }
   #situri-habitat .filters-actions{ grid-column: 1 / -1; }
+}
+/* Associations page layout mirrors plants */
+#asociatii-filters .filters-panel { max-width: 1180px; margin-inline: auto; padding-top: 12px; padding-bottom: 12px; }
+#asociatii-filters .filters-row{ display:grid; gap:12px; align-items:end; grid-template-columns:1fr; }
+#asociatii-filters .filters-row .fullw select,
+#asociatii-filters .filters-row .fullw input{ width:100%; }
+#asociatii-filters .filters-actions{ display:flex; justify-content:flex-start; }
+#asociatii-filters .filters-actions .btn{ white-space:nowrap; padding-inline:16px; height:38px; display:inline-flex; align-items:center; }
+
+/* Inputs max widths so they don't over-stretch (match plants) */
+#asociatii-filters #reserve-combobox{ max-width: 26rem; }
+#asociatii-filters .filters-row > label{ max-width: 26rem; }
+
+/* Narrower widths when both Reserve and Year are visible (mode: by_reserve_year) */
+#asociatii-filters .filters-row.compact-layout #reserve-combobox{ max-width: 20rem; }
+#asociatii-filters .filters-row.compact-layout #yearLbl{ max-width: 60px; }
+#asociatii-filters .filters-row.compact-layout #yearInput{ max-width: 60px; }
+
+/* Tighter spacing in compact layout - An field closer to Rezervație */
+#asociatii-filters .filters-row.compact-layout{ gap: 12px 6px; }
+#asociatii-filters .filters-row.compact-layout #reserve-combobox{ margin-right: -2px; }
+#asociatii-filters .filters-row.compact-layout #yearLbl{ margin-left: -2px; }
+
+/* Align reservation combobox with mode select baseline */
+#asociatii-filters #reserve-combobox{ margin-top: 0; padding-top: 0; position: relative; }
+#asociatii-filters #reserve-combobox .label{ margin-bottom: 6px; line-height: 1.2; }
+#asociatii-filters #reserve-combobox .form-control{ margin-top: 0; }
+
+/* Combo-menu styling (exact match with plants page) */
+#asociatii-filters .combo-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border, #dfe3e6);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.07);
+  padding: 4px 0;
+}
+#asociatii-filters .combo-menu li {
+  list-style: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#asociatii-filters .combo-menu li[aria-selected="true"],
+#asociatii-filters .combo-menu li:hover { background: #f2f6f8; }
+#asociatii-filters .combo-menu::-webkit-scrollbar { width: 6px; }
+#asociatii-filters .combo-menu::-webkit-scrollbar-thumb { background: #c7d0d6; border-radius: 3px; }
+#asociatii-filters .hidden { display: none; }
+
+/* Compact year input (4 digits only) */
+#asociatii-filters #yearInput{ max-width: 60px; text-align: center; }
+#asociatii-filters #yearInput::-webkit-outer-spin-button,
+#asociatii-filters #yearInput::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+#asociatii-filters #yearInput[type="text"]{ -moz-appearance: textfield; }
+
+/* Year label alignment to match other labels */
+#asociatii-filters #yearLbl{ max-width: 60px; }
+
+/* Year input positioning and spacing - let grid handle spacing */
+#asociatii-filters #yearLbl{ margin-right: 0; }
+#asociatii-filters #yearInput{ margin-right: 0; }
+
+/* Tablet */
+@media (min-width: 768px){
+  #asociatii-filters .filters-row{ grid-template-columns: 1fr 1fr; }
+  #asociatii-filters .filters-actions{ grid-column: 1 / -1; }
+}
+
+/* Desktop ≥1280px: four columns (Mode | Reserve | Year | Button) */
+@media (min-width: 1280px){
+  #asociatii-filters .filters-row{ grid-template-columns: minmax(220px,1fr) minmax(240px,1fr) minmax(60px,auto) auto; }
+  #asociatii-filters .filters-actions{ grid-column: auto; justify-content:flex-end; }
 }
 @media (min-width: 1280px){
   #situri-habitat .filters-row{ grid-template-columns: minmax(220px,1fr) minmax(260px,1fr) auto; }
