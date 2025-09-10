@@ -73,6 +73,12 @@
     {% if raion %} • <span>Raion: <strong>{{ raion }}</strong></span>{% endif %}
   </div>
 
+  <!-- Export action bar (centered) -->
+  <div class="prw-results" style="margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:10px;">
+    <a class="btn btn-outline" href="{% url 'export_plante_rezervatii' %}?{{ request.GET.urlencode }}&format=csv">Export CSV</a>
+    <a class="btn btn-outline" href="{% url 'export_plante_rezervatii' %}?{{ request.GET.urlencode }}&format=xlsx">Export Excel</a>
+  </div>
+
   <div class="card mt-4 prw-results">
     {% if error %}
       <p style="color:#b00">{{ error }}</p>

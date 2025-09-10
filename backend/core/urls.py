@@ -37,6 +37,7 @@ urlpatterns = [
 
     # New Filtrari specific wrappers
     path("filtrari/plante-rezervatii/", core_views.filters_plante_rezervatii, name="filters_plante_rezervatii"),
+    path("filtrari/plante-rezervatii/export/", core_views.export_plante_rezervatii, name="export_plante_rezervatii"),
     path("filtrari/situri-habitat/", core_views.filters_situri_habitat, name="filters_situri_habitat"),
     path("comparatii/", views.comparatii_home, name="comparatii_home"),
 

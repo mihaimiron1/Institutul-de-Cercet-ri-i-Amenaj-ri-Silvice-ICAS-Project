@@ -127,7 +127,6 @@ def filtrari(request):
 
 def filters_plante_rezervatii(request):
     """Wrapper that mirrors occurrences_filters_page behavior but renders a dedicated template under /filtrari/ namespace."""
-    # Reuse the same logic from occurrences_filters_page to build context
     mode = (request.GET.get("mode") or "by_reserve_all").strip()
     reserve_name = (request.GET.get("reserve_name") or "").strip()
     raion = (request.GET.get("raion") or "").strip()
@@ -137,49 +136,10 @@ def filters_plante_rezervatii(request):
                   .exclude(raion__isnull=True).exclude(raion="")
                   .values_list("raion", flat=True).distinct().order_by("raion"))
 
-    qs = (Occurrence.objects
-          .select_related("species", "reserve")
-          .all())
-
-    error = None
-
-    if mode in ("by_reserve_all", "by_reserve_rare"):
-        if not reserve_name:
-            error = "Alege o rezervație."
-            qs = qs.none()
-        else:
-            qs = qs.filter(reserve__name__iexact=reserve_name)
-            if mode == "by_reserve_rare":
-                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
-
-    elif mode in ("by_raion_all", "by_raion_rare"):
-        if not raion:
-            error = "Alege un raion."
-            qs = qs.none()
-        else:
-            qs = qs.filter(reserve__raion__iexact=raion)
-            if mode == "by_raion_rare":
-                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
-
-    else:
-        error = "Mod invalid."
-        qs = qs.none()
-
-    qs = qs.order_by("reserve__name", "species__denumire_stiintifica", "-year")
+    qs, error = _build_occurrence_filters_queryset(mode, reserve_name, raion)
 
     paginator, page_obj = _paginate(request, qs, default=50)
-    rows = []
-    for o in page_obj.object_list:
-        rows.append({
-            "reserve": o.reserve.name,
-            "raion": o.reserve.raion or "",
-            "species_sci": o.species.denumire_stiintifica,
-            "species_pop": o.species.denumire_populara or "",
-            "year": o.year,
-            "rare": "Da" if (o.is_rare or o.species.is_rare) else "Nu",
-            "lat": o.latitude,
-            "lon": o.longitude,
-        })
+    rows = _rows_from_occurrences(page_obj.object_list)
 
     return render(request, "core/filters_plante_rezervatii.html", {
         "mode": mode,
@@ -191,6 +151,111 @@ def filters_plante_rezervatii(request):
         "page_obj": page_obj,
         "paginator": paginator,
         "error": error,
+    })
+
+def _build_occurrence_filters_queryset(mode: str, reserve_name: str, raion: str):
+    qs = (Occurrence.objects.select_related("species", "reserve").all())
+    error = None
+    if mode in ("by_reserve_all", "by_reserve_rare"):
+        if not reserve_name:
+            error = "Alege o rezervație."
+            qs = qs.none()
+        else:
+            qs = qs.filter(reserve__name__iexact=reserve_name)
+            if mode == "by_reserve_rare":
+                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
+    elif mode in ("by_raion_all", "by_raion_rare"):
+        if not raion:
+            error = "Alege un raion."
+            qs = qs.none()
+        else:
+            qs = qs.filter(reserve__raion__iexact=raion)
+            if mode == "by_raion_rare":
+                qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
+    else:
+        error = "Mod invalid."
+        qs = qs.none()
+    return qs.order_by("reserve__name", "species__denumire_stiintifica", "-year"), error
+
+def _rows_from_occurrences(iterable):
+    rows = []
+    for o in iterable:
+        rows.append({
+            "reserve": o.reserve.name,
+            "raion": o.reserve.raion or "",
+            "species_sci": o.species.denumire_stiintifica,
+            "species_pop": o.species.denumire_populara or "",
+            "year": o.year,
+            "rare": "Da" if (o.is_rare or o.species.is_rare) else "Nu",
+            "lat": o.latitude,
+            "lon": o.longitude,
+        })
+    return rows
+
+def export_plante_rezervatii(request):
+    kind = (request.GET.get("format") or request.GET.get("export") or "csv").lower()
+    mode = (request.GET.get("mode") or "by_reserve_all").strip()
+    reserve_name = (request.GET.get("reserve_name") or "").strip()
+    raion = (request.GET.get("raion") or "").strip()
+
+    qs, error = _build_occurrence_filters_queryset(mode, reserve_name, raion)
+    if error:
+        return HttpResponse(error, content_type="text/plain; charset=utf-8", status=400)
+
+    headers = [
+        "Rezervație", "Raion", "Specie (științific)", "Specie (popular)", "An", "Rară?", "Lat", "Lon"
+    ]
+
+    if kind == "xlsx":
+        try:
+            from openpyxl import Workbook
+        except ModuleNotFoundError:
+            kind = "csv"
+        else:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "PlanteRezervatii"
+            ws.append(headers)
+            for o in qs.iterator():
+                ws.append([
+                    o.reserve.name,
+                    o.reserve.raion or "",
+                    o.species.denumire_stiintifica,
+                    o.species.denumire_populara or "",
+                    o.year,
+                    "Da" if (o.is_rare or o.species.is_rare) else "Nu",
+                    o.latitude if o.latitude is not None else "",
+                    o.longitude if o.longitude is not None else "",
+                ])
+            bio = BytesIO()
+            wb.save(bio)
+            bio.seek(0)
+            resp = HttpResponse(
+                bio.read(),
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            resp["Content-Disposition"] = 'attachment; filename="plante_rezervatii.xlsx"'
+            return resp
+
+    # CSV fallback or explicit csv
+    def rows_iter():
+        yield ",".join(headers)
+        import csv as _csv
+        pseudo = _Echo()
+        writer = _csv.writer(pseudo)
+        for o in qs.iterator():
+            yield writer.writerow([
+                o.reserve.name,
+                o.reserve.raion or "",
+                o.species.denumire_stiintifica,
+                o.species.denumire_populara or "",
+                o.year,
+                "Da" if (o.is_rare or o.species.is_rare) else "Nu",
+                o.latitude if o.latitude is not None else "",
+                o.longitude if o.longitude is not None else "",
+            ])
+    return StreamingHttpResponse(rows_iter(), content_type="text/csv; charset=utf-8", headers={
+        "Content-Disposition": 'attachment; filename="plante_rezervatii.csv"'
     })
 
 def filters_situri_habitat(request):

@@ -1,45 +1,58 @@
 {% extends "base.html" %}
 {% block title %}Filtre · Situri – Habitat{% endblock %}
 {% block content %}
-<section class="container">
+<section id="situri-habitat" class="container">
   <header class="hero">
     <h1>Situri – Habitat</h1>
     <p class="muted">Aceleași filtre și rezultate ca în pagina Site–Habitat.</p>
   </header>
 
-  <div class="card">
-    <form method="get" class="grid" style="grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 12px; align-items: end;">
-      <label>
+  <div class="card filters-panel">
+    <form method="get" class="filters-row">
+      <label class="fullw" style="display:flex; flex-direction:column; gap:6px;">
         <span>Mod</span>
-        <select name="mode" id="mode">
+        <select name="mode" id="mode" class="form-select fullw">
           <option value="by_site"    {% if mode == 'by_site' %}selected{% endif %}>Habitate în site</option>
           <option value="by_habitat" {% if mode == 'by_habitat' %}selected{% endif %}>Site-uri pentru habitat</option>
           <option value="by_year"    {% if mode == 'by_year' %}selected{% endif %}>Toate în anul</option>
         </select>
       </label>
 
-      <label id="siteLbl">
-        <span>Site (după nume)</span>
-        <input name="site_name" list="sites" value="{{ site_name|default_if_none:'' }}" autocomplete="off">
-        <datalist id="sites">
-          {% for s in sites %}<option value="{{ s }}">{% endfor %}
-        </datalist>
-      </label>
+      <!-- Site combobox (visible only in by_site mode) -->
+      <div id="site-combobox" class="fullw" style="position:relative; display:none;">
+        <label class="label" for="siteSearch">Site (după nume)</label>
+        <input
+          id="siteSearch"
+          class="form-control fullw"
+          type="text"
+          inputmode="search"
+          placeholder="Caută site…"
+          autocomplete="off"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="siteMenu"
+          aria-autocomplete="list"
+          value="{{ site_name|default_if_none:'' }}"
+        />
+        <input type="hidden" name="site_name" id="siteValue" value="{{ site_name|default_if_none:'' }}" />
+        <ul id="siteMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii site"></ul>
+        <script id="sites-data" type="application/json">{% autoescape off %}[{% for s in sites %}"{{ s|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
+      </div>
 
-      <label id="habLbl">
+      <label id="habLbl" class="fullw" style="display:flex; flex-direction:column; gap:6px;">
         <span>Habitat (RO/EN/Cod)</span>
-        <input name="habitat_name" list="habitats" value="{{ habitat_name|default_if_none:'' }}" autocomplete="off">
+        <input name="habitat_name" list="habitats" value="{{ habitat_name|default_if_none:'' }}" autocomplete="off" class="form-control fullw" placeholder="Caută habitat…">
         <datalist id="habitats">
           {% for h in habitats %}<option value="{{ h }}">{% endfor %}
         </datalist>
       </label>
 
-      <label id="yearLbl">
+      <label id="yearLbl" class="fullw" style="display:flex; flex-direction:column; gap:6px;">
         <span>An</span>
-        <input type="number" name="year" min="1900" max="2100" value="{{ year|default_if_none:'' }}">
+        <input type="number" name="year" min="1900" max="2100" value="{{ year|default_if_none:'' }}" class="form-control fullw">
       </label>
 
-      <div>
+      <div class="filters-actions">
         <button type="submit" class="btn">Caută</button>
         {% if qs %}
           <a class="btn btn-outline" href="?{{ request.GET.urlencode }}&export=csv">Export CSV</a>
@@ -87,18 +100,76 @@
 
 {% block extra_js %}
 <script>
-  const modeSel = document.getElementById('mode');
-  const siteLbl = document.getElementById('siteLbl');
-  const habLbl  = document.getElementById('habLbl');
-  const yearLbl = document.getElementById('yearLbl');
-  function refresh() {
-    const m = modeSel.value;
-    siteLbl.style.display = (m === 'by_site') ? 'block' : 'none';
-    habLbl.style.display  = (m === 'by_habitat') ? 'block' : 'none';
-    yearLbl.style.display = (m === 'by_year') ? 'block' : 'none';
+  // Generic combobox initializer (same as Plante – Rezervații)
+  function initCombo(opts){
+    var box    = document.getElementById(opts.boxId);
+    if (!box) return;
+    var input  = document.getElementById(opts.inputId);
+    var menu   = document.getElementById(opts.menuId);
+    var hidden = document.getElementById(opts.hiddenId);
+    var dataEl = document.getElementById(opts.dataId);
+    var raw = (dataEl && dataEl.textContent || '[]').trim();
+    var ITEMS = [];
+    try { ITEMS = JSON.parse(raw).filter(Boolean); } catch(e) { ITEMS = []; }
+
+    function norm(s){ return (s||'').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim(); }
+    function candidates(q){ if (!q) return ITEMS.slice(0,20); var n=norm(q); return ITEMS.filter(function(name){ return norm(name).indexOf(n)!==-1; }).slice(0,20); }
+
+    var activeIndex = -1;
+    function render(list){
+      while (menu.firstChild) menu.removeChild(menu.firstChild);
+      if (!input.value && list.length === 0) {
+        var li0 = document.createElement('li'); li0.textContent = '— alege —'; li0.setAttribute('aria-disabled','true'); menu.appendChild(li0);
+      }
+      list.forEach(function(name, i){
+        var li = document.createElement('li'); li.setAttribute('role','option'); li.id = opts.menuId + '-opt-' + i; li.textContent = name; li.addEventListener('mousedown', function(e){ e.preventDefault(); select(name); }); menu.appendChild(li);
+      });
+      input.setAttribute('aria-expanded', String(list.length > 0));
+      menu.classList.toggle('hidden', list.length === 0 && !!input.value);
+      activeIndex = -1;
+    }
+    function select(name){ input.value = name; hidden.value = name; close(); }
+    function close(){ menu.classList.add('hidden'); input.setAttribute('aria-expanded','false'); activeIndex=-1; }
+    function openWith(q){ render(candidates(q)); menu.classList.remove('hidden'); }
+
+    input.addEventListener('focus', function(){ openWith(input.value); });
+    input.addEventListener('input', function(){ hidden.value=''; openWith(input.value); });
+    input.addEventListener('keydown', function(e){
+      var items = Array.from(menu.querySelectorAll('li[role="option"]'));
+      if (menu.classList.contains('hidden') && (e.key==='ArrowDown' || e.key==='Enter')) { openWith(input.value); return; }
+      if (!items.length) return;
+      if (e.key==='ArrowDown'){ e.preventDefault(); activeIndex = Math.min(items.length-1, activeIndex+1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); activeIndex = Math.max(0, activeIndex-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); if (activeIndex>=0) select(items[activeIndex].textContent); else if (items.length) select(items[0].textContent); }
+      else if (e.key==='Escape'){ close(); }
+      items.forEach(function(li, i){ li.setAttribute('aria-selected', String(i===activeIndex)); });
+      if (activeIndex>=0) items[activeIndex].scrollIntoView({ block: 'nearest' });
+    });
+    document.addEventListener('click', function(e){ if (!box.contains(e.target)) close(); });
+    var form = input.closest('form');
+    if (form) form.addEventListener('submit', function(){ if (!hidden.value && input.value){ var list = candidates(input.value); if (list.length){ hidden.value = list[0]; input.value = list[0]; } } close(); });
   }
-  modeSel.addEventListener('change', refresh);
-  refresh();
+
+  // Initialize Site combobox
+  initCombo({ boxId:'site-combobox', inputId:'siteSearch', menuId:'siteMenu', hiddenId:'siteValue', dataId:'sites-data' });
+
+  // Mode-driven visibility (show Site only for by_site)
+  (function(){
+    var modeSel = document.getElementById('mode');
+    var siteBox = document.getElementById('site-combobox');
+    var habLbl  = document.getElementById('habLbl');
+    var yearLbl = document.getElementById('yearLbl');
+    function refresh(){
+      var m = modeSel.value;
+      var showSite = (m === 'by_site');
+      siteBox.style.display = showSite ? 'block' : 'none';
+      habLbl.style.display  = (m === 'by_habitat') ? 'block' : 'none';
+      yearLbl.style.display = (m === 'by_year') ? 'block' : 'none';
+      if (!showSite){ var hv = document.getElementById('siteValue'); var hs = document.getElementById('siteSearch'); if (hv) hv.value=''; if (hs) hs.value=''; }
+    }
+    modeSel.addEventListener('change', refresh);
+    refresh();
+  })();
 </script>
 {% endblock %}
 {% endblock %}

@@ -426,6 +426,24 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 #plante-rezervatii .combo-menu::-webkit-scrollbar-thumb { background: #c7d0d6; border-radius: 3px; }
 #plante-rezervatii .hidden { display: none; }
 
+/* Reuse the same filters-row layout for situri-habitat */
+#situri-habitat .filters-panel { max-width: 1180px; margin-inline: auto; padding-top: 12px; padding-bottom: 12px; }
+#situri-habitat .filters-row{
+  display: grid; gap: 12px; align-items: end; grid-template-columns: 1fr;
+}
+#situri-habitat .filters-row .fullw select,
+#situri-habitat .filters-row .fullw input{ width: 100%; }
+#situri-habitat .filters-actions{ display:flex; justify-content:flex-start; }
+#situri-habitat .filters-actions .btn{ white-space: nowrap; padding-inline: 16px; height: 38px; display:inline-flex; align-items:center; }
+@media (min-width: 768px){
+  #situri-habitat .filters-row{ grid-template-columns: 1fr 1fr; }
+  #situri-habitat .filters-actions{ grid-column: 1 / -1; }
+}
+@media (min-width: 1280px){
+  #situri-habitat .filters-row{ grid-template-columns: minmax(220px,1fr) minmax(260px,1fr) auto; }
+  #situri-habitat .filters-actions{ grid-column: auto; justify-content:flex-end; }
+}
+
 /* Results card width aligned with filters-panel */
 #plante-rezervatii .prw-results{ width: 100%; max-width: 1180px; margin-inline: auto; }
 
