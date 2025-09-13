@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Comparații · ResNat{% endblock %}
+
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Comparații</h1>
+    <p class="muted">Alege comparații între entități. Funcționalitatea urmează.</p>
+  </header>
+
+  <div class="viz-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+    <a href="{% url 'comparatii_plante_list' %}" class="viz-tile viz-teal">
+      <div class="viz-title">Comparare Plante pe Rezervație</div>
+      <div class="viz-sub muted">Compară speciile de plante între rezervații (în curând).</div>
+      <div class="viz-cta-row">
+        <span class="btn btn-outline" role="button">Deschide</span>
+      </div>
+    </a>
+  </div>
+
+  <style>
+    .viz-cta-row{margin-top:12px;display:flex;gap:8px;align-items:center}
+    .viz-cta-row .btn{pointer-events:none;opacity:.8}
+    .viz-grid .viz-tile{display:flex;flex-direction:column;justify-content:space-between}
+  </style>
+
+</section>
+{% endblock %}
+

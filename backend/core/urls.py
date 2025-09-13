@@ -63,6 +63,13 @@ urlpatterns = [
     path("vizualizari/habitate/<int:pk>/", views.viz_habitate_detail, name="viz_habitate_detail"),
     path("vizualizari/habitate/<int:pk>/update-meta/", views.update_habitat_meta, name="update_habitat_meta"),
 
+    # Comparatii – plante
+    path("comparatii/plante/", views.comparatii_plante_list, name="comparatii_plante_list"),
+    path("comparatii/plante/<int:pk>/", views.comparatii_plante_detail, name="comparatii_plante_detail"),
+    path("comparatii/plante/data/", views.comparatii_plante_data, name="comparatii_plante_data"),
+    path("comparatii/plante/export/", views.comparatii_plante_export, name="comparatii_plante_export"),
+    path("comparatii/plante/years/", views.comparatii_plante_years, name="comparatii_plante_years"),
+
 
 
 

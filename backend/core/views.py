@@ -34,6 +34,7 @@ import difflib
 from django.utils.html import strip_tags
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET
 
 class _Echo:
     def write(self, value):  # csv.writer cere un .write()
@@ -1185,6 +1186,401 @@ def sitehab_filters_page(request):
 @login_required
 def comparatii_home(request):
     return render(request, "core/comparatii_home.html")
+
+
+@login_required
+def comparatii_plante_list(request):
+    """List similar to vizualizări/rezervatii but for starting rare plant comparisons.
+
+    Reuses the same dataset and pagination pattern as viz_rezervatii.
+    """
+    q = (request.GET.get("q") or "").strip()
+    qs = Reserve.objects.all()
+
+    if not q:
+        qs = qs.order_by("name")
+        paginator, page_obj = _paginate(request, qs, default=24)
+    else:
+        # Mirror basic tolerant search from viz_rezervatii for parity
+        def _normalize_text(value: str) -> str:
+            if not value:
+                return ""
+            decomposed = unicodedata.normalize("NFKD", str(value))
+            no_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+            return no_accents.lower().strip()
+
+        def _fuzzy_ratio(a: str, b: str) -> float:
+            if not a or not b:
+                return 0.0
+            return difflib.SequenceMatcher(None, a, b).ratio()
+
+        norm_q = _normalize_text(q)
+        candidates = list(qs.only(
+            "id", "name", "raion", "amplasare", "proprietar", "category", "subcategory"
+        ))
+        scored = []
+        for r in candidates:
+            fields = [
+                _normalize_text(r.name),
+                _normalize_text(r.raion),
+                _normalize_text(r.amplasare),
+                _normalize_text(r.proprietar),
+                _normalize_text(r.category),
+                _normalize_text(r.subcategory),
+            ]
+            best = 0.0
+            substr_bonus = 0.0
+            for f in fields:
+                if not f:
+                    continue
+                if norm_q in f:
+                    substr_bonus = max(substr_bonus, 0.15)
+                best = max(best, _fuzzy_ratio(norm_q, f))
+            total_score = best + substr_bonus
+            if total_score >= 0.55:
+                scored.append((total_score, r))
+
+        scored.sort(key=lambda t: (-t[0], _normalize_text(t[1].name)))
+        ordered = [r for _, r in scored]
+        paginator, page_obj = _paginate(request, ordered, default=24)
+
+    all_reserves = Reserve.objects.order_by("name").only("id", "name", "raion")
+    return render(request, "core/comparatii_plante.html", {
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "q": q,
+        "all_reserves": all_reserves,
+    })
+
+
+@login_required
+def comparatii_plante_detail(request, pk: int):
+    r = get_object_or_404(Reserve, pk=pk)
+    mode = (request.GET.get("mode") or "years").strip()
+    
+    # Parse base reserve and year from URL
+    base_reserve_id = request.GET.get("base_reserve")
+    base_year = request.GET.get("base_year")
+    if base_reserve_id and base_reserve_id.isdigit():
+        base_reserve_id = int(base_reserve_id)
+    else:
+        base_reserve_id = None
+    if base_year and base_year.isdigit():
+        base_year = int(base_year)
+    else:
+        base_year = None
+    # Available years for rare species occurrences in this reserve
+    years_qs = (Occurrence.objects
+                .filter(reserve_id=pk)
+                .filter(Q(is_rare=True) | Q(species__is_rare=True))
+                .exclude(year__isnull=True)
+                .values_list("year", flat=True)
+                .distinct())
+    available_years = sorted(set(int(y) for y in years_qs if y), reverse=True)
+
+    # Parse selected years from URL, keep only available, limit 2..4
+    years_param = (request.GET.get("years") or "").strip()
+    selected_years = []
+    if years_param:
+        for part in years_param.split(','):
+            part = part.strip()
+            if part.isdigit():
+                y = int(part)
+                if y in available_years:
+                    selected_years.append(y)
+    # keep stable order as provided, but also ensure uniqueness
+    seen = set()
+    selected_years = [y for y in selected_years if not (y in seen or seen.add(y))][:4]
+
+    has_valid_selection = 2 <= len(selected_years) <= 4 if mode == "years" else False
+
+    rows = []
+    page_obj = None
+    paginator = None
+    total_species = 0
+
+    if mode == "years" and has_valid_selection:
+        # Fetch occurrences once for selected years
+        occ = (Occurrence.objects
+               .filter(reserve_id=pk, year__in=selected_years)
+               .filter(Q(is_rare=True) | Q(species__is_rare=True))
+               .values_list("species_id", "year")
+               .distinct())
+
+        # Build presence map: species_id -> set(years)
+        species_to_years = {}
+        for sid, yr in occ:
+            if sid is None or yr is None:
+                continue
+            species_to_years.setdefault(int(sid), set()).add(int(yr))
+
+        total_species = len(species_to_years)
+
+        # Order species by scientific name
+        species_ids = list(species_to_years.keys())
+        sp_qs = Species.objects.filter(id__in=species_ids).only("id", "denumire_stiintifica").order_by("denumire_stiintifica")
+        ordered_species = list(sp_qs)
+
+        # Build rows as dicts for template
+        for sp in ordered_species:
+            presence = []
+            years_set = species_to_years.get(sp.id, set())
+            for y in selected_years:
+                presence.append(y in years_set)
+            rows.append({
+                "species_id": sp.id,
+                "species_name": sp.denumire_stiintifica,
+                "presence": presence,
+            })
+
+        # Paginate rows if large
+        paginator, page_obj = _paginate(request, rows, default=50)
+        rows = page_obj.object_list
+
+    # Mode: reserves (compare with other reserves)
+    columns = []
+    rows_res = []
+    if mode == "reserves":
+        # Expect base=pk:year and res=rid:year,...
+        base_pair = (request.GET.get("base") or "").strip()
+        base_year = None
+        if ":" in base_pair:
+            b_id, b_y = base_pair.split(":", 1)
+            if b_id.strip().isdigit() and int(b_id.strip()) == pk and b_y.strip().isdigit():
+                base_year = int(b_y.strip())
+
+        res_param = (request.GET.get("res") or "").strip()
+        other_pairs = []
+        if res_param:
+            for part in res_param.split(','):
+                if ":" in part:
+                    rid_s, y_s = part.split(":", 1)
+                    rid_s = rid_s.strip(); y_s = y_s.strip()
+                    if rid_s.isdigit() and y_s.isdigit():
+                        rid = int(rid_s); yy = int(y_s)
+                        if rid != pk:
+                            other_pairs.append((rid, yy))
+
+        valid_pairs = []
+        if base_year is not None:
+            valid_pairs.append((pk, base_year))
+        for rid, yy in other_pairs[:3]:
+            valid_pairs.append((rid, yy))
+
+        # Validate years availability per reserve (rare-only)
+        ids_all = list({rid for rid, _ in valid_pairs})
+        years_by_rid = {}
+        if ids_all:
+            for rid in ids_all:
+                ys = (Occurrence.objects
+                      .filter(reserve_id=rid)
+                      .filter(Q(is_rare=True) | Q(species__is_rare=True))
+                      .exclude(year__isnull=True)
+                      .values_list("year", flat=True)
+                      .distinct())
+                years_by_rid[rid] = set(int(y) for y in ys if y)
+
+            valid_pairs = [(rid, yy) for (rid, yy) in valid_pairs if yy in years_by_rid.get(rid, set())]
+
+        if len(valid_pairs) >= 2:
+            rid_list = [rid for rid, _ in valid_pairs]
+            years_list = [yy for _, yy in valid_pairs]
+            occ = (Occurrence.objects
+                   .filter(reserve_id__in=rid_list, year__in=years_list)
+                   .filter(Q(is_rare=True) | Q(species__is_rare=True))
+                   .values_list("species_id", "reserve_id", "year")
+                   .distinct())
+            presence_map = {}
+            for sid, rid, yy in occ:
+                if sid is None or rid is None or yy is None:
+                    continue
+                presence_map.setdefault(int(sid), set()).add((int(rid), int(yy)))
+
+            species_ids = list(presence_map.keys())
+            sp_qs = Species.objects.filter(id__in=species_ids).only("id", "denumire_stiintifica").order_by("denumire_stiintifica")
+            ordered_species = list(sp_qs)
+
+            rid_to_name = { rr.id: rr.name for rr in Reserve.objects.filter(id__in=set(rid_list)).only("id","name") }
+
+            # Ensure base first, then others in provided order
+            pairs_ordered = []
+            for rid, yy in valid_pairs:
+                if rid == pk:
+                    pairs_ordered.append((rid, yy))
+                    break
+            for rid, yy in valid_pairs:
+                if rid != pk:
+                    pairs_ordered.append((rid, yy))
+
+            for rid, yy in pairs_ordered:
+                columns.append({"reserve_id": rid, "reserve_name": rid_to_name.get(rid, f"#{rid}"), "year": yy})
+
+            for sp in ordered_species:
+                presence = []
+                pset = presence_map.get(sp.id, set())
+                for col in columns:
+                    presence.append((col["reserve_id"], col["year"]) in pset)
+                rows_res.append({
+                    "species_id": sp.id,
+                    "species_name": sp.denumire_stiintifica,
+                    "presence": presence,
+                })
+
+    # Reserves combobox data (exclude current reserve)
+    all_reserves = Reserve.objects.exclude(id=pk).order_by("name").only("id", "name")
+
+    context = {
+        "r": r,
+        "available_years": available_years,
+        "selected_years": selected_years,
+        "has_valid_selection": has_valid_selection,
+        "mode": mode,
+        "rows": rows,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "total_species": total_species,
+        # reserves-mode context
+        "columns": columns,
+        "rows_res": rows_res,
+        "all_reserves": all_reserves,
+        "base_reserve_id_url": base_reserve_id,
+        "base_year_url": base_year,
+    }
+    return render(request, "core/comparatii_plante_detail.html", context)
+
+
+def _species_ids_for_reserve(reserve_id: int, only_rare: bool = True):
+    qs = (Occurrence.objects
+          .filter(reserve_id=reserve_id)
+          .select_related("species"))
+    if only_rare:
+        qs = qs.filter(Q(is_rare=True) | Q(species__is_rare=True))
+    return set(qs.values_list("species_id", flat=True))
+
+
+@login_required
+@require_GET
+def comparatii_plante_data(request):
+    """Return JSON summary for selected reserves. Params: res=1,2,3; rare=1.
+    Response: { reserves: [ {id,name},...], common:[{id,name}], unique:{rid:[...]}, totalDistinct:N }
+    """
+    res_param = (request.GET.get("res") or "").strip()
+    rare_flag = (request.GET.get("rare") or "1").strip() in ("1", "true", "yes", "on")
+    ids = []
+    if res_param:
+        for part in res_param.split(','):
+            part = part.strip()
+            if part.isdigit():
+                ids.append(int(part))
+    ids = ids[:3]
+    reserves = list(Reserve.objects.filter(id__in=ids).only("id", "name"))
+    id_to_species = {}
+    for r in reserves:
+        id_to_species[r.id] = _species_ids_for_reserve(r.id, only_rare=rare_flag)
+    # Compute sets
+    common_ids = set.intersection(*id_to_species.values()) if id_to_species else set()
+    all_ids = set().union(*id_to_species.values()) if id_to_species else set()
+    unique = {}
+    for rid, s in id_to_species.items():
+        others = all_ids - s
+        unique[rid] = list(s - (all_ids - s))  # unique to this reserve
+    # Fetch species names
+    species_map = { s.id: s.denumire_stiintifica for s in Species.objects.filter(id__in=all_ids).only("id","denumire_stiintifica") }
+    def to_rows(id_list):
+        return [ {"id": sid, "name": species_map.get(sid, str(sid))} for sid in sorted(id_list) ]
+    data = {
+        "reserves": [ {"id": r.id, "name": r.name} for r in reserves ],
+        "common": to_rows(common_ids),
+        "unique": { str(rid): to_rows(uids) for rid, uids in unique.items() },
+        "totalDistinct": len(all_ids),
+    }
+    return JsonResponse(data)
+
+
+@login_required
+@require_GET
+def comparatii_plante_export(request):
+    kind = (request.GET.get("format") or request.GET.get("export") or "csv").lower()
+    res_param = (request.GET.get("res") or "").strip()
+    rare_flag = (request.GET.get("rare") or "1").strip() in ("1", "true", "yes", "on")
+    ids = []
+    if res_param:
+        for part in res_param.split(','):
+            if part.strip().isdigit():
+                ids.append(int(part.strip()))
+    ids = ids[:3]
+    reserves = list(Reserve.objects.filter(id__in=ids).only("id", "name"))
+    id_to_species = {}
+    for r in reserves:
+        id_to_species[r.id] = _species_ids_for_reserve(r.id, only_rare=rare_flag)
+    common_ids = set.intersection(*id_to_species.values()) if id_to_species else set()
+    all_ids = set().union(*id_to_species.values()) if id_to_species else set()
+    species_map = { s.id: s.denumire_stiintifica for s in Species.objects.filter(id__in=all_ids).only("id","denumire_stiintifica") }
+
+    headers = ["Tip", "Specie (științific)"] + [r.name for r in reserves]
+    def rows_iter():
+        yield headers
+        # Common
+        for sid in sorted(common_ids):
+            yield ["Comun", species_map.get(sid, sid)] + ["Da"]*len(reserves)
+        # Unique per reserve
+        for r in reserves:
+            only = id_to_species[r.id] - (all_ids - id_to_species[r.id])
+            for sid in sorted(only):
+                row = [f"Unic {r.name}", species_map.get(sid, sid)]
+                for rr in reserves:
+                    row.append("Da" if rr.id == r.id else "Nu")
+                yield row
+
+    # Filename
+    base = "comparatie_plante_" + "_".join([r.name.replace(" ", "_") for r in reserves])
+    if kind == "xlsx":
+        try:
+            from openpyxl import Workbook
+        except ModuleNotFoundError:
+            kind = "csv"
+        else:
+            wb = Workbook(); ws = wb.active; ws.title = "Comparatie";
+            for row in rows_iter():
+                ws.append(row)
+            bio = BytesIO(); wb.save(bio); bio.seek(0)
+            resp = HttpResponse(bio.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            resp["Content-Disposition"] = f'attachment; filename="{base}.xlsx"'
+            return resp
+
+    return _stream_csv(f"{base}.csv", headers, rows_iter())
+
+
+@login_required
+@require_GET
+def comparatii_plante_years(request):
+    """Returns rare-only available years for one or multiple reserves.
+    Params:
+      - base: reserve id for base (optional)
+      - res: comma-separated reserve ids
+    Response: { yearsByReserve: { reserveId: [years...] } }
+    """
+    base = request.GET.get("base")
+    res_param = (request.GET.get("res") or "").strip()
+    ids = []
+    if base and base.isdigit():
+        ids.append(int(base))
+    if res_param:
+        for part in res_param.split(','):
+            if part.strip().isdigit():
+                ids.append(int(part.strip()))
+    ids = list(dict.fromkeys(ids))  # dedupe preserve order
+    yearsByReserve = {}
+    for rid in ids:
+        ys = (Occurrence.objects
+              .filter(reserve_id=rid)
+              .filter(Q(is_rare=True) | Q(species__is_rare=True))
+              .exclude(year__isnull=True)
+              .values_list("year", flat=True)
+              .distinct())
+        years = sorted(set(int(y) for y in ys if y), reverse=True)
+        yearsByReserve[str(rid)] = years
+    return JsonResponse({"yearsByReserve": yearsByReserve})
 
 
 @login_required
