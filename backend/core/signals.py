@@ -4,6 +4,7 @@ from django.dispatch import receiver
 
 
 ADMIN_GROUP_NAME = "Administrators"
+CONTRIB_GROUP_NAME = "Contributors"
 
 
 def _sync_is_staff(user: User):
@@ -32,6 +33,13 @@ def on_user_created(sender, instance: User, created: bool, **kwargs):
         if instance.is_staff is True and not instance.groups.filter(name__iexact=ADMIN_GROUP_NAME).exists():
             instance.is_staff = False
             changed = True
+        # Ensure Contributors group exists and add user to it
+        try:
+            contrib_group, _ = Group.objects.get_or_create(name=CONTRIB_GROUP_NAME)
+            if not instance.groups.filter(pk=contrib_group.pk).exists():
+                instance.groups.add(contrib_group)
+        except Exception:
+            pass
         if changed:
             instance.save(update_fields=["is_active", "is_staff"])
 

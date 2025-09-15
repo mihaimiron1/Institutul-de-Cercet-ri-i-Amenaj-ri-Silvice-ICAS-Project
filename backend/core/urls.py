@@ -11,6 +11,16 @@ urlpatterns = [
 
 
     path('species/', views.species_list, name='species_list'),
+    # Public additions hub
+    path('adaugari/', views.adaugari_home, name='adaugari_home'),
+    path('adaugari/plante/', views.add_plante, name='add_plante'),
+    path('adaugari/rezervatii/', views.add_rezervatii, name='add_rezervatii'),
+    path('adaugari/asociatii/', views.add_asociatii, name='add_asociatii'),
+    path('adaugari/situri/', views.add_situri, name='add_situri'),
+    path('adaugari/habitate/', views.add_habitate, name='add_habitate'),
+    path('adaugari/plante-rezervatii/', views.add_plante_rezervatii, name='add_plante_rezervatii'),
+    path('adaugari/rezervatii-asociatii/', views.add_rezervatii_asociatii, name='add_rezervatii_asociatii'),
+    path('adaugari/situri-habitate/', views.add_situri_habitate, name='add_situri_habitate'),
     #path('reserves/', views.reserve_list, name='reserve_list'),
     #path('occurrences/', views.occurrence_list, name='occurrence_list'),
     #path('occurrences/add/', views.occurrence_create, name='occurrence_create'),

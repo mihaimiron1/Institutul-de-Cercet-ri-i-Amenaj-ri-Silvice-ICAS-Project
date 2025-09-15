@@ -66,6 +66,44 @@ def _paginate(request, qs, default=50, max_per_page=200):
         page_no = 1
     paginator = Paginator(qs, per_page)
     return paginator, paginator.get_page(page_no)
+def adaugari_home(request):
+    """Public landing page for Adăugări (no auth).
+    Keep minimal content; links to actual add/import tools can be added later.
+    """
+    return render(request, "core/adaugari_home.html", {})
+
+
+def add_plante(request):
+    return render(request, "core/add_plante.html", {})
+
+
+def add_rezervatii(request):
+    return render(request, "core/add_rezervatii.html", {})
+
+
+def add_asociatii(request):
+    return render(request, "core/add_asociatii.html", {})
+
+
+def add_situri(request):
+    return render(request, "core/add_situri.html", {})
+
+
+def add_habitate(request):
+    return render(request, "core/add_habitate.html", {})
+
+
+def add_plante_rezervatii(request):
+    return render(request, "core/add_plante_rezervatii.html", {})
+
+
+def add_rezervatii_asociatii(request):
+    return render(request, "core/add_rezervatii_asociatii.html", {})
+
+
+def add_situri_habitate(request):
+    return render(request, "core/add_situri_habitate.html", {})
+
 
 
 def _resolve_reserve(q):
@@ -624,9 +662,6 @@ def viz_asociatii_detail(request, pk: int):
 def update_species_description(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
     species = get_object_or_404(Species, pk=pk)
     raw = request.POST.get("description", "")
     safe = strip_tags(raw)
@@ -638,9 +673,6 @@ def update_species_description(request, pk: int):
 def update_species_meta(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
     
     species = get_object_or_404(Species, pk=pk)
     
@@ -717,9 +749,7 @@ def update_species_meta(request, pk: int):
 @require_POST
 def update_association_meta(request, pk: int):
     """Update Association fields (admins only)."""
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    # Any authenticated user can edit
 
     a = get_object_or_404(Association, pk=pk)
 
@@ -745,9 +775,6 @@ def update_association_meta(request, pk: int):
 def update_reserve_description(request, pk: int):
     if request.method != "POST":
         return JsonResponse({"ok": False, "error": "Method not allowed"}, status=405)
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
     reserve = get_object_or_404(Reserve, pk=pk)
     raw = request.POST.get("description", "")
     safe = strip_tags(raw)
@@ -760,9 +787,7 @@ def update_reserve_description(request, pk: int):
 @require_POST
 def update_reserve_meta(request, pk: int):
     """Update selected Reserve fields. Admins only. Returns changed fields."""
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    # Any authenticated user can edit
 
     reserve = get_object_or_404(Reserve, pk=pk)
 
@@ -950,9 +975,7 @@ def viz_habitate_detail(request, pk: int):
 @require_POST
 def update_habitat_meta(request, pk: int):
     """Update Habitat fields (admins only)."""
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    # Any authenticated user can edit
 
     h = get_object_or_404(Habitat, pk=pk)
 
@@ -988,7 +1011,6 @@ def species_list(request):
 
 
 @login_required
-@permission_required("core.view_occurrence", raise_exception=True)
 def occurrences_filters_page(request):
     """
     4 moduri:
@@ -1071,7 +1093,6 @@ def occurrences_filters_page(request):
 
 
 @login_required
-@permission_required("core.view_sitehabitat", raise_exception=True)
 def sitehab_filters_page(request):
     """
     Mode:
@@ -1593,9 +1614,7 @@ def viz_situri_detail(request, pk: int):
 @login_required
 @require_POST
 def update_site_meta(request, pk: int):
-    is_admin = request.user.is_staff or request.user.groups.filter(name__iexact="Administrators").exists()
-    if not is_admin:
-        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+    # Any authenticated user can edit
 
     site = get_object_or_404(Site, pk=pk)
 

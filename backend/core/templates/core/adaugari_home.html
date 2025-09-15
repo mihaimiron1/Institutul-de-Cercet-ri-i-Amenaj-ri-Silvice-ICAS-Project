@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Adăugări · ResNat{% endblock %}
+
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Adăugări</h1>
+    <p class="muted">Alege zona în care vrei să adaugi sau să gestionezi date.</p>
+  </header>
+
+  <div class="viz-grid">
+    <a href="{% url 'add_plante' %}" class="viz-tile viz-green" role="link" aria-label="Plante">
+      <div class="viz-title">Plante</div>
+      <div class="viz-sub muted">Adaugă / gestionează plante</div>
+    </a>
+
+    <a href="{% url 'add_rezervatii' %}" class="viz-tile viz-teal" role="link" aria-label="Rezervatii">
+      <div class="viz-title">Rezervatii</div>
+      <div class="viz-sub muted">Adaugă / gestionează rezervații</div>
+    </a>
+
+    <a href="{% url 'add_asociatii' %}" class="viz-tile viz-orange" role="link" aria-label="Asociatii">
+      <div class="viz-title">Asociatii</div>
+      <div class="viz-sub muted">Adaugă / gestionează asociații</div>
+    </a>
+
+    <a href="{% url 'add_situri' %}" class="viz-tile viz-olive" role="link" aria-label="Situri">
+      <div class="viz-title">Situri</div>
+      <div class="viz-sub muted">Adaugă / gestionează situri</div>
+    </a>
+
+    <a href="{% url 'add_habitate' %}" class="viz-tile viz-red" role="link" aria-label="Habitate">
+      <div class="viz-title">Habitate</div>
+      <div class="viz-sub muted">Adaugă / gestionează habitate</div>
+    </a>
+
+    <a href="{% url 'add_plante_rezervatii' %}" class="viz-tile viz-blue" role="link" aria-label="Plante – Rezervatii">
+      <div class="viz-title">Plante – Rezervatii</div>
+      <div class="viz-sub muted">Relații plante/rezervații</div>
+    </a>
+
+    <a href="{% url 'add_rezervatii_asociatii' %}" class="viz-tile viz-purple" role="link" aria-label="Rezervatii – Asociatii">
+      <div class="viz-title">Rezervatii – Asociatii</div>
+      <div class="viz-sub muted">Relații rezervații/asociații</div>
+    </a>
+
+    <a href="{% url 'add_situri_habitate' %}" class="viz-tile viz-brown" role="link" aria-label="Situri – Habitate">
+      <div class="viz-title">Situri – Habitate</div>
+      <div class="viz-sub muted">Relații situri/habitate</div>
+    </a>
+  </div>
+</section>
+{% endblock %}
+
