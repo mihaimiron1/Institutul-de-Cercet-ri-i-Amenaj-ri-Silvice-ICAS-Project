@@ -1,8 +1,118 @@
 {% extends "base.html" %}
-{% block title %}Plante · Adăugări{% endblock %}
+{% block title %}Adăugări · Plante{% endblock %}
 {% block content %}
 <section class="container">
-  <header class="hero"><h1>Plante</h1><p class="muted">Stub de start pentru adăugarea/gestionarea plantelor.</p></header>
+  <header class="hero">
+    <h1>Adaugă specie nouă</h1>
+    <p class="muted">Completează datele speciei. Câmpurile opționale pot fi lăsate necompletate.</p>
+  </header>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if messages %}
+        <div class="mt-3">
+          {% for m in messages %}
+            <div class="alert">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="mt-3" role="alert" aria-live="polite">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-grid">
+        <!-- Row 1 -->
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_denumire_stiintifica">{{ form.denumire_stiintifica.label }}</label>
+          {{ form.denumire_stiintifica }}
+          {% if form.denumire_stiintifica.help_text %}<small id="help_sci" class="muted">{{ form.denumire_stiintifica.help_text }}</small>{% endif %}
+          {% if form.denumire_stiintifica.errors %}<div class="errors">{{ form.denumire_stiintifica.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_denumire_populara">{{ form.denumire_populara.label }}</label>
+          {{ form.denumire_populara }}
+          {% if form.denumire_populara.errors %}<div class="errors">{{ form.denumire_populara.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_clasa">{{ form.clasa.label }}</label>
+          {{ form.clasa }}
+          {% if form.clasa.errors %}<div class="errors">{{ form.clasa.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 2 -->
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_familia">{{ form.familia.label }}</label>
+          {{ form.familia }}
+          {% if form.familia.errors %}<div class="errors">{{ form.familia.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_habitat">{{ form.habitat.label }}</label>
+          {{ form.habitat }}
+          {% if form.habitat.errors %}<div class="errors">{{ form.habitat.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_localitatea">{{ form.localitatea.label }}</label>
+          {{ form.localitatea }}
+          {% if form.localitatea.errors %}<div class="errors">{{ form.localitatea.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 3: Options block -->
+        <div class="col-span-12 md:col-span-12 sm:col-span-12">
+          <div class="options-card">
+            <div class="options-grid">
+              <div>
+                <label class="checkbox"><input id="id_silvice" type="checkbox" name="silvice" {% if form.silvice.value %}checked{% endif %}> {{ form.silvice.label }}</label>
+                <label class="checkbox"><input id="id_palustre_si_acvatice" type="checkbox" name="palustre_si_acvatice" {% if form.palustre_si_acvatice.value %}checked{% endif %}> {{ form.palustre_si_acvatice.label }}</label>
+                <label class="checkbox"><input id="id_directiva_habitate" type="checkbox" name="directiva_habitate" {% if form.directiva_habitate.value %}checked{% endif %}> {{ form.directiva_habitate.label }}</label>
+              </div>
+              <div>
+                <label class="checkbox"><input id="id_pajisti_sau_stepice" type="checkbox" name="pajisti_sau_stepice" {% if form.pajisti_sau_stepice.value %}checked{% endif %}> {{ form.pajisti_sau_stepice.label }}</label>
+                <label class="checkbox"><input id="id_is_rare" type="checkbox" name="is_rare" {% if form.is_rare.value %}checked{% endif %}> {{ form.is_rare.label }}</label>
+              </div>
+              <div>
+                <label class="checkbox"><input id="id_stancarii" type="checkbox" name="stancarii" {% if form.stancarii.value %}checked{% endif %}> {{ form.stancarii.label }}</label>
+                <label class="checkbox"><input id="id_conventia_berna" type="checkbox" name="conventia_berna" {% if form.conventia_berna.value %}checked{% endif %}> {{ form.conventia_berna.label }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_cartea_rosie">{{ form.cartea_rosie.label }}</label>
+          <div style="max-width:12ch;">
+            {{ form.cartea_rosie }}
+          </div>
+          {% if form.cartea_rosie.errors %}<div class="errors">{{ form.cartea_rosie.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_cartea_rosie_cat">{{ form.cartea_rosie_cat.label }}</label>
+          {{ form.cartea_rosie_cat }}
+          {% if form.cartea_rosie_cat.errors %}<div class="errors">{{ form.cartea_rosie_cat.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_frecventa">{{ form.frecventa.label }}</label>
+          {{ form.frecventa }}
+          {% if form.frecventa.errors %}<div class="errors">{{ form.frecventa.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 5 -->
+        <div class="field col-span-12 md:col-span-12 sm:col-span-12">
+          <label class="label" for="id_notes">{{ form.notes.label }}</label>
+          {{ form.notes }}
+          {% if form.notes.errors %}<div class="errors">{{ form.notes.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Salvează</button>
+        <a href="{% url 'viz_specii' %}" class="btn btn-outline">Renunță</a>
+      </div>
+    </form>
+  </div>
 </section>
 {% endblock %}
 

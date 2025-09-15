@@ -35,6 +35,10 @@ from django.utils.html import strip_tags
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.http import require_GET
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
+from .forms import SpeciesForm, ReserveForm, AssociationForm, SiteForm, HabitatForm, OccurrenceForm
 
 class _Echo:
     def write(self, value):  # csv.writer cere un .write()
@@ -74,27 +78,48 @@ def adaugari_home(request):
 
 
 def add_plante(request):
-    return render(request, "core/add_plante.html", {})
+    # Permissions: allow staff or members of Contributors/Administrators
+    user = request.user
+    allowed = False
+    if user.is_authenticated:
+        if user.is_staff or user.groups.filter(name__iexact="Contributors").exists() or user.groups.filter(name__iexact="Administrators").exists():
+            allowed = True
+    if not allowed:
+        return HttpResponse("Nu ai permisiunea pentru această pagină.", status=403, content_type="text/plain; charset=utf-8")
+
+    if request.method == "POST":
+        form = SpeciesForm(request.POST)
+        if form.is_valid():
+            species = form.save()
+            messages.success(request, "Specia a fost adăugată cu succes.")
+            try:
+                return redirect(reverse("viz_specii_detail", args=[species.pk]))
+            except Exception:
+                return redirect(reverse("viz_specii"))
+    else:
+        form = SpeciesForm()
+
+    return render(request, "core/add_plante.html", {"form": form})
 
 
 def add_rezervatii(request):
-    return render(request, "core/add_rezervatii.html", {})
+    return redirect("add_reserve")
 
 
 def add_asociatii(request):
-    return render(request, "core/add_asociatii.html", {})
+    return redirect("add_association")
 
 
 def add_situri(request):
-    return render(request, "core/add_situri.html", {})
+    return redirect("add_site")
 
 
 def add_habitate(request):
-    return render(request, "core/add_habitate.html", {})
+    return redirect("add_habitat")
 
 
 def add_plante_rezervatii(request):
-    return render(request, "core/add_plante_rezervatii.html", {})
+    return redirect("add_occurrence")
 
 
 def add_rezervatii_asociatii(request):
@@ -103,6 +128,121 @@ def add_rezervatii_asociatii(request):
 
 def add_situri_habitate(request):
     return render(request, "core/add_situri_habitate.html", {})
+@login_required
+def add_reserve_page(request):
+    if request.method == "POST":
+        form = ReserveForm(request.POST)
+        if form.is_valid():
+            reserve = form.save()
+            messages.success(request, "Rezervația a fost creată.")
+            try:
+                return redirect(reverse("viz_rez_detail", args=[reserve.pk]))
+            except Exception:
+                try:
+                    return redirect(reverse("viz_rez"))
+                except Exception:
+                    return redirect("adaugari_home")
+    else:
+        form = ReserveForm()
+
+    breadcrumbs = [
+        (reverse("adaugari_home"), "Adăugări"),
+        (None, "Rezervatii"),
+    ]
+    return render(request, "adaugari/reserve_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+
+@login_required
+def add_association_page(request):
+    if request.method == "POST":
+        form = AssociationForm(request.POST)
+        if form.is_valid():
+            assoc = form.save()
+            messages.success(request, "Asociația a fost creată.")
+            try:
+                return redirect(reverse("viz_asoc_detail", args=[assoc.pk]))
+            except Exception:
+                try:
+                    return redirect(reverse("viz_asoc"))
+                except Exception:
+                    return redirect("adaugari_home")
+    else:
+        form = AssociationForm()
+
+    breadcrumbs = [
+        (reverse("adaugari_home"), "Adăugări"),
+        (None, "Asociatii"),
+    ]
+    return render(request, "adaugari/association_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+
+@login_required
+def add_site_page(request):
+    if request.method == "POST":
+        form = SiteForm(request.POST)
+        if form.is_valid():
+            site = form.save()
+            messages.success(request, "Site-ul a fost creat.")
+            try:
+                return redirect(reverse("viz_sit_detail", args=[site.pk]))
+            except Exception:
+                try:
+                    return redirect(reverse("viz_situri"))
+                except Exception:
+                    return redirect("adaugari_home")
+    else:
+        form = SiteForm()
+
+    breadcrumbs = [
+        (reverse("adaugari_home"), "Adăugări"),
+        (None, "Situri"),
+    ]
+    return render(request, "adaugari/site_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+
+@login_required
+def add_habitat_page(request):
+    if request.method == "POST":
+        form = HabitatForm(request.POST)
+        if form.is_valid():
+            habitat = form.save()
+            messages.success(request, "Habitatul a fost creat.")
+            try:
+                return redirect(reverse("viz_habitate_detail", args=[habitat.pk]))
+            except Exception:
+                try:
+                    return redirect(reverse("viz_habitate"))
+                except Exception:
+                    return redirect("adaugari_home")
+    else:
+        form = HabitatForm()
+
+    breadcrumbs = [
+        (reverse("adaugari_home"), "Adăugări"),
+        (None, "Habitate"),
+    ]
+    return render(request, "adaugari/habitat_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+
+@login_required
+def add_occurrence_page(request):
+    if request.method == "POST":
+        form = OccurrenceForm(request.POST)
+        if form.is_valid():
+            occurrence = form.save(commit=False)
+            occurrence.created_by = request.user
+            occurrence.save()
+            messages.success(request, "Înregistrarea a fost creată.")
+            # Redirect to filters page with the new occurrence's reserve and year
+            try:
+                return redirect(f"{reverse('filters_plante_rezervatii')}?mode=by_reserve_all&reserve_name={occurrence.reserve.name}&year={occurrence.year}")
+            except Exception:
+                return redirect("adaugari_home")
+    else:
+        form = OccurrenceForm()
+
+    breadcrumbs = [
+        (reverse("adaugari_home"), "Adăugări"),
+        (None, "Plante – Rezervatii"),
+    ]
+    return render(request, "adaugari/occurrence_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+
 
 
 

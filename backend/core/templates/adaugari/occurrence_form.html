@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}Adăugări · Plante–Rezervații{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Adaugă Înregistrare Plante–Rezervație</h1>
+    <p class="muted">Completează câmpurile de mai jos. Câmpurile opționale pot fi lăsate necompletate.</p>
+  </header>
+
+  <nav aria-label="breadcrumb" class="mb-2">
+    <small>
+      <a href="{% url 'adaugari_home' %}">Adăugări</a>
+      <span> / </span>
+      <span>Plante – Rezervații</span>
+    </small>
+  </nav>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="mt-3" role="alert" aria-live="polite">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-grid">
+        <!-- Row 1: Search bars -->
+        <div class="field col-span-7 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_reserve_name">{{ form.reserve_name.label }}</label>
+          {{ form.reserve_name }}
+          {% if form.reserve_name.errors %}<div class="errors">{{ form.reserve_name.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-5 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_species_name">{{ form.species_name.label }}</label>
+          {{ form.species_name }}
+          {% if form.species_name.errors %}<div class="errors">{{ form.species_name.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 2: Year, coordinates, flags -->
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_year">{{ form.year.label }}</label>
+          <div style="max-width:12ch;">
+            {{ form.year }}
+          </div>
+          {% if form.year.errors %}<div class="errors">{{ form.year.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_latitude">{{ form.latitude.label }}</label>
+          {{ form.latitude }}
+          {% if form.latitude.errors %}<div class="errors">{{ form.latitude.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_longitude">{{ form.longitude.label }}</label>
+          {{ form.longitude }}
+          {% if form.longitude.errors %}<div class="errors">{{ form.longitude.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="checkbox"><input id="id_is_rare" type="checkbox" name="is_rare" {% if form.is_rare.value %}checked{% endif %}> {{ form.is_rare.label }}</label>
+          {% if form.is_rare.errors %}<div class="errors">{{ form.is_rare.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 3: Source and observer -->
+        <div class="field col-span-6 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_source">{{ form.source.label }}</label>
+          {{ form.source }}
+          {% if form.source.errors %}<div class="errors">{{ form.source.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-6 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_observer">{{ form.observer.label }}</label>
+          {{ form.observer }}
+          {% if form.observer.errors %}<div class="errors">{{ form.observer.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 4: Notes -->
+        <div class="field col-span-12 md:col-span-12 sm:col-span-12">
+          <label class="label" for="id_notes">{{ form.notes.label }}</label>
+          {{ form.notes }}
+          {% if form.notes.errors %}<div class="errors">{{ form.notes.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Salvează</button>
+        <a href="{% url 'adaugari_home' %}" class="btn btn-outline">Renunță</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+// Simple autosuggest for reserve and species search
+document.addEventListener('DOMContentLoaded', function() {
+    const reserveInput = document.getElementById('id_reserve_name');
+    const speciesInput = document.getElementById('id_species_name');
+    
+    // Reserve autosuggest
+    if (reserveInput) {
+        let reserveTimeout;
+        reserveInput.addEventListener('input', function() {
+            clearTimeout(reserveTimeout);
+            const query = this.value.trim();
+            if (query.length < 2) return;
+            
+            reserveTimeout = setTimeout(() => {
+                fetch(`/api/reserves/search/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        showSuggestions(this, data.reserves || []);
+                    })
+                    .catch(() => {
+                        // Fallback: no suggestions
+                    });
+            }, 300);
+        });
+    }
+    
+    // Species autosuggest
+    if (speciesInput) {
+        let speciesTimeout;
+        speciesInput.addEventListener('input', function() {
+            clearTimeout(speciesTimeout);
+            const query = this.value.trim();
+            if (query.length < 2) return;
+            
+            speciesTimeout = setTimeout(() => {
+                fetch(`/api/species/search/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        showSuggestions(this, data.species || []);
+                    })
+                    .catch(() => {
+                        // Fallback: no suggestions
+                    });
+            }, 300);
+        });
+    }
+    
+    function showSuggestions(input, items) {
+        // Remove existing dropdown
+        const existing = input.parentNode.querySelector('.suggestions-dropdown');
+        if (existing) existing.remove();
+        
+        if (items.length === 0) return;
+        
+        const dropdown = document.createElement('div');
+        dropdown.className = 'suggestions-dropdown';
+        dropdown.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dfe7df;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.07);
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+        `;
+        
+        items.forEach(item => {
+            const option = document.createElement('div');
+            option.className = 'suggestion-item';
+            option.style.cssText = `
+                padding: 8px 12px;
+                cursor: pointer;
+                border-bottom: 1px solid #f0f0f0;
+            `;
+            option.textContent = item.name || item.denumire_stiintifica;
+            option.addEventListener('click', () => {
+                input.value = item.name || item.denumire_stiintifica;
+                dropdown.remove();
+            });
+            dropdown.appendChild(option);
+        });
+        
+        input.parentNode.style.position = 'relative';
+        input.parentNode.appendChild(dropdown);
+        
+        // Close on outside click
+        document.addEventListener('click', function closeDropdown(e) {
+            if (!input.parentNode.contains(e.target)) {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

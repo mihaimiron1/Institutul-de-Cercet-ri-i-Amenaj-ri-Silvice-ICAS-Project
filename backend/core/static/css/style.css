@@ -377,6 +377,99 @@ input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 .viz-orange { background: #ffe9d6; border-color:#ffd9b8; }  /* Asociații – portocaliu deschis */
 .viz-olive  { background: #e8efd9; border-color:#d8e5c2; }  /* Situri – olive/planty */
 .viz-red    { background: #ffe3e1; border-color:#ffd0cc; }  /* Habitate – roșu cald (soft) */
+/* Extra palettes for Adăugări tiles to keep parity */
+.viz-blue   { background: #e2ecff; border-color:#cfdbff; }
+.viz-purple { background: #efe2ff; border-color:#dfccff; }
+.viz-brown  { background: #f2e8dd; border-color:#e6d8c5; }
+
+/* ===== Forms: Grid, fields, errors, actions ===== */
+.form-grid{
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px; /* ~1.25rem */
+}
+@media (max-width: 991px){ /* < 992px */
+  .form-grid{ grid-template-columns: repeat(6, 1fr); }
+}
+@media (max-width: 639px){ /* < 640px */
+  .form-grid{ grid-template-columns: 1fr; }
+}
+
+/* Column span utilities (desktop base) */
+.col-span-12{ grid-column: span 12; }
+.col-span-8{ grid-column: span 8; }
+.col-span-6{ grid-column: span 6; }
+.col-span-4{ grid-column: span 4; }
+.col-span-3{ grid-column: span 3; }
+.col-span-2{ grid-column: span 2; }
+.col-span-1{ grid-column: span 1; }
+
+/* Tablet: default most fields to 6 columns */
+@media (max-width: 991px){
+  .md\:col-span-6{ grid-column: span 6; }
+  .md\:col-span-12{ grid-column: span 12; }
+}
+/* Mobile: full width */
+@media (max-width: 639px){
+  .sm\:col-span-12{ grid-column: 1 / -1; }
+}
+
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field .label{ font-weight:600; line-height:1.2; }
+.field small{ color: var(--muted); overflow-wrap:anywhere; }
+.field input[type="text"],
+.field input[type="number"],
+.field select,
+.field textarea{
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: #fff;
+  box-sizing: border-box;
+}
+.field textarea{ min-height: 130px; padding: 10px 12px; }
+.field .errors{ color: #b52b3b; font-size: var(--fs-14); }
+
+/* Number input: remove spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+input[type="number"]{ -moz-appearance: textfield; }
+
+/* Short input width helper (e.g., year) */
+.w-ch-12{ max-width: 12ch; }
+
+/* Options block (checkbox groups) */
+.options-card{
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.options-grid{
+  display:grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 991px){ .options-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 639px){ .options-grid{ grid-template-columns: 1fr; } }
+.checkbox{ display:flex; align-items:center; gap:8px; min-height: 36px; }
+.checkbox input{ width: 18px; height: 18px; }
+
+/* Sticky actions */
+.form-actions{
+  position: sticky; bottom: 0; background:#fff;
+  padding-top: 12px; margin-top: 16px;
+  display:flex; gap: 12px; justify-content:flex-end;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 639px){
+  .form-actions{ flex-direction: column; }
+  .form-actions .btn, .form-actions .btn-outline{ width: 100%; justify-content: center; }
+}
+
+/* High z-index for future dropdowns/autocomplete */
+.dropdown-portal{ position: relative; z-index: 50; }
 /* ==== Plante – Rezervatii wide layout (UI only) ==== */
 #plante-rezervatii .prw-90 { width: 100%; margin-inline: auto; }
 

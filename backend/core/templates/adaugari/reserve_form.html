@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Adăugări · Rezervatii{% endblock %}
+{% block content %}
+<section class="container">
+  <header class="hero">
+    <h1>Adaugă Rezervație</h1>
+    <p class="muted">Completează câmpurile de mai jos. Câmpurile opționale pot fi lăsate necompletate.</p>
+  </header>
+
+  <nav aria-label="breadcrumb" class="mb-2">
+    <small>
+      <a href="{% url 'adaugari_home' %}">Adăugări</a>
+      <span> / </span>
+      <span>Rezervatii</span>
+    </small>
+  </nav>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="mt-3" role="alert" aria-live="polite">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-grid">
+        <!-- Row 1 -->
+        <div class="field col-span-8 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_name">{{ form.name.label }}</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="errors">{{ form.name.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_category">{{ form.category.label }}</label>
+          {{ form.category }}
+          {% if form.category.errors %}<div class="errors">{{ form.category.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 2 -->
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_subcategory">{{ form.subcategory.label }}</label>
+          {{ form.subcategory }}
+          {% if form.subcategory.errors %}<div class="errors">{{ form.subcategory.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12 dropdown-portal">
+          <label class="label" for="id_raion">{{ form.raion.label }}</label>
+          {{ form.raion }}
+          {% if form.raion.errors %}<div class="errors">{{ form.raion.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-4 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_proprietar">{{ form.proprietar.label }}</label>
+          {{ form.proprietar }}
+          {% if form.proprietar.errors %}<div class="errors">{{ form.proprietar.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 3 -->
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_latitude">{{ form.latitude.label }}</label>
+          {{ form.latitude }}
+          {% if form.latitude.errors %}<div class="errors">{{ form.latitude.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_longitude">{{ form.longitude.label }}</label>
+          {{ form.longitude }}
+          {% if form.longitude.errors %}<div class="errors">{{ form.longitude.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_suprafata_ha">{{ form.suprafata_ha.label }}</label>
+          {{ form.suprafata_ha }}
+          {% if form.suprafata_ha.errors %}<div class="errors">{{ form.suprafata_ha.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-3 md:col-span-6 sm:col-span-12">
+          <label class="label" for="id_amplasare">{{ form.amplasare.label }}</label>
+          {{ form.amplasare }}
+          {% if form.amplasare.errors %}<div class="errors">{{ form.amplasare.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 4: descriptions -->
+        <div class="field col-span-12 md:col-span-12 sm:col-span-12">
+          <label class="label" for="id_description">{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}<div class="errors">{{ form.description.errors }}</div>{% endif %}
+        </div>
+        <div class="field col-span-12 md:col-span-12 sm:col-span-12">
+          <label class="label" for="id_diversitatea_fitocenotica">{{ form.diversitatea_fitocenotica.label }}</label>
+          {{ form.diversitatea_fitocenotica }}
+          {% if form.diversitatea_fitocenotica.errors %}<div class="errors">{{ form.diversitatea_fitocenotica.errors }}</div>{% endif %}
+        </div>
+
+        <!-- Row 5: notes -->
+        <div class="field col-span-12 md:col-span-12 sm:col-span-12">
+          <label class="label" for="id_notes">{{ form.notes.label }}</label>
+          {{ form.notes }}
+          {% if form.notes.errors %}<div class="errors">{{ form.notes.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Salvează</button>
+        <a href="{% url 'adaugari_home' %}" class="btn btn-outline">Renunță</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+
