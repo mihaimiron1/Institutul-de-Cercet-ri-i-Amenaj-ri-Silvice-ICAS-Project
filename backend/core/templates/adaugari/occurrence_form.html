@@ -24,15 +24,21 @@
       {% endif %}
 
       <div class="form-grid">
-        <!-- Row 1: Search bars -->
-        <div class="field col-span-7 md:col-span-6 sm:col-span-12 dropdown-portal">
-          <label class="label" for="id_reserve_name">{{ form.reserve_name.label }}</label>
-          {{ form.reserve_name }}
+        <!-- Row 1: Large side-by-side combobox search inputs -->
+        <div class="field col-span-7 md:col-span-6 sm:col-span-12" id="reserve-combobox" style="position:relative;">
+          <label class="label" for="reserveSearch">{{ form.reserve_name.label }}</label>
+          <input id="reserveSearch" class="form-control fullw big-combo" type="text" inputmode="search" placeholder="Caută rezervație…" autocomplete="off" aria-haspopup="listbox" aria-expanded="false" aria-controls="reserveMenu" aria-autocomplete="list" value="{{ form.reserve_name.value|default_if_none:'' }}" />
+          <input type="hidden" name="reserve_name" id="reserveValue" value="{{ form.reserve_name.value|default_if_none:'' }}" />
+          <ul id="reserveMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii rezervație"></ul>
+          <script id="reserves-data" type="application/json">{% autoescape off %}[{% for r in all_reserves %}"{{ r.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
           {% if form.reserve_name.errors %}<div class="errors">{{ form.reserve_name.errors }}</div>{% endif %}
         </div>
-        <div class="field col-span-5 md:col-span-6 sm:col-span-12 dropdown-portal">
-          <label class="label" for="id_species_name">{{ form.species_name.label }}</label>
-          {{ form.species_name }}
+        <div class="field col-span-5 md:col-span-6 sm:col-span-12" id="species-combobox" style="position:relative;">
+          <label class="label" for="speciesSearch">{{ form.species_name.label }}</label>
+          <input id="speciesSearch" class="form-control fullw big-combo" type="text" inputmode="search" placeholder="Caută specie…" autocomplete="off" aria-haspopup="listbox" aria-expanded="false" aria-controls="speciesMenu" aria-autocomplete="list" value="{{ form.species_name.value|default_if_none:'' }}" />
+          <input type="hidden" name="species_name" id="speciesValue" value="{{ form.species_name.value|default_if_none:'' }}" />
+          <ul id="speciesMenu" class="combo-menu hidden" role="listbox" tabindex="-1" aria-label="Sugestii specie"></ul>
+          <script id="species-data" type="application/json">{% autoescape off %}[{% for s in all_species %}"{{ s.denumire_stiintifica|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %}</script>
           {% if form.species_name.errors %}<div class="errors">{{ form.species_name.errors }}</div>{% endif %}
         </div>
 
@@ -88,103 +94,74 @@
 </section>
 
 <script>
-// Simple autosuggest for reserve and species search
-document.addEventListener('DOMContentLoaded', function() {
-    const reserveInput = document.getElementById('id_reserve_name');
-    const speciesInput = document.getElementById('id_species_name');
-    
-    // Reserve autosuggest
-    if (reserveInput) {
-        let reserveTimeout;
-        reserveInput.addEventListener('input', function() {
-            clearTimeout(reserveTimeout);
-            const query = this.value.trim();
-            if (query.length < 2) return;
-            
-            reserveTimeout = setTimeout(() => {
-                fetch(`/api/reserves/search/?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        showSuggestions(this, data.reserves || []);
-                    })
-                    .catch(() => {
-                        // Fallback: no suggestions
-                    });
-            }, 300);
-        });
+// Reuse combobox behavior from filters page for local arrays
+(function(){
+  function initCombo(opts){
+    var box    = document.getElementById(opts.boxId);
+    if (!box) return;
+    var input  = document.getElementById(opts.inputId);
+    var menu   = document.getElementById(opts.menuId);
+    var hidden = document.getElementById(opts.hiddenId);
+    var dataEl = document.getElementById(opts.dataId);
+    var raw = (dataEl && dataEl.textContent || '[]').trim();
+    var ITEMS = [];
+    try { ITEMS = JSON.parse(raw).filter(Boolean); } catch(e) { ITEMS = []; }
+
+    function norm(s){ return (s||'').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim(); }
+    function candidates(q){ if (!q) return ITEMS.slice(0,20); var n=norm(q); return ITEMS.filter(function(name){ return norm(name).indexOf(n)!==-1; }).slice(0,20); }
+
+    var activeIndex = -1;
+    function render(list){
+      while (menu.firstChild) menu.removeChild(menu.firstChild);
+      if (!input.value && list.length === 0) {
+        var li0 = document.createElement('li'); li0.textContent = '— alege —'; li0.setAttribute('aria-disabled','true'); menu.appendChild(li0);
+      }
+      list.forEach(function(name, i){
+        var li = document.createElement('li'); li.setAttribute('role','option'); li.id = opts.menuId + '-opt-' + i; li.textContent = name; li.addEventListener('mousedown', function(e){ e.preventDefault(); select(name); }); menu.appendChild(li);
+      });
+      input.setAttribute('aria-expanded', String(list.length > 0));
+      menu.classList.toggle('hidden', list.length === 0 && !!input.value);
+      activeIndex = -1;
     }
-    
-    // Species autosuggest
-    if (speciesInput) {
-        let speciesTimeout;
-        speciesInput.addEventListener('input', function() {
-            clearTimeout(speciesTimeout);
-            const query = this.value.trim();
-            if (query.length < 2) return;
-            
-            speciesTimeout = setTimeout(() => {
-                fetch(`/api/species/search/?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        showSuggestions(this, data.species || []);
-                    })
-                    .catch(() => {
-                        // Fallback: no suggestions
-                    });
-            }, 300);
-        });
-    }
-    
-    function showSuggestions(input, items) {
-        // Remove existing dropdown
-        const existing = input.parentNode.querySelector('.suggestions-dropdown');
-        if (existing) existing.remove();
-        
-        if (items.length === 0) return;
-        
-        const dropdown = document.createElement('div');
-        dropdown.className = 'suggestions-dropdown';
-        dropdown.style.cssText = `
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #dfe7df;
-            border-radius: 8px;
-            box-shadow: 0 6px 20px rgba(0,0,0,.07);
-            z-index: 50;
-            max-height: 200px;
-            overflow-y: auto;
-        `;
-        
-        items.forEach(item => {
-            const option = document.createElement('div');
-            option.className = 'suggestion-item';
-            option.style.cssText = `
-                padding: 8px 12px;
-                cursor: pointer;
-                border-bottom: 1px solid #f0f0f0;
-            `;
-            option.textContent = item.name || item.denumire_stiintifica;
-            option.addEventListener('click', () => {
-                input.value = item.name || item.denumire_stiintifica;
-                dropdown.remove();
-            });
-            dropdown.appendChild(option);
-        });
-        
-        input.parentNode.style.position = 'relative';
-        input.parentNode.appendChild(dropdown);
-        
-        // Close on outside click
-        document.addEventListener('click', function closeDropdown(e) {
-            if (!input.parentNode.contains(e.target)) {
-                dropdown.remove();
-                document.removeEventListener('click', closeDropdown);
-            }
-        });
-    }
-});
+    function select(name){ input.value = name; hidden.value = name; close(); }
+    function close(){ menu.classList.add('hidden'); input.setAttribute('aria-expanded','false'); activeIndex=-1; }
+    function openWith(q){ render(candidates(q)); menu.classList.remove('hidden'); }
+
+    input.addEventListener('focus', function(){ openWith(input.value); });
+    input.addEventListener('input', function(){ hidden.value=''; openWith(input.value); });
+    input.addEventListener('keydown', function(e){
+      var items = Array.from(menu.querySelectorAll('li[role="option"]'));
+      if (menu.classList.contains('hidden') && (e.key==='ArrowDown' || e.key==='Enter')) { openWith(input.value); return; }
+      if (!items.length) return;
+      if (e.key==='ArrowDown'){ e.preventDefault(); activeIndex = Math.min(items.length-1, activeIndex+1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); activeIndex = Math.max(0, activeIndex-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); if (activeIndex>=0) select(items[activeIndex].textContent); else if (items.length) select(items[0].textContent); }
+      else if (e.key==='Escape'){ close(); }
+      items.forEach(function(li, i){ li.setAttribute('aria-selected', String(i===activeIndex)); });
+      if (activeIndex>=0) items[activeIndex].scrollIntoView({ block: 'nearest' });
+    });
+    document.addEventListener('click', function(e){ if (!box.contains(e.target)) close(); });
+    var form = input.closest('form');
+    if (form) form.addEventListener('submit', function(){ if (!hidden.value && input.value){ var list = candidates(input.value); if (list.length){ hidden.value = list[0]; input.value = list[0]; } } close(); });
+  }
+
+  // init both comboboxes
+  initCombo({ boxId:'reserve-combobox', inputId:'reserveSearch', menuId:'reserveMenu', hiddenId:'reserveValue', dataId:'reserves-data' });
+  initCombo({ boxId:'species-combobox', inputId:'speciesSearch', menuId:'speciesMenu', hiddenId:'speciesValue', dataId:'species-data' });
+})();
 </script>
+
+<style>
+  /* Make the top two inputs bigger, same row, search-like */
+  .big-combo { height: 46px; font-size: 16px; padding: 10px 12px; }
+  .combo-menu { position:absolute; left:0; right:0; top:calc(100% + 4px); background:#fff; border:1px solid #dfe7df; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,.07); max-height:220px; overflow:auto; margin:0; padding:6px; list-style:none; z-index:30; }
+  .combo-menu.hidden { display:none; }
+  .combo-menu li { padding:8px 10px; border-radius:6px; cursor:pointer; }
+  .combo-menu li[aria-selected="true"] { background:#f0f7f0; }
+  .form-grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+  .col-span-7 { grid-column: span 7; }
+  .col-span-5 { grid-column: span 5; }
+  .fullw { width:100%; }
+  @media (max-width: 960px){ .col-span-7, .col-span-5 { grid-column: span 12; } }
+</style>
 {% endblock %}

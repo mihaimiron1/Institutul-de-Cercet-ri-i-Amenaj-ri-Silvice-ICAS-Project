@@ -123,11 +123,23 @@ def add_plante_rezervatii(request):
 
 
 def add_rezervatii_asociatii(request):
-    return render(request, "core/add_rezervatii_asociatii.html", {})
+    # Provide data for client-side comboboxes
+    reserves = Reserve.objects.order_by("name").only("id", "name")
+    associations = Association.objects.order_by("name").only("id", "name")
+    return render(request, "core/add_rezervatii_asociatii.html", {
+        "all_reserves": reserves,
+        "all_associations": associations,
+    })
 
 
 def add_situri_habitate(request):
-    return render(request, "core/add_situri_habitate.html", {})
+    # Provide data for comboboxes
+    sites = Site.objects.order_by("name").only("id", "name")
+    habitats = Habitat.objects.order_by("name_romanian", "name_english").only("id", "name_romanian", "name_english")
+    return render(request, "core/add_situri_habitate.html", {
+        "all_sites": sites,
+        "all_habitats": habitats,
+    })
 @login_required
 def add_reserve_page(request):
     if request.method == "POST":
@@ -241,7 +253,16 @@ def add_occurrence_page(request):
         (reverse("adaugari_home"), "Adăugări"),
         (None, "Plante – Rezervatii"),
     ]
-    return render(request, "adaugari/occurrence_form.html", {"form": form, "breadcrumbs": breadcrumbs})
+    # For UI combobox dropdowns (client-side search)
+    all_reserves = Reserve.objects.order_by("name").only("id", "name")
+    all_species = Species.objects.order_by("denumire_stiintifica").only("id", "denumire_stiintifica")
+
+    return render(request, "adaugari/occurrence_form.html", {
+        "form": form,
+        "breadcrumbs": breadcrumbs,
+        "all_reserves": all_reserves,
+        "all_species": all_species,
+    })
 
 
 
